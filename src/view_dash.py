@@ -22,5 +22,5 @@ def build_dash_app(datatable, single_figure, single_checkbox_list):
 
     #bd_control.register_callbacks(app)
 
-    if __name__ == "beaverdam_views_dash":
+    if __name__ == "view_dash":
         app.run_server(debug=True)
