@@ -49,9 +49,9 @@ config_filter_options = {"Document.sections.subject.sections.Subject.properties.
 # Import beaverdam-specific code
 import sys
 sys.path.insert(0, './src')
-import beaverdam_core as bd
-import beaverdam_presenters as bd_present
-import beaverdam_views_dash as bd_views_dash
+import core as bd
+import presenters as bd_present
+import view_dash as bd_views_dash
 
 # Define database info
 db_info = bd.MongoDbDatabase(
