@@ -56,7 +56,7 @@ class MongoDbDatabase(MetadataSource):
         projection_paths = list(requested_projections.keys())
 
         # Set up pointers to the database
-        client = MongoClient(self.address, self.port)
+        client = MongoClient(self.address, self.port)#"localhost",27017)#
         db = getattr(client, self.db_name)
         collection = getattr(db, self.collection_name)
 

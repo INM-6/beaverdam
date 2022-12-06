@@ -95,9 +95,10 @@ class DashFilterChecklist(FilterChecklist):
         
 
     def build(self):
-        checklist_options = []
-        for key, val in self.items.items():
-            checklist_options.append(key + ' = ' + val)
+        # checklist_options = []
+        # for key, val in self.items.items():
+            # checklist_options.append(key + ' = ' + val)
+        checklist_options = self.items
         return dcc.Checklist(
             options=checklist_options,
             id = self.id

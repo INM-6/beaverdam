@@ -1,0 +1,36 @@
+# Configuration parameters for beaverdam
+
+[database]
+# Information about the database containing metadata
+address = "localhost"
+port = 27017
+db_name = "testodml"
+collection_name = "odmlmetadata"
+
+
+[queries]
+# Which fields you will be able to place conditions on to filter trials
+filter_options = ["Document.sections.subject.sections.Subject.properties.GivenName.value"]
+
+[projections]
+# Which fields to return from the database when it's queried
+
+Name = "Document.sections.session.sections.Session.properties.Name.value"
+GivenName = "Document.sections.subject.sections.Subject.properties.GivenName.value"
+ShortName = "Document.sections.session.sections.Session.sections.Task.properties.ShortName.value"
+dtp_filename = "Document.sections.TaskParameters.properties.dtp_filename.value"
+AverageTrialTime = "Document.sections.session.sections.Session.sections.Performance.properties.AverageTrialTime.value"
+AverageErrorCount = "Document.sections.session.sections.Session.sections.Performance.properties.AverageErrorCount.value"
+SortingAuthor1 = "Document.sections.SessionInfo.sections.spike_sorting1.properties.SortingAuthor.value"
+SortingAuthor2 = "Document.sections.SessionInfo.sections.spike_sorting2.properties.SortingAuthor.value"
+SortingAuthor3 = "Document.sections.SessionInfo.sections.spike_sorting3.properties.SortingAuthor.value"
+SortingAuthor4 = "Document.sections.SessionInfo.sections.spike_sorting4.properties.SortingAuthor.value"
+ElectrophysQuality = "Document.sections.session.sections.Session.sections.DataQuality.properties.Electrophysiology.value"
+EyeQuality = "Document.sections.session.sections.Session.sections.DataQuality.properties.Eye.value"
+HandQuality = "Document.sections.session.sections.Session.sections.DataQuality.properties.Hand.value"
+Modality1 = "Document.sections.session.sections.Session.properties.Modality1.value"
+Modality2 = "Document.sections.session.sections.Session.properties.Modality2.value"
+Modality3 = "Document.sections.session.sections.Session.properties.Modality3.value"
+
+[plots]
+data_to_plot = "Document.sections.subject.sections.Subject.properties.GivenName.value"
