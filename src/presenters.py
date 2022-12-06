@@ -99,4 +99,6 @@ class DashFilterChecklist(FilterChecklist):
     def build(self):
         checklist_options = self.db_info.query({}, {self.field: 1})
         checklist_options = checklist_options[self.field].drop_duplicates().to_list()
-        return dcc.Checklist(options=checklist_options, id=self.id, labelStyle={'display': 'block'})
+        return dcc.Checklist(
+            options=checklist_options, id=self.id, labelStyle={"display": "block"}
+        )
