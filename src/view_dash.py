@@ -1,6 +1,7 @@
 from dash import Dash, html
-#from . import beaverdam_controllers_dash as bd_control
-#from beaverdam_controllers_dash import register_callbacks
+
+# from . import beaverdam_controllers_dash as bd_control
+# from beaverdam_controllers_dash import register_callbacks
 
 
 def build_dash_app(datatable, single_figure, single_checkbox_list):
@@ -20,7 +21,7 @@ def build_dash_app(datatable, single_figure, single_checkbox_list):
         ]
     )
 
-    #bd_control.register_callbacks(app)
+    # bd_control.register_callbacks(app)
 
     if __name__ == "view_dash":
         app.run_server(debug=True)

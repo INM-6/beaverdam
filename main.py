@@ -1,3 +1,5 @@
+## IMPORTS
+
 # Import beaverdam-specific code
 import sys
 
@@ -6,12 +8,16 @@ import core as bd
 import presenters as bd_present
 import view_dash as bd_views_dash
 
-# Import stuff for config file
-# NOTE:  use tomllib once using Python 3.11
-from tomlkit import parse
+from tomlkit import (
+    parse,
+)  # parsing config file; change to tomllib once using Python 3.11
+
+## INPUTS
 
 # Path to config file
 fp_config = "config.toml"
+
+## CODE
 
 # Parse config file
 with open(fp_config, "rb") as f:
@@ -44,10 +50,14 @@ table_data.filter(filter_criteria)
 table_data_for_dash = bd_present.DashDataTable("testtable", table_data.df)
 
 # Make a graph
-pie_graph = bd_present.DashPieChart("testfig", table_data.df, config["plots"]["data_to_plot"])
+pie_graph = bd_present.DashPieChart(
+    "testfig", table_data.df, config["plots"]["data_to_plot"]
+)
 
 # Make checkboxes
-checkboxes = bd_present.DashFilterChecklist("testchecklist", config["queries"]["filter_options"])
+checkboxes = bd_present.DashFilterChecklist(
+    "testchecklist", config["queries"]["filter_options"]
+)
 
 # Make GUI
 bd_views_dash.build_dash_app(table_data_for_dash, pie_graph, checkboxes)

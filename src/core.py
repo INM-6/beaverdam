@@ -56,7 +56,7 @@ class MongoDbDatabase(MetadataSource):
         projection_paths = list(requested_projections.keys())
 
         # Set up pointers to the database
-        client = MongoClient(self.address, self.port)#"localhost",27017)#
+        client = MongoClient(self.address, self.port)  # "localhost",27017)#
         db = getattr(client, self.db_name)
         collection = getattr(db, self.collection_name)
 
@@ -110,7 +110,7 @@ class Table(pd.DataFrame):
 
     def filter(self, filter_criteria):
         """Identify rows that meet the filter criteria and mark them as selected
-        
+
         Args:
         filter_criteria (FilterCriteria): dict of criteria -- sessions must meet at least one allowable val for all keys in the dict"""
         pass

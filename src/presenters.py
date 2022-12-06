@@ -92,14 +92,10 @@ class DashFilterChecklist(FilterChecklist):
             id (str):  the id to assign to the corresponding Dash UI element
         """
         self.items = items
-        
 
     def build(self):
         # checklist_options = []
         # for key, val in self.items.items():
-            # checklist_options.append(key + ' = ' + val)
+        # checklist_options.append(key + ' = ' + val)
         checklist_options = self.items
-        return dcc.Checklist(
-            options=checklist_options,
-            id = self.id
-        )
+        return dcc.Checklist(options=checklist_options, id=self.id)

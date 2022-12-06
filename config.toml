@@ -10,7 +10,9 @@ collection_name = "odmlmetadata"
 
 [queries]
 # Which fields you will be able to place conditions on to filter trials
-filter_options = ["Document.sections.subject.sections.Subject.properties.GivenName.value"]
+filter_options = [
+    "Document.sections.subject.sections.Subject.properties.GivenName.value",
+]
 
 [projections]
 # Which fields to return from the database when it's queried
