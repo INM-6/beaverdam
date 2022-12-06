@@ -83,19 +83,20 @@ class FilterChecklist:
 class DashFilterChecklist(FilterChecklist):
     """Information to generate a checklist in Dash"""
 
-    def __init__(self, id, items):
+    def __init__(self, id, db_info, field):
         super().__init__(id)
         """Store the list of checkbox options
 
         Args:
             items (dict): checkbox items with keys = projection, vals = allowable values
             id (str):  the id to assign to the corresponding Dash UI element
+            db_info (MongoDbDatabase):  information about where to find the database
+            field (str):  the path to the database field which the checklist represents
         """
-        self.items = items
+        self.db_info = db_info
+        self.field = field
 
     def build(self):
-        # checklist_options = []
-        # for key, val in self.items.items():
-        # checklist_options.append(key + ' = ' + val)
-        checklist_options = self.items
-        return dcc.Checklist(options=checklist_options, id=self.id)
+        checklist_options = self.db_info.query({}, {self.field: 1})
+        checklist_options = checklist_options[self.field].drop_duplicates().to_list()
+        return dcc.Checklist(options=checklist_options, id=self.id, labelStyle={'display': 'block'})

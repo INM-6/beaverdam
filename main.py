@@ -56,7 +56,7 @@ pie_graph = bd_present.DashPieChart(
 
 # Make checkboxes
 checkboxes = bd_present.DashFilterChecklist(
-    "testchecklist", config["queries"]["filter_options"]
+    list(config["queries"].keys())[0], db_info, list(config["queries"].values())[0]
 )
 
 # Make GUI
