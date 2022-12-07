@@ -7,25 +7,47 @@ import plotly.express as px
 class DataTable:
     """Store data to display in a table"""
 
-    def __init__(self, df, presenter):
-        # Choose the correct presenter class and create a datatable of that class
-        pass
+    def __init__(self, id, df, presenter=""):
+        filter_col_name = "selectionState"
+        self.id = id
+        # Remove column denoting selection state
+        if filter_col_name in df.columns:
+            self.df = df.drop([filter_col_name], axis=1)
+        else:
+            self.df = df
+        # TODO:  Choose the correct presenter class and create a datatable of that class
 
 
 class DashDataTable(DataTable):
     """Format dataframe for Dash dashboard"""
 
-    def __init__(self, id, df):
+    def __init__(self, id, df, new_column_names={}):
         """Format a dataframe to be displayed by a Dash DataTable
 
         Args:
+            id (str):  id of the resulting table element in the dashboard
             df (Pandas dataframe): data to be shown in the table, with column names
             corresponding to the column names that should be in the table
+            new_column_names (opt; dict):  keys = column names in df, vals = new column
+            names to display.  If a column name is not specified in the dict, the
+            original column name will be retained.
         """
-        self.id = id
-        self.df = df
-        self.data = df.to_dict("records")
-        self.columns = [{"name": i, "id": i} for i in df.columns]
+        super().__init__(id, df)
+        self.data = self.df.to_dict("records")
+        if len(new_column_names) > 0:
+            # TODO:  add check for dict rather than list For each column of the dataframe,
+            # check whether the column name is in the list of new column names and replace
+            # it if needed; if it isn't in the list, retain the original column name
+            # self.columns = {"name": [], "id" = []}
+            self.columns = []
+            for icol in self.df.columns:
+                tmp_dict = {}
+                tmp_dict["id"] = icol
+                if icol in list(new_column_names.keys()):
+                    tmp_dict["name"] = new_column_names[icol]
+                else:
+                    tmp_dict["name"] = icol
+                self.columns.append(tmp_dict)
 
     def build(self):
         return dash_table.DataTable(

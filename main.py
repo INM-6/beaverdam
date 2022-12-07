@@ -46,8 +46,11 @@ filter_criteria = bd.FilterCriteria()
 # Filter for sessions meeting criteria
 table_data.filter(filter_criteria)
 
-# Convert the table to something useable by Dash
-table_data_for_dash = bd_present.DashDataTable("testtable", table_data.df)
+# Convert the table to something useable by Dash Note that keys and vals for the
+# projections need to be switched to provide the input expected by DashDataTable
+table_data_for_dash = bd_present.DashDataTable(
+    "testtable", table_data.df, {y: x for x, y in config["projections"].items()}
+)
 
 # Make a graph
 pie_graph = bd_present.DashPieChart(
