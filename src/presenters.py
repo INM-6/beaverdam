@@ -34,11 +34,12 @@ class DashDataTable(DataTable):
         """
         super().__init__(id, df)
         self.data = self.df.to_dict("records")
+        # Rename columns to use short human-readable names
+        # TODO:  consider adding this to the DataTable __init__ instead
         if len(new_column_names) > 0:
             # TODO:  add check for dict rather than list For each column of the dataframe,
             # check whether the column name is in the list of new column names and replace
             # it if needed; if it isn't in the list, retain the original column name
-            # self.columns = {"name": [], "id" = []}
             self.columns = []
             for icol in self.df.columns:
                 tmp_dict = {}
