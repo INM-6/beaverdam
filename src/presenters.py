@@ -1,41 +1,36 @@
 """Prepare data for visualization
 """
-from dash import dcc, dash_table
-import plotly.express as px
 
+from dash import dcc
+import plotly.express as px
 
 class DataTable:
     """Store data to display in a table"""
 
-    def __init__(self, id, df, presenter=""):
+    def __init__(self, id, df, new_column_names={}, presenter=""):
+        """Format a dataframe for display
+
+        Args:
+            id (str):  id of the resulting table element, e.g. in a dashboard
+            df (Pandas dataframe): data to be shown in the table
+            new_column_names (opt; dict):  keys = column names in df, vals = new column
+            names to display.  If a column name is not specified in the dict, the
+            original column name will be retained.
+        Returns:
+            self.id (str):  id, e.g. to use for the resulting table in a dashboard
+            self.df (dataframe):  data to be shown in the table; column names are the same as column headers to display
+            self.columns (list):  column names (same as the column names in self.df)
+        """
         filter_col_name = "selectionState"
         self.id = id
+
         # Remove column denoting selection state
         if filter_col_name in df.columns:
             self.df = df.drop([filter_col_name], axis=1)
         else:
             self.df = df
-        # TODO:  Choose the correct presenter class and create a datatable of that class
 
-
-class DashDataTable(DataTable):
-    """Format dataframe for Dash dashboard"""
-
-    def __init__(self, id, df, new_column_names={}):
-        """Format a dataframe to be displayed by a Dash DataTable
-
-        Args:
-            id (str):  id of the resulting table element in the dashboard
-            df (Pandas dataframe): data to be shown in the table, with column names
-            corresponding to the column names that should be in the table
-            new_column_names (opt; dict):  keys = column names in df, vals = new column
-            names to display.  If a column name is not specified in the dict, the
-            original column name will be retained.
-        """
-        super().__init__(id, df)
-        self.data = self.df.to_dict("records")
         # Rename columns to use short human-readable names
-        # TODO:  consider adding this to the DataTable __init__ instead
         if len(new_column_names) > 0:
             # For each column of the dataframe, check whether the column name is in the
             # list of new column names and replace it if needed; if it isn't in the
@@ -50,13 +45,6 @@ class DashDataTable(DataTable):
                 else:
                     tmp_dict["name"] = icol
                 self.columns.append(tmp_dict)
-
-    def build(self):
-        return dash_table.DataTable(
-            id=self.id,
-            data=self.data,
-            columns=self.columns,
-        )
 
 
 class DataFigure:

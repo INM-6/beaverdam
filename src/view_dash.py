@@ -1,7 +1,23 @@
-from dash import Dash, html
+from dash import Dash, html, dcc, dash_table
+import plotly.express as px
+
+import presenters
 
 # from . import beaverdam_controllers_dash as bd_control
 # from beaverdam_controllers_dash import register_callbacks
+
+
+def build_data_table(data_table):
+    """Build table for Dash dashboard
+
+    Args: 
+        data_table (DataTable):  data to display in the table
+    """    
+    return dash_table.DataTable(
+            id=data_table.id,
+            data=data_table.df.to_dict("records"),
+            columns=data_table.columns,
+        )
 
 
 def build_dash_app(datatable, single_figure, single_checkbox_list):
@@ -17,7 +33,7 @@ def build_dash_app(datatable, single_figure, single_checkbox_list):
         [
             single_checkbox_list.build(),
             single_figure.build(),
-            datatable.build(),
+            build_data_table(datatable),
         ]
     )
 

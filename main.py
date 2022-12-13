@@ -44,9 +44,9 @@ filter_criteria = bd.FilterCriteria()
 # Filter for sessions meeting criteria
 table_data.filter(filter_criteria)
 
-# Convert the table to something useable by Dash Note that keys and vals for the
-# projections need to be switched to provide the input expected by DashDataTable
-table_data_for_dash = bdp.DashDataTable(
+# Convert the table to something useable by Dash.  NOTE: keys and vals for the
+# projections need to be switched to provide the input expected by DataTable
+table_data_for_dash = bdp.DataTable(
     "testtable", table_data.df, {y: x for x, y in config.projections.items()}
 )
 
