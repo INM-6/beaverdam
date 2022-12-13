@@ -5,8 +5,8 @@ import sys
 
 sys.path.insert(0, "./src")
 import core as bd
-import presenters as bd_present
-import view_dash as bd_views_dash
+import presenters as bdp
+import view_dash as bdv
 import parser
 
 
@@ -18,7 +18,7 @@ fp_config = "config.toml"
 
 ## CODE
 
-# # Parse config file
+# Parse config file
 config = parser.parse_config(fp_config)
 
 # Define database info
@@ -46,19 +46,19 @@ table_data.filter(filter_criteria)
 
 # Convert the table to something useable by Dash Note that keys and vals for the
 # projections need to be switched to provide the input expected by DashDataTable
-table_data_for_dash = bd_present.DashDataTable(
+table_data_for_dash = bdp.DashDataTable(
     "testtable", table_data.df, {y: x for x, y in config.projections.items()}
 )
 
 # Make a graph
-pie_graph = bd_present.DashPieChart(
+pie_graph = bdp.DashPieChart(
     "testfig", table_data.df, config.plots["data_to_plot"]
 )
 
 # Make checkboxes
-checkboxes = bd_present.DashFilterChecklist(
+checkboxes = bdp.DashFilterChecklist(
     list(config.queries.keys())[0], db_info, list(config.queries.values())[0]
 )
 
 # Make GUI
-bd_views_dash.build_dash_app(table_data_for_dash, pie_graph, checkboxes)
+bdv.build_dash_app(table_data_for_dash, pie_graph, checkboxes)
