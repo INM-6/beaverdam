@@ -13,11 +13,17 @@ def build_checklist(filter_checklist):
     Args:
         filter_checklist (FilterChecklist): checklist options, ID, and title
     """
-    # TODO:  add title
-    return dcc.Checklist(
-        options=filter_checklist.checklist_options,
-        id=filter_checklist.id,
-        labelStyle={"display": "block"},
+    return html.Div(
+        children=[
+            html.Div(children=filter_checklist.title),
+            html.Div(
+                children=dcc.Checklist(
+                    options=filter_checklist.checklist_options,
+                    id=filter_checklist.id,
+                    labelStyle={"display": "block"},
+                )
+            ),
+        ]
     )
 
 
