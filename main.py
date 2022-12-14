@@ -50,7 +50,11 @@ table_data_for_dash = bdp.DataTable("testtable", table_data.df, cfg.projections)
 
 # Make a graph
 pie_graph = bdp.PieChart(
-    "testfig", table_data.df, cfg.plots["data_to_plot"], cfg.projections
+    "testfig",
+    table_data.df,
+    cfg.plots["data_to_plot"],
+    cfg.projections,
+    "Make nice plot titles",
 )
 
 # Make checkboxes

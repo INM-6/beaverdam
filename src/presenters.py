@@ -38,7 +38,7 @@ class DataTable:
 class DataFigure:
     """Store information to generate figures"""
 
-    def __init__(self, id, df, col_to_plot=[], col_labels={}):
+    def __init__(self, id, df, col_to_plot=[], col_labels={}, title=[]):
         """Store information to plot a figure from data
 
         Args:
@@ -49,10 +49,12 @@ class DataFigure:
             col_labels (dict, optional): labels to use for each column of data, if you
             don't want to use the existing dataframe column labels. keys = new names to
             display, vals = column names in df. Defaults to {}.
+            title (str): title of resulting figure.  Defaults to [].
         Returns:
             self.id (str):  id of the resulting figure element
             self.graph_type (str):  type of graph to plot
             self.df (dataframe):  dataframe containing data to plot and columns named with display names
+            self.title (str):  title of plot
         """
         self.id = id
         self.graph_type = "undefined"
@@ -69,13 +71,15 @@ class DataFigure:
             col_labels = {y: x for x, y in col_labels.items()}
             # Rename columns
             self.df.rename(columns=col_labels, inplace=True)
+        # Set title
+        self.title = title
 
 
 class PieChart(DataFigure):
     """Store information to generate pie charts"""
 
-    def __init__(self, id, df, col_to_plot=[], col_labels={}):
-        super().__init__(id, df, col_to_plot, col_labels)
+    def __init__(self, id, df, col_to_plot=[], col_labels={}, title=[]):
+        super().__init__(id, df, col_to_plot, col_labels, title)
         self.graph_type = "pie"
         # TODO: Manipulate dataframe so that there is one column for categories and one for counts
         # Example:

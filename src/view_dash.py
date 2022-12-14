@@ -49,7 +49,11 @@ def build_data_figure(data_figure):
     if data_figure.graph_type == "pie":
         return dcc.Graph(
             id=data_figure.id,
-            figure=px.pie(data_figure.df, names=list(data_figure.df.columns.values)[0]),
+            figure=px.pie(
+                data_figure.df,
+                names=list(data_figure.df.columns.values)[0],
+                title=data_figure.title,
+            ),
         )
     else:
         raise Exception("Graph type " + data_figure.graph_type + " not defined.")
