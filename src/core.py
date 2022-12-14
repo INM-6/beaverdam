@@ -15,7 +15,7 @@ class MetadataSource:
     def __init__(self):
         pass
 
-    def Query():
+    def query():
         """Get metadata from source"""
         # Should return a dataframe
         pass
