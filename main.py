@@ -45,8 +45,7 @@ filter_criteria = bd.FilterCriteria()
 # Filter for sessions meeting criteria
 table_data.filter(filter_criteria)
 
-# Convert the table to something useable by Dash.  NOTE: keys and vals for the
-# projections need to be switched to provide the input expected by DataTable
+# Make the data table
 table_data_for_dash = bdp.DataTable("testtable", table_data.df, cfg.projections)
 
 # Make a graph
@@ -55,8 +54,11 @@ pie_graph = bdp.PieChart(
 )
 
 # Make checkboxes
-checkboxes = bdp.DashFilterChecklist(
-    list(cfg.queries.keys())[0], db_info, list(cfg.queries.values())[0]
+checkboxes = bdp.FilterChecklist(
+    list(cfg.queries.keys())[0] + "_checklist",
+    db_info,
+    list(cfg.queries.values())[0],
+    list(cfg.queries.keys())[0],
 )
 
 # Make GUI

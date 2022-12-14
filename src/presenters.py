@@ -82,7 +82,7 @@ class PieChart(DataFigure):
     def __init__(self, id, df, col_to_plot=[], col_labels={}):
         super().__init__(id, df, col_to_plot, col_labels)
         self.graph_type = "pie"
-        # Manipulate dataframe so that there is one column for categories and one for counts
+        # TODO: Manipulate dataframe so that there is one column for categories and one for counts
         # Example:
         #   df:
         #           colName
@@ -99,30 +99,29 @@ class PieChart(DataFigure):
 class FilterChecklist:
     """Information for lists of checkboxes to filter data"""
 
-    def __init__(self, id):
-        # Choose the correct presenter subclass
-        self.id = id
-
-
-class DashFilterChecklist(FilterChecklist):
-    """Information to generate a checklist in Dash"""
-
-    def __init__(self, id, db_info, field):
-        super().__init__(id)
-        """Store the list of checkbox options
+    def __init__(self, id, metadata_source, field_location, checklist_title=[]):
+        """Set checklist properties and find options
 
         Args:
-            items (dict): checkbox items with keys = projection, vals = allowable values
             id (str):  the id to assign to the corresponding Dash UI element
-            db_info (MongoDbDatabase):  information about where to find the database
-            field (str):  the path to the database field which the checklist represents
+            metadata_source (MetadataSource):  information about where to find metadata
+            field_location (str):  which metadata attribute the checklist represents, in a format
+            which the MetadataSource accepts as a query.  E.g. for a MongoDbDatabase
+            MetadataSource, use the path to the attribute in MongoDB.
+            checklist_title (str):  title for the checklist (optional; if not given, field_location will be used)
         """
-        self.db_info = db_info
-        self.field = field
+        self.id = id
 
-    def build(self):
-        checklist_options = self.db_info.query({}, {self.field: 1})
-        checklist_options = checklist_options[self.field].drop_duplicates().to_list()
-        return dcc.Checklist(
-            options=checklist_options, id=self.id, labelStyle={"display": "block"}
+        # Find options for the checklist
+        # TODO:  improve query method so you don't have to put the self.field: 1 here
+        self.checklist_options = metadata_source.query({}, {field_location: 1})
+        self.checklist_options = (
+            self.checklist_options[field_location].drop_duplicates().to_list()
         )
+
+        # Set title for the checklist.  Default to field_location if checklist_title
+        # isn't provided
+        if len(checklist_title) > 0:
+            self.title = checklist_title
+        else:
+            self.title = field_location

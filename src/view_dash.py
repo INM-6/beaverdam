@@ -7,6 +7,20 @@ import plotly.express as px
 # from beaverdam_controllers_dash import register_callbacks
 
 
+def build_checklist(filter_checklist):
+    """Build checklist for Dash dashboard
+
+    Args:
+        filter_checklist (FilterChecklist): checklist options, ID, and title
+    """
+    # TODO:  add title
+    return dcc.Checklist(
+        options=filter_checklist.checklist_options,
+        id=filter_checklist.id,
+        labelStyle={"display": "block"},
+    )
+
+
 def build_data_table(data_table):
     """Build table for Dash dashboard
 
@@ -46,7 +60,7 @@ def build_dash_app(datatable, single_figure, single_checkbox_list):
 
     app.layout = html.Div(
         [
-            single_checkbox_list.build(),
+            build_checklist(single_checkbox_list),
             build_data_figure(single_figure),
             build_data_table(datatable),
         ]
