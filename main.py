@@ -10,7 +10,6 @@ import view_dash as bdv
 import parser
 
 
-
 ## INPUTS
 
 # Path to config file
@@ -48,13 +47,11 @@ table_data.filter(filter_criteria)
 
 # Convert the table to something useable by Dash.  NOTE: keys and vals for the
 # projections need to be switched to provide the input expected by DataTable
-table_data_for_dash = bdp.DataTable(
-    "testtable", table_data.df, {y: x for x, y in cfg.projections.items()}
-)
+table_data_for_dash = bdp.DataTable("testtable", table_data.df, cfg.projections)
 
 # Make a graph
-pie_graph = bdp.DashPieChart(
-    "testfig", table_data.df, cfg.plots["data_to_plot"]
+pie_graph = bdp.PieChart(
+    "testfig", table_data.df, cfg.plots["data_to_plot"], cfg.projections
 )
 
 # Make checkboxes

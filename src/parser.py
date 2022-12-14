@@ -34,16 +34,28 @@ def parse_config(fp, required_fields=[]):
     with open(fp, "rb") as f:
         config_contents = parse(f.read())
 
-    # Put each of the top-level dict entries into its own variable
-    convert_config = namedtuple("convert_config", list(config_contents.keys()))
-    config_values = convert_config(**config_contents)
-
     # Check for required fields
-    is_section_missing = [item not in config_values._fields for item in required_fields]
+    is_section_missing = [
+        item not in list(config_contents.keys()) for item in required_fields
+    ]
     if any(is_section_missing):
         missing_sections = [
-            required_fields[i] for i, val in enumerate(is_section_missing) if is_section_missing[i]
+            required_fields[i]
+            for i, val in enumerate(is_section_missing)
+            if is_section_missing[i]
         ]
-        raise Exception("Config file is missing section(s): " + ", ".join(missing_sections))
+        raise Exception(
+            "Config file is missing section(s): " + ", ".join(missing_sections)
+        )
+
+    # Make sure items in each field will be a dict
+    list_of_dicts = []
+    for isection in list(config_contents.keys()):
+        list_of_dicts.append(dict(config_contents[isection]))
+
+    # Put each of the top-level dict entries into its own variable
+    convert_config = namedtuple("convert_config", list(config_contents.keys()))
+    # config_values = convert_config(**config_contents)
+    config_values = convert_config._make(list_of_dicts)
 
     return config_values
