@@ -1,11 +1,6 @@
 """Prepare data for visualization
 """
 
-from dash import dcc
-
-# import plotly.express as px
-import pandas as pd
-
 
 class DataTable:
     """Store data to display in a table"""
