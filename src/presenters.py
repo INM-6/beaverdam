@@ -2,6 +2,43 @@
 """
 
 
+def apply_selection_filter(df):
+    """Filter the dataframe based on a selection trigger contained in a column
+
+    Args:
+        df (dataframe): dataframe to be filtered, containing a column denoting the
+        selection state of each row
+    Returns:
+        filtered_df (dataframe):  dataframe WITHOUT (1) the selection-state column and
+        (2) any unselected rows
+    """
+    filter_col_name = "selectionState"
+
+    if filter_col_name in df.columns:
+        # Drop any unselected rows
+        filtered_df = df.drop(df[df[filter_col_name] == False].index)
+        # Remove column denoting selection state
+        filtered_df.drop([filter_col_name], axis=1, inplace=True)
+    else:
+        pass
+    return filtered_df
+
+
+def rename_df_columns(df, col_name_dict):
+    """Rename the columns of a dataframe
+
+    Args:
+        df (dataframe): dataframe whose columns should be renamed
+        col_name_dict (dict): dictionary containing keys=new names, vals=old names
+    Returns:
+        renamed_df (dataframe): dataframe with renamed columns
+    """
+    # Reverse the dict so keys=old names, vals=new names
+    col_name_dict = {y: x for x, y in col_name_dict.items()}
+    renamed_df = df.rename(columns=col_name_dict)
+    return renamed_df
+
+
 class DataTable:
     """Store data to display in a table"""
 
@@ -20,19 +57,11 @@ class DataTable:
             same as column headers to display
             self.columns (list):  column names (same as the column names in self.df)
         """
-        filter_col_name = "selectionState"
         self.id = id
 
-        # Remove column denoting selection state
-        if filter_col_name in df.columns:
-            self.df = df.drop([filter_col_name], axis=1)
-        else:
-            self.df = df
+        self.df = apply_selection_filter(df)
 
-        # Rename columns
-        # Reverse the dict so keys=old names, vals=new names
-        new_column_names = {y: x for x, y in new_column_names.items()}
-        self.df.rename(columns=new_column_names, inplace=True)
+        self.df = rename_df_columns(self.df, new_column_names)
 
 
 class DataFigure:
@@ -58,19 +87,21 @@ class DataFigure:
         """
         self.id = id
         self.graph_type = "undefined"
+
+        # Filter dataframe
+        self.df = apply_selection_filter(df)
+
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(col_to_plot) > 0:
-            self.df = df[
+            self.df = self.df[
                 [col_to_plot]
             ].copy()  # df.loc[:, col_to_plot] # df.get(col_to_plot)
         else:
-            self.df = df
+            pass
+
         # Rename columns
-        if len(col_labels) > 0:
-            # Switch keys and vals so that keys=current col names, vals=new names
-            col_labels = {y: x for x, y in col_labels.items()}
-            # Rename columns
-            self.df.rename(columns=col_labels, inplace=True)
+        self.df = rename_df_columns(self.df, col_labels)
+
         # Set title
         self.title = title
 
