@@ -105,15 +105,34 @@ class Table(pd.DataFrame):
         # Check whether there is already a column for specifying whether the row is
         # selected.  If not, add one.
         if filter_col_name not in df.columns:
-            df[filter_col_name] = 1
+            df[filter_col_name] = True
         self.df = df
 
     def filter(self, filter_criteria):
         """Identify rows that meet the filter criteria and mark them as selected
 
         Args:
-        filter_criteria (FilterCriteria): dict of criteria -- sessions must meet at least one allowable val for all keys in the dict"""
-        pass
+        filter_criteria (FilterCriteria): dict of criteria, with key=column name,
+        val=allowable values.  Sessions must meet at least one allowable val for all
+        keys in the dict"""
+        filter_col_name = "selectionState"
+
+        # Initialize list containing one list for each filter criterion
+        is_row_selected = [[] for _ in range(len(self.df))]
+        # For each criterion, find out if each row meets the criterion or not and add
+        # this information as additional elements to each list inside the selected_rows
+        # list.
+        # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
+        for iCriteria, iVal in filter_criteria.criteria.items():
+            is_row_selected = [
+                x + [y] for x, y in zip(is_row_selected, self.df[iCriteria].isin(iVal))
+            ]
+
+        # Only accept rows where all criteria are met
+        is_row_selected = [all(x) for x in is_row_selected]
+        # Replace the column in the dataframe that denotes whether a row is selected or
+        # not
+        self.df[filter_col_name] = is_row_selected
 
 
 class FilterCriteria:
@@ -122,7 +141,7 @@ class FilterCriteria:
     def __init__(self, criteria_dict={}):
         """Create a new object with a defined list of criteria
         Args:
-        criteria_dict (dict):  keys=projection, vals=allowable options"""
+        criteria_dict (dict):  keys=projection, vals=list of allowable options"""
         self.criteria = criteria_dict
 
     def update(self, new_criteria_dict):
