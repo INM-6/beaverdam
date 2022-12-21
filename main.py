@@ -40,17 +40,18 @@ query_output = db_info.query(requested_queries, requested_projections)
 table_data = bd.Table(query_output)
 
 # Initialize filter options
-filter_criteria = bd.FilterCriteria()
+filter_criteria = bd.FilterCriteria({}
+    #{"Document.sections.subject.sections.Subject.properties.GivenName.value": ["Enya"]}
+)
 
 # Filter for sessions meeting criteria
 table_data.filter(filter_criteria)
 
 # Make the data table
-table_data_for_dash = bdp.DataTable("testtable", table_data.df, cfg.projections)
+table_to_display = bdp.DataTable(table_data.df, cfg.projections)
 
 # Make a graph
 pie_graph = bdp.PieChart(
-    "testfig",
     table_data.df,
     cfg.plots["data_to_plot"],
     cfg.projections,
@@ -59,11 +60,10 @@ pie_graph = bdp.PieChart(
 
 # Make checkboxes
 checkboxes = bdp.FilterChecklist(
-    list(cfg.queries.keys())[0] + "_checklist",
     db_info,
     list(cfg.queries.values())[0],
     list(cfg.queries.keys())[0],
 )
 
 # Make GUI
-bdv.build_dash_app(table_data_for_dash, pie_graph, checkboxes)
+bdv.build_dash_app(table_to_display, pie_graph, checkboxes)

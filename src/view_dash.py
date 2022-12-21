@@ -1,10 +1,15 @@
 from dash import Dash, html, dcc, dash_table
 import plotly.express as px
+import uuid
 
 # import presenters
 
 # from . import beaverdam_controllers_dash as bd_control
 # from beaverdam_controllers_dash import register_callbacks
+
+# Initialize structure to keep track of ids of dashboard components.
+# dict with keys=id, vals=type of component, named as per the Dash component name
+ui_ids = {}
 
 
 def build_checklist(filter_checklist):
@@ -19,7 +24,7 @@ def build_checklist(filter_checklist):
             html.Div(
                 children=dcc.Checklist(
                     options=filter_checklist.checklist_options,
-                    id=filter_checklist.id,
+                    id={"id": "Checklist_" + str(uuid.uuid4()), "type": "Checklist"},
                     labelStyle={"display": "block"},
                 )
             ),
@@ -34,7 +39,7 @@ def build_data_table(data_table):
         data_table (DataTable):  data to display in the table
     """
     return dash_table.DataTable(
-        id=data_table.id,
+        id={"id": "DataTable_" + str(uuid.uuid4()), "type": "DataTable"},
         data=data_table.df.to_dict("records"),
         # columns=list(data_table.df.columns),
     )
@@ -48,7 +53,7 @@ def build_data_figure(data_figure):
     """
     if data_figure.graph_type == "pie":
         return dcc.Graph(
-            id=data_figure.id,
+            id={"id": "Graph_pie_" + str(uuid.uuid4()), "type": "Graph_pie"},
             figure=px.pie(
                 data_figure.df,
                 names=list(data_figure.df.columns.values)[0],
@@ -77,6 +82,9 @@ def build_dash_app(datatable, single_figure, single_checkbox_list):
     )
 
     # bd_control.register_callbacks(app)
+
+    # @app.callback(
+    #     Output(
 
     if __name__ == "view_dash":
         app.run_server(debug=True)
