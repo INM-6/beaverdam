@@ -1,13 +1,12 @@
-"""Beaverdam queries databases of metadata and visualizes the results.
+"""Query databases of metadata and filter the results.
 
 :copyright:
 :licence:
 """
 
-# Import external packages
 import pandas as pd
 from pymongo import MongoClient
-
+import parser
 
 class MetadataSource:
     """Store information about where to get metadata"""
@@ -24,20 +23,24 @@ class MetadataSource:
 class MongoDbDatabase(MetadataSource):
     """Use a MongoDB database as a metadata source"""
 
-    def __init__(self, address, port, db_name, collection_name):
+    def __init__(self, config_file_path):#address, port, db_name, collection_name):
         """Define database properties
 
         Args:
-            address (string): location of the server
-            port (int): number of the port to access
-            db_name (string): name of the MongoDB database
-            collection_name (string): name of the collection containing the documents
-            you want to view
+            config_file_path (string):  path to configuration file.  Configuration file 
+            should contain a section with the heading 'database' and contents:
+                address (string): location of the server
+                port (int): number of the port to access
+                db_name (string): name of the MongoDB database
+                collection_name (string): name of the collection containing the documents
+                you want to view
         """
-        self.address = address
-        self.port = port
-        self.db_name = db_name
-        self.collection_name = collection_name
+        # Read configuration file and store database information
+        cfg = parser.parse_config(config_file_path, 'database')
+        self.address = str(cfg.database["address"])
+        self.port = int(cfg.database["port"])
+        self.db_name = cfg.database["db_name"]
+        self.collection_name = cfg.database["collection_name"]
 
     def query(self, requested_queries, requested_projections):
         """Query a MongoDB database

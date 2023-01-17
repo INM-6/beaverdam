@@ -2,33 +2,31 @@
 
 # Import beaverdam-specific code
 import sys
-
 sys.path.insert(0, "./src")
 import core as bd
 import presenters as bdp
 import view_dash as bdv
-import parser
-
+import controllers as bdc
 
 ## INPUTS
 
 # Path to config file
 fp_cfg = "config.toml"
 # Required headings in config file
-cfg_sections = ["database", "queries", "projections", "plots"]
+#cfg_sections = ["database", "queries", "projections", "plots"]
 
 ## CODE
 
 # Parse config file
-cfg = parser.parse_config(fp_cfg, cfg_sections)
+#cfg = parser.parse_config(fp_cfg, cfg_sections)
 
 # Define database info
-db_info = bd.MongoDbDatabase(
-    str(cfg.database["address"]),
-    int(cfg.database["port"]),
-    cfg.database["db_name"],
-    cfg.database["collection_name"],
-)
+db = bd.MongoDbDatabase(fp_cfg)
+#     str(cfg.database["address"]),
+#     int(cfg.database["port"]),
+#     cfg.database["db_name"],
+#     cfg.database["collection_name"],
+# )
 
 # Query database
 requested_queries = {}
