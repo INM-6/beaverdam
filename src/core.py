@@ -135,15 +135,15 @@ class MongoDbDatabase(MetadataSource):
 
         finally:
             client.close()
-        return Table(query_results)
+        return DataTable(query_results)
 
 
-class Table(pd.DataFrame):
+class DataTable(pd.DataFrame):
     """Store data and information about which data is currently selected by the user"""
 
     def __init__(self, df):
         filter_col_name = "selectionState"
-        super(Table, self).__init__()
+        super(DataTable, self).__init__()
         # Check whether there is already a column for specifying whether the row is
         # selected.  If not, add one.
         if filter_col_name not in df.columns:
