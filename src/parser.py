@@ -37,7 +37,7 @@ def parse_config(fp, sections_to_extract="all"):
             config_contents = parse(f.read())
     except:
         raise Exception(
-            "File path " + fp + " is invalid."
+            "File " + fp + " cannot be read."
         )
 
     # If no requested sections are provided, get all the sections in the config file
