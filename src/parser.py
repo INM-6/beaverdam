@@ -7,21 +7,22 @@ from tomlkit import (
 from collections import namedtuple
 
 
-def parse_config(fp, required_fields=[]):
+def parse_config(fp, sections_to_extract="all"):
     """Parse configuration file
 
     Args:
         fp (str): path to config file
+        sections_to_extract (string or list of strings):  [optional] which sections to get out of file.  If not provided, defaults to all sections
     Returns:
         config_values (namedtuple):  contains dicts for each heading of config file (see example)
 
     Example:
 
-        TOML file (input to parse_config()):
+        TOML file -- input to parse_config()
             [heading]
             key1 = val1
             key2 = val2
-        config_values (output of parse_config()):
+        config_values -- output of parse_config(fp) -or- parse_config(fp, "heading")
             config_values.heading
                 {'key1': val1, 'key2': val2}
             config_values.heading["key1"]
@@ -31,31 +32,41 @@ def parse_config(fp, required_fields=[]):
     """
 
     # Parse the config file
-    with open(fp, "rb") as f:
-        config_contents = parse(f.read())
+    try:
+        with open(fp, "rb") as f:
+            config_contents = parse(f.read())
+    except:
+        raise Exception(
+            "File path " + fp + " is invalid."
+        )
 
-    # Check for required fields
+    # If no requested sections are provided, get all the sections in the config file
+    if sections_to_extract == 'all':
+        sections_to_extract = list(config_contents.keys())
+    # If only one requested section is present, and it's not already in a list, put it into a list
+    if isinstance(sections_to_extract, str):
+        sections_to_extract = [sections_to_extract]
+    # Check if the requested section is present
     is_section_missing = [
-        item not in list(config_contents.keys()) for item in required_fields
+        item not in list(config_contents.keys()) for item in sections_to_extract
     ]
     if any(is_section_missing):
         missing_sections = [
-            required_fields[i]
+            sections_to_extract[i]
             for i, val in enumerate(is_section_missing)
             if is_section_missing[i]
         ]
         raise Exception(
-            "Config file is missing section(s): " + ", ".join(missing_sections)
+            "Config file is missing requested section(s): " + ", ".join(missing_sections)
         )
 
     # Make sure items in each field will be a dict
     list_of_dicts = []
-    for isection in list(config_contents.keys()):
+    for isection in sections_to_extract:
         list_of_dicts.append(dict(config_contents[isection]))
 
     # Put each of the top-level dict entries into its own variable
-    convert_config = namedtuple("convert_config", list(config_contents.keys()))
-    # config_values = convert_config(**config_contents)
+    convert_config = namedtuple("convert_config", sections_to_extract)
     config_values = convert_config._make(list_of_dicts)
 
     return config_values
