@@ -88,7 +88,8 @@ class MongoDbDatabase(MetadataSource):
         """Query a MongoDB database
 
         Returns:
-            query_results: Pandas dataframe with rows=documents and cols=projections
+            query_results: Table (modified Pandas dataframe) with rows=documents and 
+            cols=projections
         """
         # Use the projection ID as the index in the output dataframe
         index_id = "_id"
@@ -134,7 +135,7 @@ class MongoDbDatabase(MetadataSource):
 
         finally:
             client.close()
-        return query_results
+        return Table(query_results)
 
 
 class Table(pd.DataFrame):

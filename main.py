@@ -21,11 +21,11 @@ db = bd.MongoDbDatabase(fp_cfg)
 # Query database
 db.set_queries({})
 db.set_projections(fp_cfg)
-query_output = db.query()
+session_table = db.query()
 
 # Store query output as Table class; later this will enable adding columns to specify
 # which sessions are selected
-table_data = bd.Table(query_output)
+#table_data = bd.Table(query_output)
 
 # Initialize filter options
 filter_criteria = bd.FilterCriteria({}
