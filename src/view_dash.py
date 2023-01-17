@@ -1,8 +1,9 @@
-from dash import Dash, html, dcc, dash_table
+from dash import Dash, html, dcc, dash_table, Input, Output, State, MATCH, ALL
 import plotly.express as px
 import uuid
 
-# import presenters
+import parser
+
 
 # from . import beaverdam_controllers_dash as bd_control
 # from beaverdam_controllers_dash import register_callbacks
@@ -24,7 +25,7 @@ def build_checklist(filter_checklist):
             html.Div(
                 children=dcc.Checklist(
                     options=filter_checklist.checklist_options,
-                    id={"id": "Checklist_" + str(uuid.uuid4()), "type": "Checklist"},
+                    id={"idx": "Checklist_" + str(uuid.uuid4()), "type": "Checklist"},
                     labelStyle={"display": "block"},
                 )
             ),
@@ -39,7 +40,7 @@ def build_data_table(data_table):
         data_table (DataTable):  data to display in the table
     """
     return dash_table.DataTable(
-        id={"id": "DataTable_" + str(uuid.uuid4()), "type": "DataTable"},
+        id={"idx": "DataTable_" + str(uuid.uuid4()), "type": "DataTable"},
         data=data_table.df.to_dict("records"),
         # columns=list(data_table.df.columns),
     )
@@ -53,7 +54,7 @@ def build_data_figure(data_figure):
     """
     if data_figure.graph_type == "pie":
         return dcc.Graph(
-            id={"id": "Graph_pie_" + str(uuid.uuid4()), "type": "Graph_pie"},
+            id={"idx": "Graph_pie_" + str(uuid.uuid4()), "type": "Graph_pie"},
             figure=px.pie(
                 data_figure.df,
                 names=list(data_figure.df.columns.values)[0],
@@ -77,14 +78,25 @@ def build_dash_app(datatable, single_figure, single_checkbox_list):
         [
             build_checklist(single_checkbox_list),
             build_data_figure(single_figure),
+            html.Div(id="test_output"),#{"id": "test_output", "type": "TestType"}),
             build_data_table(datatable),
         ]
     )
 
-    # bd_control.register_callbacks(app)
+    # bdc.register_callbacks(app)
 
-    # @app.callback(
-    #     Output(
+    @app.callback(
+        Output('test_output', 'children'),
+        Input({'type': 'Checklist', 'idx': ALL}, 'value')
+    )
+    # Output({'type': 'TestType', 'index': ALL}, 'children'),
+        # Input({'type': 'Checklist', 'index': ALL}, 'value')
+    # )
+    def filter_data(values):
+        return html.Div(
+            str(values)
+        )
+        # bdc.trigger_update_filter_criteria(values)
 
     if __name__ == "view_dash":
         app.run_server(debug=True)

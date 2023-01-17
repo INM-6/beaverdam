@@ -1,6 +1,7 @@
 """Prepare data for visualization
 """
 
+import parser
 
 def apply_selection_filter(df):
     """Filter the dataframe based on a selection trigger contained in a column
