@@ -19,9 +19,10 @@ fp_cfg = "config.toml"
 db = bd.MongoDbDatabase(fp_cfg)
 
 # Query database
-requested_queries = {}
-db.set_projections(fp_cfg)
+#requested_queries = {}
 #requested_projections = dict.fromkeys(list(cfg.projections.values()), 1)
+db.set_queries({})
+db.set_projections(fp_cfg)
 query_output = db_info.query(requested_queries, requested_projections)
 
 # Store query output as Table class; later this will enable adding columns to specify

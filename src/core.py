@@ -56,7 +56,7 @@ class MongoDbDatabase(MetadataSource):
         #     'Document.sections.TaskParameters.properties.dtp_filename.value': {"$in": ['Hex_VR2_LR100.dtp', 'Hex_2-4-6_and_3-5-7.dtp']},
         #     'Document.sections.session.sections.Session.sections.Task.properties.ShortName.value': "land"
         # }
-        pass
+        self.queries = requested_queries  # Change this later
 
     def set_projections(self, requested_projections):
         """Store requested projections
