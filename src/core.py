@@ -84,12 +84,8 @@ class MongoDbDatabase(MetadataSource):
         )
         self.projections = requested_projections
 
-    def query(self, requested_queries, requested_projections):
+    def query(self):#, requested_queries, requested_projections):
         """Query a MongoDB database
-
-        Args:
-            requested_queries (dict): criteria to meet for records to be returned
-            requested_projections (dict?): which information to return from a record
 
         Returns:
             query_results: Pandas dataframe with rows=documents and cols=projections
@@ -98,7 +94,7 @@ class MongoDbDatabase(MetadataSource):
         index_id = "_id"
 
         # Extract only the paths of the projections, as strings
-        projection_paths = list(requested_projections.keys())
+        projection_paths = list(self.projections.keys())
 
         # Set up pointers to the database
         client = MongoClient(self.address, self.port)  # "localhost",27017)#
@@ -106,7 +102,7 @@ class MongoDbDatabase(MetadataSource):
         collection = getattr(db, self.collection_name)
 
         # Query the databaase
-        cursor = collection.find(requested_queries, projection=requested_projections)
+        cursor = collection.find(self.queries, projection=self.projections)
 
         # Put projection values into a dataframe.  For each session, make a dict where
         # the keys are the requested projections and the vals are their values for that
