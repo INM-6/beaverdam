@@ -19,9 +19,10 @@ fp_cfg = "config.toml"
 db = bd.MongoDbDatabase(fp_cfg)
 
 # Query database
-db.set_queries({})
-db.set_projections(fp_cfg)
-session_table = db.query()
+query_request = bd.MongoDbQueryIO()
+query_request.set_query_input({})
+query_request.set_query_output(fp_cfg)
+session_table = db.query(query_request)
 
 # Store query output as Table class; later this will enable adding columns to specify
 # which sessions are selected

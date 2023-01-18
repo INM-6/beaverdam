@@ -84,18 +84,22 @@ class MongoDbDatabase(MetadataSource):
         )
         self.projections = requested_projections
 
-    def query(self):#, requested_queries, requested_projections):
+    def query(self, query_io):
         """Query a MongoDB database
 
+        Args:
+            query_io (MongoDbQueryIO):  information on the requested queries and
+            projections
+
         Returns:
-            query_results: Table (modified Pandas dataframe) with rows=documents and 
+            query_results (DataTable): modified Pandas dataframe with rows=documents and
             cols=projections
         """
         # Use the projection ID as the index in the output dataframe
         index_id = "_id"
 
         # Extract only the paths of the projections, as strings
-        projection_paths = list(self.projections.keys())
+        projection_paths = list(query_io.projections.keys())
 
         # Set up pointers to the database
         client = MongoClient(self.address, self.port)  # "localhost",27017)#
@@ -103,7 +107,7 @@ class MongoDbDatabase(MetadataSource):
         collection = getattr(db, self.collection_name)
 
         # Query the databaase
-        cursor = collection.find(self.queries, projection=self.projections)
+        cursor = collection.find(query_io.queries, projection=query_io.projections)
 
         # Put projection values into a dataframe.  For each session, make a dict where
         # the keys are the requested projections and the vals are their values for that
@@ -134,6 +138,68 @@ class MongoDbDatabase(MetadataSource):
         finally:
             client.close()
         return DataTable(query_results)
+
+class QueryIO():
+    """Store information about a desired query input and output
+    """
+
+    def __init__(self):
+        pass
+
+    def set_query_input(self, query_input):
+        """Which request you are sending for the query"""
+        pass
+
+    def set_query_output(self, query_output):
+        """What output information you desire from the query"""
+        pass
+
+class MongoDbQueryIO(QueryIO):
+    """Store desired queries and projections for a MongoDB database"""
+    def __init__(self):
+        super().__init__()
+
+    def set_query_input(self, requested_queries):
+        """Store requested queries
+
+        Args:
+            requested_queries (dict or str): If a dict:  criteria to meet for records to 
+            be returned. If a string:  path to config file with a section named 
+            'queries' containing the query information
+        """
+        # Format queries so the logical and/or will work.  The format should be:
+        # Ref:  https://www.analyticsvidhya.com/blog/2020/08/query-a-mongodb-database-using-pymongo/
+        # requested_queries = {
+        #     'Document.sections.TaskParameters.properties.dtp_filename.value': {"$in": ['Hex_VR2_LR100.dtp', 'Hex_2-4-6_and_3-5-7.dtp']},
+        #     'Document.sections.session.sections.Session.sections.Task.properties.ShortName.value': "land"
+        # }
+        self.queries = requested_queries  # Change this later
+
+    def set_query_output(self, requested_projections):
+        """Store requested projections
+
+        Args:
+            requested_projections (dict or str):
+                If a dict:  specifies values to be returned with format:
+                    {"path.to.output.value": 1}
+                If a string:  path to config file with a section named 'projections' 
+                containing lines with format:
+                    ShortName = "path.to.output.value"
+        """
+        if isinstance(requested_projections, str):
+            # If the input points to a config file, get the projections and convert them
+            # to the appropriate format
+            cfg = parser.parse_config(requested_projections, 'projections')
+            requested_projections = dict.fromkeys(list(cfg.projections.values()), 1)
+        elif isinstance(requested_projections, dict):
+            # If the input is already in the correct format (assume anything dict is
+            # correct), then leave it as is
+            pass
+        else:
+            raise Exception(
+            "Requested projections not provided in correct format."
+        )
+        self.projections = requested_projections
 
 
 class DataTable(pd.DataFrame):
