@@ -92,8 +92,7 @@ class MongoDbDatabase(MetadataSource):
             projections
 
         Returns:
-            query_results (DataTable): modified Pandas dataframe with rows=documents and
-            cols=projections
+            query_results (dataframe): rows=documents and cols=projections
         """
         # Use the projection ID as the index in the output dataframe
         index_id = "_id"
@@ -137,7 +136,7 @@ class MongoDbDatabase(MetadataSource):
 
         finally:
             client.close()
-        return DataTable(query_results)
+        return query_results
 
 class QueryIO():
     """Store information about a desired query input and output

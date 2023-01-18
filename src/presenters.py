@@ -2,6 +2,7 @@
 """
 
 import parser
+import core as bdc
 
 def remove_unselected_rows(data_table):
     """Remove rows of a dataframe that aren't contained in the selection-state column
@@ -133,16 +134,19 @@ class FilterChecklist:
 
         Args:
             metadata_source (MetadataSource):  information about where to find metadata
-            field_location (str):  which metadata attribute the checklist represents, in a format
-            which the MetadataSource accepts as a query.  E.g. for a MongoDbDatabase
+            field_location (str):  which metadata attribute the checklist represents, in
+            a format appropriate to the MetadataSource.  E.g. for a MongoDbDatabase
             MetadataSource, use the path to the attribute in MongoDB.
             checklist_title (str):  title for the checklist (optional; if not given, field_location will be used)
         """
         # Find options for the checklist
-        # TODO:  improve query method so you don't have to put the self.field: 1 here
-        self.checklist_options = metadata_source.query({}, {field_location: 1})
+        # TODO:  choose type of I/O object based on type of metadata source
+        checklist_init_query_io = bdc.MongoDbQueryIO()
+        checklist_init_query_io.set_query_input({})
+        checklist_init_query_io.set_query_output({field_location: 1}) # Possible TODO:  improve query method so you don't have to put the self.field: 1 here
+        checklist_query_results = metadata_source.query(checklist_init_query_io)
         self.checklist_options = (
-            self.checklist_options[field_location].drop_duplicates().to_list()
+            checklist_query_results[field_location].drop_duplicates().to_list()
         )
 
         # Set title for the checklist.  Default to field_location if checklist_title

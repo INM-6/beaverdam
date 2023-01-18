@@ -7,6 +7,7 @@ import core as bd
 import presenters as bdp
 import view_dash as bdv
 import controllers as bdc
+import parser
 
 ## INPUTS
 
@@ -22,11 +23,19 @@ db = bd.MongoDbDatabase(fp_cfg)
 query_request = bd.MongoDbQueryIO()
 query_request.set_query_input({})
 query_request.set_query_output(fp_cfg)
-session_table = db.query(query_request)
+session_table = bd.DataTable(db.query(query_request))
 
 # Store query output as Table class; later this will enable adding columns to specify
 # which sessions are selected
 #table_data = bd.Table(query_output)
+
+# Make checkbox list
+cfg_checkbox_info = parser.parse_config(fp_cfg, "queries")
+checkboxes = bdp.FilterChecklist(
+    db,
+    list(cfg_checkbox_info.queries.values())[0],
+    list(cfg_checkbox_info.queries.keys())[0],
+)
 
 # Initialize filter options
 filter_criteria = bd.FilterCriteria({}
