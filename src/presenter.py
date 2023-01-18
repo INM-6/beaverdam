@@ -4,6 +4,7 @@
 import parser
 import core as bdc
 
+
 def remove_unselected_rows(data_table):
     """Remove rows of a dataframe that aren't contained in the selection-state column
 
@@ -20,7 +21,9 @@ def remove_unselected_rows(data_table):
 
     if data_table.selection_state_column_name in pretty_df.columns:
         # Drop any unselected rows
-        pretty_df.drop(pretty_df[pretty_df[data_table.selection_state_column_name] == False].index)
+        pretty_df.drop(
+            pretty_df[pretty_df[data_table.selection_state_column_name] == False].index
+        )
         # Remove column denoting selection state
         pretty_df.drop([data_table.selection_state_column_name], axis=1, inplace=True)
     else:
@@ -42,15 +45,17 @@ def rename_df_columns(df, col_name_dict):
     renamed_df = df.rename(columns=col_name_dict)
     return renamed_df
 
+
 class Presenter:
     def __init__(self, fp_cfg):
         self.cfg = parser.parse_config(fp_cfg, ["projections", "queries", "plots"])
-        
 
     def set_model(self, model_to_use):
         self.model = model_to_use
 
-        self.data_tables = PrettyDataTable(self.model.session_table, self.cfg.projections)
+        self.data_tables = PrettyDataTable(
+            self.model.session_table, self.cfg.projections
+        )
         self.graphs = PieChart(
             self.model.session_table,
             self.cfg.plots["data_to_plot"],
@@ -62,28 +67,6 @@ class Presenter:
             list(self.cfg.queries.values())[0],
             list(self.cfg.queries.keys())[0],
         )
-
-
-        # # Make the data table
-        # cfg_projections = parser.parse_config(fp_cfg, "projections")
-        # table_to_display = bdp.PrettyDataTable(session_table, cfg_projections.projections)
-
-        # # Make a graph
-        # cfg_plots = parser.parse_config(fp_cfg, "plots")
-        # pie_graph = bdp.PieChart(
-        #     session_table,
-        #     cfg_plots.plots["data_to_plot"],
-        #     cfg_projections.projections,
-        #     "Make nice plot titles",
-        # )
-
-        # Make checkbox list
-        # cfg_checkbox_info = parser.parse_config(fp_cfg, "queries")
-        # checkboxes = bdp.FilterChecklist(
-        #     db,
-        #     list(cfg_checkbox_info.queries.values())[0],
-        #     list(cfg_checkbox_info.queries.keys())[0],
-        # )
 
 
 class PrettyDataTable:
@@ -126,7 +109,8 @@ class DataFigure:
             title (str): title of resulting figure.  Defaults to [].
         Returns:
             self.graph_type (str):  type of graph to plot
-            self.df (dataframe):  dataframe containing data to plot and columns named with display names
+            self.df (dataframe):  dataframe containing data to plot and columns named
+            with display names
             self.title (str):  title of plot
         """
         self.graph_type = "undefined"
@@ -136,9 +120,7 @@ class DataFigure:
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(col_to_plot) > 0:
-            self.df = self.df[
-                [col_to_plot]
-            ].copy()  # df.loc[:, col_to_plot] # df.get(col_to_plot)
+            self.df = self.df[[col_to_plot]].copy()
         else:
             pass
 
@@ -180,13 +162,16 @@ class FilterChecklist:
             field_location (str):  which metadata attribute the checklist represents, in
             a format appropriate to the MetadataSource.  E.g. for a MongoDbDatabase
             MetadataSource, use the path to the attribute in MongoDB.
-            checklist_title (str):  title for the checklist (optional; if not given, field_location will be used)
+            checklist_title (str):  title for the checklist (optional; if not given,
+            field_location will be used)
         """
         # Find options for the checklist
         # TODO:  choose type of I/O object based on type of metadata source
         checklist_init_query_io = bdc.MongoDbQueryIO()
         checklist_init_query_io.set_query_input({})
-        checklist_init_query_io.set_query_output({field_location: 1}) # Possible TODO:  improve query method so you don't have to put the self.field: 1 here
+        checklist_init_query_io.set_query_output(
+            {field_location: 1}
+        )  # Possible TODO:  improve query method so you don't have to put the self.field: 1 here
         checklist_query_results = metadata_source.query(checklist_init_query_io)
         self.checklist_options = (
             checklist_query_results[field_location].drop_duplicates().to_list()

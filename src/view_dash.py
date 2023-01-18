@@ -4,15 +4,17 @@ import uuid
 
 import parser
 
+
 class View:
     def __init__(self):
         pass
 
-    # def set_presenter(self, presenter):
-    #     self.presenter = presenter
+    def set_presenter(self, presenter):
+        self.presenter = presenter
 
     def set_controller(self, controller):
         self.controller = controller
+
 
 class DashView(View):
     def __init__(self):  # TODO: make inputs more generic
@@ -26,7 +28,9 @@ class DashView(View):
             [
                 build_checklist(self.presenter.checklists),
                 build_data_figure(self.presenter.graphs),
-                html.Div(id="test_output"),#{"id": "test_output", "type": "TestType"}),
+                html.Div(
+                    id="test_output"
+                ),  # {"id": "test_output", "type": "TestType"}),
                 build_data_table(self.presenter.data_tables),
             ]
         )
@@ -37,24 +41,17 @@ class DashView(View):
         app = self.app
 
         @app.callback(
-            Output('test_output', 'children'),
-            Input({'type': 'Checklist', 'idx': ALL}, 'value')
+            Output("test_output", "children"),
+            Input({"type": "Checklist", "idx": ALL}, "value"),
         )
-        # Output({'type': 'TestType', 'index': ALL}, 'children'),
-            # Input({'type': 'Checklist', 'index': ALL}, 'value')
-        # )
         def filter_data(values):
-            return html.Div(
-                str(values)
-            )
+            return html.Div(str(values))
             # bdc.trigger_update_filter_criteria(values)
 
     def launch_app(self):
         if __name__ == "view_dash":
             self.app.run_server(debug=False)
 
-# from . import beaverdam_controllers_dash as bd_control
-# from beaverdam_controllers_dash import register_callbacks
 
 # Initialize structure to keep track of ids of dashboard components.
 # dict with keys=id, vals=type of component, named as per the Dash component name
@@ -90,7 +87,6 @@ def build_data_table(data_table):
     return dash_table.DataTable(
         id={"idx": "DataTable_" + str(uuid.uuid4()), "type": "DataTable"},
         data=data_table.df.to_dict("records"),
-        # columns=list(data_table.df.columns),
     )
 
 
@@ -111,40 +107,3 @@ def build_data_figure(data_figure):
         )
     else:
         raise Exception("Graph type " + data_figure.graph_type + " not defined.")
-
-
-# def build_dash_app(datatable, single_figure, single_checkbox_list):
-#     """Define the layout and build a Dash app
-
-#     Args:
-#         datatable (DashDataTable): data to show and column names, formatted so Dash
-#         likes it
-#     """
-#     app = Dash(__name__)
-
-#     app.layout = html.Div(
-#         [
-#             build_checklist(single_checkbox_list),
-#             build_data_figure(single_figure),
-#             html.Div(id="test_output"),#{"id": "test_output", "type": "TestType"}),
-#             build_data_table(datatable),
-#         ]
-#     )
-
-    # bdc.register_callbacks(app)
-
-    # @app.callback(
-    #     Output('test_output', 'children'),
-    #     Input({'type': 'Checklist', 'idx': ALL}, 'value')
-    # )
-    # # Output({'type': 'TestType', 'index': ALL}, 'children'),
-    #     # Input({'type': 'Checklist', 'index': ALL}, 'value')
-    # # )
-    # def filter_data(values):
-    #     return html.Div(
-    #         str(values)
-    #     )
-    #     # bdc.trigger_update_filter_criteria(values)
-
-    # if __name__ == "view_dash":
-    #     app.run_server(debug=True)

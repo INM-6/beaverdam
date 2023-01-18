@@ -8,6 +8,7 @@ import pandas as pd
 from pymongo import MongoClient
 import parser
 
+
 class Core:
     def __init__(self, fp_cfg):
         """Main code for the core/model of the app
@@ -26,12 +27,14 @@ class Core:
         session_table = DataTable(self.db.query(query_request))
 
         # Initialize filter options
-        filter_criteria = FilterCriteria({}
-            #{"Document.sections.subject.sections.Subject.properties.GivenName.value": ["Enya"]}
+        filter_criteria = FilterCriteria(
+            {}
+            # {"Document.sections.subject.sections.Subject.properties.GivenName.value": ["Enya"]}
         )
 
         self.session_table = session_table
         self.filter_criteria = filter_criteria
+
 
 class MetadataSource:
     """Store information about where to get metadata"""
@@ -52,7 +55,7 @@ class MongoDbDatabase(MetadataSource):
         """Define database properties
 
         Args:
-            config_file_path (string):  path to configuration file.  Configuration file 
+            config_file_path (string):  path to configuration file.  Configuration file
             should contain a section with the heading 'database' and contents:
                 address (string): location of the server
                 port (int): number of the port to access
@@ -61,7 +64,7 @@ class MongoDbDatabase(MetadataSource):
                 you want to view
         """
         # Read configuration file and store database information
-        cfg = parser.parse_config(config_file_path, 'database')
+        cfg = parser.parse_config(config_file_path, "database")
         self.address = str(cfg.database["address"])
         self.port = int(cfg.database["port"])
         self.db_name = cfg.database["db_name"]
@@ -71,8 +74,8 @@ class MongoDbDatabase(MetadataSource):
         """Store requested queries
 
         Args:
-            requested_queries (dict or str): If a dict:  criteria to meet for records to 
-            be returned. If a string:  path to config file with a section named 
+            requested_queries (dict or str): If a dict:  criteria to meet for records to
+            be returned. If a string:  path to config file with a section named
             'queries' containing the query information
         """
         # Format queries so the logical and/or will work.  The format should be:
@@ -90,23 +93,21 @@ class MongoDbDatabase(MetadataSource):
             requested_projections (dict or str):
                 If a dict:  specifies values to be returned with format:
                     {"path.to.output.value": 1}
-                If a string:  path to config file with a section named 'projections' 
+                If a string:  path to config file with a section named 'projections'
                 containing lines with format:
                     ShortName = "path.to.output.value"
         """
         if isinstance(requested_projections, str):
             # If the input points to a config file, get the projections and convert them
             # to the appropriate format
-            cfg = parser.parse_config(requested_projections, 'projections')
+            cfg = parser.parse_config(requested_projections, "projections")
             requested_projections = dict.fromkeys(list(cfg.projections.values()), 1)
         elif isinstance(requested_projections, dict):
             # If the input is already in the correct format (assume anything dict is
             # correct), then leave it as is
             pass
         else:
-            raise Exception(
-            "Requested projections not provided in correct format."
-        )
+            raise Exception("Requested projections not provided in correct format.")
         self.projections = requested_projections
 
     def query(self, query_io):
@@ -163,9 +164,9 @@ class MongoDbDatabase(MetadataSource):
             client.close()
         return query_results
 
-class QueryIO():
-    """Store information about a desired query input and output
-    """
+
+class QueryIO:
+    """Store information about a desired query input and output"""
 
     def __init__(self):
         pass
@@ -178,8 +179,10 @@ class QueryIO():
         """What output information you desire from the query"""
         pass
 
+
 class MongoDbQueryIO(QueryIO):
     """Store desired queries and projections for a MongoDB database"""
+
     def __init__(self):
         super().__init__()
 
@@ -187,8 +190,8 @@ class MongoDbQueryIO(QueryIO):
         """Store requested queries
 
         Args:
-            requested_queries (dict or str): If a dict:  criteria to meet for records to 
-            be returned. If a string:  path to config file with a section named 
+            requested_queries (dict or str): If a dict:  criteria to meet for records to
+            be returned. If a string:  path to config file with a section named
             'queries' containing the query information
         """
         # Format queries so the logical and/or will work.  The format should be:
@@ -206,23 +209,21 @@ class MongoDbQueryIO(QueryIO):
             requested_projections (dict or str):
                 If a dict:  specifies values to be returned with format:
                     {"path.to.output.value": 1}
-                If a string:  path to config file with a section named 'projections' 
+                If a string:  path to config file with a section named 'projections'
                 containing lines with format:
                     ShortName = "path.to.output.value"
         """
         if isinstance(requested_projections, str):
             # If the input points to a config file, get the projections and convert them
             # to the appropriate format
-            cfg = parser.parse_config(requested_projections, 'projections')
+            cfg = parser.parse_config(requested_projections, "projections")
             requested_projections = dict.fromkeys(list(cfg.projections.values()), 1)
         elif isinstance(requested_projections, dict):
             # If the input is already in the correct format (assume anything dict is
             # correct), then leave it as is
             pass
         else:
-            raise Exception(
-            "Requested projections not provided in correct format."
-        )
+            raise Exception("Requested projections not provided in correct format.")
         self.projections = requested_projections
 
 

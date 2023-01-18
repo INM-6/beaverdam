@@ -12,9 +12,11 @@ def parse_config(fp, sections_to_extract="all"):
 
     Args:
         fp (str): path to config file
-        sections_to_extract (string or list of strings):  [optional] which sections to get out of file.  If not provided, defaults to all sections
+        sections_to_extract (string or list of strings):  [optional] which sections to
+        get out of file.  If not provided, defaults to all sections
     Returns:
-        config_values (namedtuple):  contains dicts for each heading of config file (see example)
+        config_values (namedtuple):  contains dicts for each heading of config file (see
+        example)
 
     Example:
 
@@ -36,14 +38,13 @@ def parse_config(fp, sections_to_extract="all"):
         with open(fp, "rb") as f:
             config_contents = parse(f.read())
     except:
-        raise Exception(
-            "File " + fp + " cannot be read."
-        )
+        raise Exception("File " + fp + " cannot be read.")
 
     # If no requested sections are provided, get all the sections in the config file
-    if sections_to_extract == 'all':
+    if sections_to_extract == "all":
         sections_to_extract = list(config_contents.keys())
-    # If only one requested section is present, and it's not already in a list, put it into a list
+    # If only one requested section is present, and it's not already in a list, put it
+    # into a list
     if isinstance(sections_to_extract, str):
         sections_to_extract = [sections_to_extract]
     # Check if the requested section is present
@@ -57,7 +58,8 @@ def parse_config(fp, sections_to_extract="all"):
             if is_section_missing[i]
         ]
         raise Exception(
-            "Config file is missing requested section(s): " + ", ".join(missing_sections)
+            "Config file is missing requested section(s): "
+            + ", ".join(missing_sections)
         )
 
     # Make sure items in each field will be a dict
