@@ -29,38 +29,33 @@ session_table = bd.DataTable(db.query(query_request))
 # which sessions are selected
 #table_data = bd.Table(query_output)
 
-# Make checkbox list
-cfg_checkbox_info = parser.parse_config(fp_cfg, "queries")
-checkboxes = bdp.FilterChecklist(
-    db,
-    list(cfg_checkbox_info.queries.values())[0],
-    list(cfg_checkbox_info.queries.keys())[0],
-)
-
 # Initialize filter options
 filter_criteria = bd.FilterCriteria({}
     #{"Document.sections.subject.sections.Subject.properties.GivenName.value": ["Enya"]}
 )
 
 # Filter for sessions meeting criteria
-table_data.filter(filter_criteria)
+session_table.filter(filter_criteria)
 
 # Make the data table
-table_to_display = bdp.DataTable(table_data.df, cfg.projections)
+cfg_projections = parser.parse_config(fp_cfg, "projections")
+table_to_display = bdp.PrettyDataTable(session_table, cfg_projections.projections)
 
 # Make a graph
+cfg_plots = parser.parse_config(fp_cfg, "plots")
 pie_graph = bdp.PieChart(
-    table_data.df,
-    cfg.plots["data_to_plot"],
-    cfg.projections,
+    session_table,
+    cfg_plots.plots["data_to_plot"],
+    cfg_projections.projections,
     "Make nice plot titles",
 )
 
-# Make checkboxes
+# Make checkbox list
+cfg_checkbox_info = parser.parse_config(fp_cfg, "queries")
 checkboxes = bdp.FilterChecklist(
-    db_info,
-    list(cfg.queries.values())[0],
-    list(cfg.queries.keys())[0],
+    db,
+    list(cfg_checkbox_info.queries.values())[0],
+    list(cfg_checkbox_info.queries.keys())[0],
 )
 
 # Make GUI

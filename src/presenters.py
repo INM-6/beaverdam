@@ -109,8 +109,8 @@ class DataFigure:
 class PieChart(DataFigure):
     """Store information to generate pie charts"""
 
-    def __init__(self, df, col_to_plot=[], col_labels={}, title=[]):
-        super().__init__(df, col_to_plot, col_labels, title)
+    def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+        super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
         # TODO: Manipulate dataframe so that there is one column for categories and one for counts
         # Example:
