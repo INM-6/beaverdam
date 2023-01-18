@@ -108,7 +108,6 @@ class MongoDbDatabase(MetadataSource):
         # Put projection values into a dataframe.  For each session, make a dict where
         # the keys are the requested projections and the vals are their values for that
         # session.  Then add the whole dict to the dataframe at once.
-        # query_results = Table(pd.DataFrame(columns=projection_paths))
         query_results = pd.DataFrame(columns=projection_paths)
         try:
             for doc in cursor:
@@ -130,7 +129,6 @@ class MongoDbDatabase(MetadataSource):
                         row_to_add[proj_path] = "-"
                     # Append the row for this session to the dataframe and assign the
                     # index of the new row
-                    # query_results.df.loc[doc[index_id]] = row_to_add
                     query_results.loc[doc[index_id]] = row_to_add
 
         finally:
@@ -142,13 +140,19 @@ class DataTable(pd.DataFrame):
     """Store data and information about which data is currently selected by the user"""
 
     def __init__(self, df):
-        filter_col_name = "selectionState"
+        selection_state_column_name = "selectionState"
         super(DataTable, self).__init__()
+        # Store name of column indicating selection state of rows
+        self.selection_state_column_name = selection_state_column_name
         # Check whether there is already a column for specifying whether the row is
         # selected.  If not, add one.
-        if filter_col_name not in df.columns:
-            df[filter_col_name] = True
+        if self.selection_state_column_name not in df.columns:
+            df[selection_state_column_name] = True
+        # Store dataframe
         self.df = df
+        # Initialize place to store selection criteria -- will be a dict with key=column
+        # name, val=allowable values
+        self.selection_criteria = {}
 
     def filter(self, filter_criteria):
         """Identify rows that meet the filter criteria and mark them as selected
@@ -157,7 +161,6 @@ class DataTable(pd.DataFrame):
         filter_criteria (FilterCriteria): dict of criteria, with key=column name,
         val=allowable values.  Sessions must meet at least one allowable val for all
         keys in the dict"""
-        filter_col_name = "selectionState"
 
         # Initialize list containing one list for each filter criterion
         is_row_selected = [[] for _ in range(len(self.df))]
@@ -174,7 +177,7 @@ class DataTable(pd.DataFrame):
         is_row_selected = [all(x) for x in is_row_selected]
         # Replace the column in the dataframe that denotes whether a row is selected or
         # not
-        self.df[filter_col_name] = is_row_selected
+        self.df[self.selection_state_column_name] = is_row_selected
 
 
 class FilterCriteria:
