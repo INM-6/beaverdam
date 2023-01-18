@@ -3,26 +3,28 @@
 
 import parser
 
-def apply_selection_filter(df):
-    """Filter the dataframe based on a selection trigger contained in a column
+def remove_unselected_rows(data_table):
+    """Remove rows of a dataframe that aren't contained in the selection-state column
 
     Args:
-        df (dataframe): dataframe to be filtered, containing a column denoting the
-        selection state of each row
+        data_table (DataTable): DataTable with data_table.df containing the dataframe to
+        be filtered and data_table.selection_state_column_name giving the name of the
+        column of the dataframe containing the selection state of each row.
     Returns:
-        filtered_df (dataframe):  dataframe WITHOUT (1) the selection-state column and
+        pretty_df (dataframe):  dataframe WITHOUT (1) the selection-state column and
         (2) any unselected rows
     """
-    filter_col_name = "selectionState"
 
-    if filter_col_name in df.columns:
+    pretty_df = data_table.df
+
+    if data_table.selection_state_column_name in pretty_df.columns:
         # Drop any unselected rows
-        filtered_df = df.drop(df[df[filter_col_name] == False].index)
+        pretty_df.drop(pretty_df[pretty_df[data_table.selection_state_column_name] == False].index)
         # Remove column denoting selection state
-        filtered_df.drop([filter_col_name], axis=1, inplace=True)
+        pretty_df.drop([data_table.selection_state_column_name], axis=1, inplace=True)
     else:
         pass
-    return filtered_df
+    return pretty_df
 
 
 def rename_df_columns(df, col_name_dict):
@@ -40,23 +42,24 @@ def rename_df_columns(df, col_name_dict):
     return renamed_df
 
 
-class DataTable:
+class PrettyDataTable:
     """Store data to display in a table"""
 
-    def __init__(self, df, new_column_names={}):
+    def __init__(self, data_table, new_column_names={}):
         """Format a dataframe for display
 
         Args:
-            df (Pandas dataframe): data to be shown in the table
+            data_table (DataTable): data_table.df is a dataframe containing data to be
+            shown in the table; data_table.selection_state_column_name gives the name of
+            the column indicating the selections state of each row
             new_column_names (opt; dict):  keys = new column names to display, vals =
             column names in df.  If a column name is not specified in the dict, the
             original column name will be retained.
         Returns:
             self.df (dataframe):  data to be shown in the table; column names are the
             same as column headers to display
-            self.columns (list):  column names (same as the column names in self.df)
         """
-        self.df = apply_selection_filter(df)
+        self.df = remove_unselected_rows(data_table)
 
         self.df = rename_df_columns(self.df, new_column_names)
 
@@ -64,11 +67,13 @@ class DataTable:
 class DataFigure:
     """Store information to generate figures"""
 
-    def __init__(self, df, col_to_plot=[], col_labels={}, title=[]):
+    def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
         """Store information to plot a figure from data
 
         Args:
-            df (dataframe): dataframe containing data to plot
+            data_table (DataTable): object with data_table.df containing the dataframe
+            with data to plot, and data_table.selection_state_column_names giving the
+            name of the column indicating the selection state of each row
             col_to_plot (list of strings matching dataframe column labels): which
             columns of the dataframe contain data to plot
             col_labels (dict, optional): labels to use for each column of data, if you
@@ -83,7 +88,7 @@ class DataFigure:
         self.graph_type = "undefined"
 
         # Filter dataframe
-        self.df = apply_selection_filter(df)
+        self.df = remove_unselected_rows(data_table)
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(col_to_plot) > 0:
