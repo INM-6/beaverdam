@@ -4,9 +4,9 @@
 import sys
 sys.path.insert(0, "./src")
 import core as bd
-import presenters as bdp
+import presenter as bdp
 import view_dash as bdv
-import controllers as bdc
+import controller as bdc
 import parser
 
 ## INPUTS
@@ -16,47 +16,69 @@ fp_cfg = "config.toml"
 
 ## CODE
 
-# Define database info
-db = bd.MongoDbDatabase(fp_cfg)
+class BeaverApp:
+    def __init__(self, fp_cfg):
+        self.model = bd.Core(fp_cfg)
+        self.presenter = bdp.Presenter(fp_cfg)
+        self.view = bdv.DashView()#datatable, single_checkbox_list, single_figure)
+        self.controller = bdc.Controller()
 
-# Query database
-query_request = bd.MongoDbQueryIO()
-query_request.set_query_input({})
-query_request.set_query_output(fp_cfg)
-session_table = bd.DataTable(db.query(query_request))
+        self.presenter.set_model(self.model)
+        self.controller.set_model(self.model)
+        self.view.set_presenter(self.presenter)
+        self.view.set_controller(self.controller)
 
-# Store query output as Table class; later this will enable adding columns to specify
-# which sessions are selected
-#table_data = bd.Table(query_output)
+    def run(self):
+        self.view.launch_app()
 
-# Initialize filter options
-filter_criteria = bd.FilterCriteria({}
-    #{"Document.sections.subject.sections.Subject.properties.GivenName.value": ["Enya"]}
-)
+def main():
+    app = BeaverApp(fp_cfg)
+    app.run()
 
-# Filter for sessions meeting criteria
-session_table.filter(filter_criteria)
+main()
+        
 
-# Make the data table
-cfg_projections = parser.parse_config(fp_cfg, "projections")
-table_to_display = bdp.PrettyDataTable(session_table, cfg_projections.projections)
+# # Define database info
+# db = bd.MongoDbDatabase(fp_cfg)
 
-# Make a graph
-cfg_plots = parser.parse_config(fp_cfg, "plots")
-pie_graph = bdp.PieChart(
-    session_table,
-    cfg_plots.plots["data_to_plot"],
-    cfg_projections.projections,
-    "Make nice plot titles",
-)
+# # Query database
+# query_request = bd.MongoDbQueryIO()
+# query_request.set_query_input({})
+# query_request.set_query_output(fp_cfg)
+# session_table = bd.DataTable(db.query(query_request))
 
-# Make checkbox list
-cfg_checkbox_info = parser.parse_config(fp_cfg, "queries")
-checkboxes = bdp.FilterChecklist(
-    db,
-    list(cfg_checkbox_info.queries.values())[0],
-    list(cfg_checkbox_info.queries.keys())[0],
-)
+# # Store query output as Table class; later this will enable adding columns to specify
+# # which sessions are selected
+# #table_data = bd.Table(query_output)
+
+# # Initialize filter options
+# filter_criteria = bd.FilterCriteria({}
+#     #{"Document.sections.subject.sections.Subject.properties.GivenName.value": ["Enya"]}
+# )
+
+# # Filter for sessions meeting criteria
+# session_table.filter(filter_criteria)
+
+# # Make the data table
+# cfg_projections = parser.parse_config(fp_cfg, "projections")
+# table_to_display = bdp.PrettyDataTable(session_table, cfg_projections.projections)
+
+# # Make a graph
+# cfg_plots = parser.parse_config(fp_cfg, "plots")
+# pie_graph = bdp.PieChart(
+#     session_table,
+#     cfg_plots.plots["data_to_plot"],
+#     cfg_projections.projections,
+#     "Make nice plot titles",
+# )
+
+# # Make checkbox list
+# cfg_checkbox_info = parser.parse_config(fp_cfg, "queries")
+# checkboxes = bdp.FilterChecklist(
+#     db,
+#     list(cfg_checkbox_info.queries.values())[0],
+#     list(cfg_checkbox_info.queries.keys())[0],
+# )
 
 # Make GUI
-bdv.build_dash_app(table_to_display, pie_graph, checkboxes)
+# bdv.build_dash_app(table_to_display, pie_graph, checkboxes)

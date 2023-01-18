@@ -8,6 +8,31 @@ import pandas as pd
 from pymongo import MongoClient
 import parser
 
+class Core:
+    def __init__(self, fp_cfg):
+        """Main code for the core/model of the app
+
+        Args:
+            fp_cfg (str): path to config file
+        """
+
+        # Define database info
+        self.db = MongoDbDatabase(fp_cfg)
+
+        # Query database
+        query_request = MongoDbQueryIO()
+        query_request.set_query_input({})
+        query_request.set_query_output(fp_cfg)
+        session_table = DataTable(self.db.query(query_request))
+
+        # Initialize filter options
+        filter_criteria = FilterCriteria({}
+            #{"Document.sections.subject.sections.Subject.properties.GivenName.value": ["Enya"]}
+        )
+
+        self.session_table = session_table
+        self.filter_criteria = filter_criteria
+
 class MetadataSource:
     """Store information about where to get metadata"""
 

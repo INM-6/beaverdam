@@ -42,6 +42,49 @@ def rename_df_columns(df, col_name_dict):
     renamed_df = df.rename(columns=col_name_dict)
     return renamed_df
 
+class Presenter:
+    def __init__(self, fp_cfg):
+        self.cfg = parser.parse_config(fp_cfg, ["projections", "queries", "plots"])
+        
+
+    def set_model(self, model_to_use):
+        self.model = model_to_use
+
+        self.data_tables = PrettyDataTable(self.model.session_table, self.cfg.projections)
+        self.graphs = PieChart(
+            self.model.session_table,
+            self.cfg.plots["data_to_plot"],
+            self.cfg.projections,
+            "Make nice plot titles",
+        )
+        self.checklists = FilterChecklist(
+            self.model.db,
+            list(self.cfg.queries.values())[0],
+            list(self.cfg.queries.keys())[0],
+        )
+
+
+        # # Make the data table
+        # cfg_projections = parser.parse_config(fp_cfg, "projections")
+        # table_to_display = bdp.PrettyDataTable(session_table, cfg_projections.projections)
+
+        # # Make a graph
+        # cfg_plots = parser.parse_config(fp_cfg, "plots")
+        # pie_graph = bdp.PieChart(
+        #     session_table,
+        #     cfg_plots.plots["data_to_plot"],
+        #     cfg_projections.projections,
+        #     "Make nice plot titles",
+        # )
+
+        # Make checkbox list
+        # cfg_checkbox_info = parser.parse_config(fp_cfg, "queries")
+        # checkboxes = bdp.FilterChecklist(
+        #     db,
+        #     list(cfg_checkbox_info.queries.values())[0],
+        #     list(cfg_checkbox_info.queries.keys())[0],
+        # )
+
 
 class PrettyDataTable:
     """Store data to display in a table"""
