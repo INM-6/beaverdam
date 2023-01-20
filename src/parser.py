@@ -1,10 +1,19 @@
 """Parse the provided config file and save the variables in a useful way"""
 # NOTE:  check out YACS:  https://github.com/rbgirshick/yacs
 
-from tomlkit import (
-    parse,
-)  # change to tomllib once using Python 3.11
-from collections import namedtuple
+# from tomlkit import (
+#     parse,
+# )  # change to tomllib once using Python 3.11
+# from collections import namedtuple
+
+
+import tomli # import tomllib in Python 3.11
+
+
+
+
+
+
 
 
 def parse_config(fp, sections_to_extract="all"):
@@ -13,10 +22,11 @@ def parse_config(fp, sections_to_extract="all"):
     Args:
         fp (str): path to config file
         sections_to_extract (string or list of strings):  [optional] which sections to
-        get out of file.  If not provided, defaults to all sections
+        get out of file.  Default is all sections.
     Returns:
-        config_values (namedtuple):  contains dicts for each heading of config file (see
-        example)
+        config_values (dict):  dict with keys obtained from the headings of the config
+        file, and vals containing contains dicts of keys/vals obtained from the section
+        of the config file under each heading (see example)
 
     Example:
 
@@ -25,18 +35,16 @@ def parse_config(fp, sections_to_extract="all"):
             key1 = val1
             key2 = val2
         config_values -- output of parse_config(fp) -or- parse_config(fp, "heading")
-            config_values.heading
+            config_values['heading']
                 {'key1': val1, 'key2': val2}
-            config_values.heading["key1"]
+            config_values['heading']['key1']
                 val1
-            config_values.heading["key2"]
-                val2
     """
 
     # Parse the config file
     try:
         with open(fp, "rb") as f:
-            config_contents = parse(f.read())
+            config_contents = tomli.load(f)
     except:
         raise Exception("File " + fp + " cannot be read.")
 
@@ -47,7 +55,7 @@ def parse_config(fp, sections_to_extract="all"):
     # into a list
     if isinstance(sections_to_extract, str):
         sections_to_extract = [sections_to_extract]
-    # Check if the requested section is present
+    # Check if the requested section(s) are present
     is_section_missing = [
         item not in list(config_contents.keys()) for item in sections_to_extract
     ]
@@ -61,14 +69,38 @@ def parse_config(fp, sections_to_extract="all"):
             "Config file is missing requested section(s): "
             + ", ".join(missing_sections)
         )
+    # Extract desired section(s)
+    cfg = {}
+    for key in sections_to_extract:
+        cfg[key] = config_contents[key]
 
     # Make sure items in each field will be a dict
-    list_of_dicts = []
-    for isection in sections_to_extract:
-        list_of_dicts.append(dict(config_contents[isection]))
+    # list_of_dicts = []
+    # for isection in sections_to_extract:
+    #     list_of_dicts.append(dict(config_contents[isection]))
 
     # Put each of the top-level dict entries into its own variable
-    convert_config = namedtuple("convert_config", sections_to_extract)
-    config_values = convert_config._make(list_of_dicts)
+    # convert_config = namedtuple("convert_config", sections_to_extract)
+    # config_values = convert_config._make(list_of_dicts)
 
-    return config_values
+    # Convert value types.  Items are tomlkit.items.String or tomlkit.items.Integer,
+    # which for some reason don't work with some functions ¯\_(ツ)_/¯
+    # for sectionkey, sectionvals in cfg.items():
+    #     for ikey, ival in sectionvals.items():
+
+    #         print(type(ival))
+
+    # type(config_values[1])
+    #     cfg = parser.parse_config(config_file_path, "database")
+    #     self.address = str(cfg.database["address"])
+    #     self.port = int(cfg.database["port"])
+    #     self.db_name = cfg.database["db_name"]
+    #     self.collection_name = cfg.database["collection_name"]
+
+    #                 cfg = parser.parse_config(requested_projections, "projections")
+    #         requested_projections = dict.fromkeys(list(cfg.projections.values()), 1)
+
+    #                     cfg = parser.parse_config(requested_projections, "projections")
+    #         requested_projections = dict.fromkeys(list(cfg.projections.values()), 1)
+
+    return cfg#config_values
