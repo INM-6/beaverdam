@@ -8,7 +8,7 @@ db_name = "testodml"
 collection_name = "odmlmetadata"
 
 
-[queries]
+[filters]
 # Which fields you will be able to place conditions on to filter trials
 GivenName = "Document.sections.subject.sections.Subject.properties.GivenName.value"
 
