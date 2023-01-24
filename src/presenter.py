@@ -2,7 +2,6 @@
 """
 
 import parser
-import core as bdc
 
 
 def remove_unselected_rows(data_table):
@@ -47,25 +46,41 @@ def rename_df_columns(df, col_name_dict):
 
 
 class Presenter:
-    def __init__(self, fp_cfg):
-        self.cfg = parser.parse_config(fp_cfg, ["projections", "queries", "plots"])
+    def __init__(self, cfg):
+        """
+        Args:
+            cfg (namedtuple):  contains dicts for each heading of config file.  Example:
 
-    def set_model(self, model_to_use):
-        self.model = model_to_use
+                cfg.headingName
+                    {'key1': val1, 'key2': val2}
+                cfg.headingName["key1"]
+                    val1
+                cfg.headingName["key2"]
+                    val2
+
+            Should contain headings:  plots, projections, queries
+        """
+        self.cfg = cfg
+
+    def set_core(self, core_to_use):
+        self.core = core_to_use
+
+        # TODO:  use loops for tables/charts/checklists to account for possibility of multiples
 
         self.data_tables = PrettyDataTable(
-            self.model.session_table, self.cfg.projections
-        )
+            self.core.data_table)#, self.cfg['projections']
+        # )
         self.graphs = PieChart(
-            self.model.session_table,
-            self.cfg.plots["data_to_plot"],
-            self.cfg.projections,
-            "Make nice plot titles",
+            data_table = self.core.data_table,
+            col_to_plot = self.cfg['plots']['monkey_name']['data_field'],
+            # col_labels = self.cfg['projections'],
+            title = "Make nice plot titles",
         )
+        # data_table, col_to_plot=[], col_labels={}, title=[]
         self.checklists = FilterChecklist(
-            self.model.db,
-            list(self.cfg.queries.values())[0],
-            list(self.cfg.queries.keys())[0],
+            self.core.db,
+            # list(self.cfg['filters'].values())[0]
+            self.cfg['filters']['headings'][0]
         )
 
 
@@ -154,27 +169,25 @@ class PieChart(DataFigure):
 class FilterChecklist:
     """Information for lists of checkboxes to filter data"""
 
-    def __init__(self, metadata_source, field_location, checklist_title=[]):
+    def __init__(self, metadata_source, display_name, checklist_title=[]):
         """Set checklist properties and find options
 
         Args:
             metadata_source (MetadataSource):  information about where to find metadata
-            field_location (str):  which metadata attribute the checklist represents, in
-            a format appropriate to the MetadataSource.  E.g. for a MongoDbDatabase
-            MetadataSource, use the path to the attribute in MongoDB.
+            display_name (str):  which metadata attribute the checklist represents
             checklist_title (str):  title for the checklist (optional; if not given,
             field_location will be used)
         """
         # Find options for the checklist
         # TODO:  choose type of I/O object based on type of metadata source
-        checklist_init_query_io = bdc.MongoDbQueryIO()
-        checklist_init_query_io.set_query_input({})
-        checklist_init_query_io.set_query_output(
-            {field_location: 1}
-        )  # Possible TODO:  improve query method so you don't have to put the self.field: 1 here
-        checklist_query_results = metadata_source.query(checklist_init_query_io)
+        # checklist_init_query_io = bdc.MongoDbQueryIO()
+        # checklist_init_query_io.set_query_input({})
+        # checklist_init_query_io.set_query_output(
+        #     {field_location: 1}
+        # ) 
+        checklist_query_results = metadata_source.query(query_output=display_name)
         self.checklist_options = (
-            checklist_query_results[field_location].drop_duplicates().to_list()
+            checklist_query_results[display_name].drop_duplicates().to_list()
         )
 
         # Set title for the checklist.  Default to field_location if checklist_title
@@ -182,4 +195,4 @@ class FilterChecklist:
         if len(checklist_title) > 0:
             self.title = checklist_title
         else:
-            self.title = field_location
+            self.title = display_name
