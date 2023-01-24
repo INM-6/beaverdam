@@ -55,5 +55,5 @@ columns = [
 
 [plots]
 # Which fields to plot, and how to plot them
-monkey_name.data = "GivenName"
-monkey_name.type = "pie"
+monkey_name.data_field = "GivenName"
+monkey_name.plot_type = "pie"
