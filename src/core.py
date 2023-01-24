@@ -6,7 +6,6 @@
 
 import pandas as pd
 from pymongo import MongoClient
-import parser
 
 
 class Core:
@@ -14,7 +13,8 @@ class Core:
         """Main code for the core/model of the app
 
         Args:
-            cfg (dict):  contains dicts with information to configure each object that will be generated.  Keys should include:
+            cfg (dict):  contains dicts with information to configure each object that
+            will be generated.  Keys should include:
                 'database' -- information required to access the database
                 'filters' -- which database fields to turn into checkboxes
         """
@@ -30,16 +30,8 @@ class Core:
         # Query database for data table
         data_table = DataTable(self.db.query({}, list(self.fields.keys())))
 
-        # query_request = MongoDbQueryIO()
-        # query_request.set_query_input({})
-        # query_request.set_query_output(cfg["projections"])
-        # session_table = DataTable(self.db.query(query_request))
-
         # Initialize filter options
-        filter_criteria = FilterCriteria(
-            {}
-            # {"Document.sections.subject.sections.Subject.properties.GivenName.value": ["Enya"]}
-        )
+        filter_criteria = FilterCriteria({})
 
         self.data_table = data_table
         self.filter_criteria = filter_criteria
@@ -72,8 +64,8 @@ class MongoDbDatabase(MetadataSource):
                 'address': string -- location of the server
                 'port': int -- number of the port to access
                 'db_name': string -- name of the MongoDB database
-                'collection_name' -- string: name of the collection containing the documents
-                you want to view
+                'collection_name' -- string: name of the collection containing the
+                documents you want to view
         """
         # Get database information
         self.address = cfg["address"]
@@ -127,9 +119,7 @@ class MongoDbDatabase(MetadataSource):
         elif isinstance(requested_display_names, str):
             field_paths = self.fields[requested_display_names]
         else:
-            field_paths = [
-                self.fields[i_name] for i_name in requested_display_names
-            ]
+            field_paths = [self.fields[i_name] for i_name in requested_display_names]
         return field_paths
 
     def query(self, query_input={}, query_output={}):
@@ -144,15 +134,17 @@ class MongoDbDatabase(MetadataSource):
                     'Document.sections.TaskParameters.properties.dtp_filename.value': {"$in": ['Hex_VR2_LR100.dtp', 'Hex_2-4-6_and_3-5-7.dtp']},
                     'Document.sections.session.sections.Session.sections.Task.properties.ShortName.value': "land"
                 }
-            query_output (dict or str or list of str):  requested projections.  If dict, should
-            be projections formatted in MongoDB style.  If string or list of strings, strings
-            should correspond to the display names in self.fields.  Default is all fields.
+            query_output (dict or str or list of str):  requested projections.  If dict,
+            should be projections formatted in MongoDB style.  If string or list of
+            strings, strings should correspond to the display names in self.fields.
+            Default is all fields.
                 query_output = {"path.to.output.value": 1}
 
         Returns:
             query_results (dataframe): rows=documents and cols=projections
         """
-        # If either of the inputs are lists of display names, get the corresponding locations of the fields
+        # If either of the inputs are lists of display names, get the corresponding
+        # locations of the fields
         if isinstance(query_input, list):
             try:
                 raise Exception("This function isn't defined yet.")
@@ -171,11 +163,8 @@ class MongoDbDatabase(MetadataSource):
         # Use the projection ID as the index in the output dataframe
         index_id = "_id"
 
-        # Extract only the paths of the projections, as strings
-        # projection_paths = list(query_io.projections.values())
-
         # Set up pointers to the database
-        client = MongoClient(self.address, self.port)  # "localhost",27017)#
+        client = MongoClient(self.address, self.port)
         db = getattr(client, self.db_name)
         collection = getattr(db, self.collection_name)
 
@@ -183,8 +172,8 @@ class MongoDbDatabase(MetadataSource):
         cursor = collection.find(query_input, projection=query_output)
 
         # Put projection values into a dataframe.  For each session, make a dict where
-        # the keys are the display names and the vals are their values for that
-        # session.  Then add the whole dict to the dataframe at once.
+        # the keys are the display names and the vals are their values for that session.
+        # Then add the whole dict to the dataframe at once.
         query_results = pd.DataFrame(
             columns=self.get_display_name(list(query_output.keys()))
         )
@@ -213,67 +202,6 @@ class MongoDbDatabase(MetadataSource):
         finally:
             client.close()
         return query_results
-
-
-# class QueryIO:
-#     """Store information about a desired query input and output"""
-
-#     def __init__(self):
-#         pass
-
-#     def set_query_input(self, query_input):
-#         """Which request you are sending for the query"""
-#         pass
-
-#     def set_query_output(self, query_output):
-#         """What output information you desire from the query"""
-#         pass
-
-
-# class MongoDbQueryIO(QueryIO):
-#     """Store desired queries and projections for a MongoDB database"""
-
-#     def __init__(self):
-#         super().__init__()
-
-#     def set_query_input(self, requested_queries):
-#         """Store requested queries
-
-#         Args:
-#             requested_queries (dict or str): If a dict:  criteria to meet for records to
-#             be returned. If a string:  path to config file with a section named
-#             'queries' containing the query information
-#         """
-#         # Format queries so the logical and/or will work.  The format should be:
-#         # Ref:  https://www.analyticsvidhya.com/blog/2020/08/query-a-mongodb-database-using-pymongo/
-#         # requested_queries = {
-#         #     'Document.sections.TaskParameters.properties.dtp_filename.value': {"$in": ['Hex_VR2_LR100.dtp', 'Hex_2-4-6_and_3-5-7.dtp']},
-#         #     'Document.sections.session.sections.Session.sections.Task.properties.ShortName.value': "land"
-#         # }
-#         self.queries = requested_queries  # Change this later
-
-#     def set_query_output(self, requested_projections):
-#         """Store requested projections
-
-#         Args:
-#             requested_projections (dict or str):
-#                 If a dict:  specifies values to be returned with format:
-#                     {"path.to.output.value": 1}
-#                 If a string:  path to config file with a section named 'projections'
-#                 containing lines with format:
-#                     ShortName = "path.to.output.value"
-#         """
-#         if isinstance(requested_projections, str):
-#             # veronica # check type of requested_projections
-#             # If the input points to a config file, get the projections
-#             requested_projections = requested_projections.projections
-#         elif isinstance(requested_projections, dict):
-#             # If the input is already in the correct format (assume anything dict is
-#             # correct), then leave it as is
-#             pass
-#         else:
-#             raise Exception("Requested projections not provided in correct format.")
-#         self.projections = requested_projections
 
 
 class DataTable(pd.DataFrame):

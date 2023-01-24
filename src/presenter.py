@@ -1,8 +1,6 @@
 """Prepare data for visualization
 """
 
-import parser
-
 
 def remove_unselected_rows(data_table):
     """Remove rows of a dataframe that aren't contained in the selection-state column
@@ -67,20 +65,14 @@ class Presenter:
 
         # TODO:  use loops for tables/charts/checklists to account for possibility of multiples
 
-        self.data_tables = PrettyDataTable(
-            self.core.data_table)#, self.cfg['projections']
-        # )
+        self.data_tables = PrettyDataTable(self.core.data_table)
         self.graphs = PieChart(
-            data_table = self.core.data_table,
-            col_to_plot = self.cfg['plots']['monkey_name']['data_field'],
-            # col_labels = self.cfg['projections'],
-            title = "Make nice plot titles",
+            data_table=self.core.data_table,
+            col_to_plot=self.cfg["plots"]["monkey_name"]["data_field"],
+            title="Make nice plot titles",
         )
-        # data_table, col_to_plot=[], col_labels={}, title=[]
         self.checklists = FilterChecklist(
-            self.core.db,
-            # list(self.cfg['filters'].values())[0]
-            self.cfg['filters']['headings'][0]
+            self.core.db, self.cfg["filters"]["headings"][0]
         )
 
 
@@ -179,12 +171,6 @@ class FilterChecklist:
             field_location will be used)
         """
         # Find options for the checklist
-        # TODO:  choose type of I/O object based on type of metadata source
-        # checklist_init_query_io = bdc.MongoDbQueryIO()
-        # checklist_init_query_io.set_query_input({})
-        # checklist_init_query_io.set_query_output(
-        #     {field_location: 1}
-        # ) 
         checklist_query_results = metadata_source.query(query_output=display_name)
         self.checklist_options = (
             checklist_query_results[display_name].drop_duplicates().to_list()

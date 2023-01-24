@@ -1,19 +1,6 @@
 """Parse the provided config file and save the variables in a useful way"""
-# NOTE:  check out YACS:  https://github.com/rbgirshick/yacs
 
-# from tomlkit import (
-#     parse,
-# )  # change to tomllib once using Python 3.11
-# from collections import namedtuple
-
-
-import tomli # import tomllib in Python 3.11
-
-
-
-
-
-
+import tomli  # import tomllib in Python 3.11
 
 
 def parse_config(fp, sections_to_extract="all"):
@@ -74,33 +61,4 @@ def parse_config(fp, sections_to_extract="all"):
     for key in sections_to_extract:
         cfg[key] = config_contents[key]
 
-    # Make sure items in each field will be a dict
-    # list_of_dicts = []
-    # for isection in sections_to_extract:
-    #     list_of_dicts.append(dict(config_contents[isection]))
-
-    # Put each of the top-level dict entries into its own variable
-    # convert_config = namedtuple("convert_config", sections_to_extract)
-    # config_values = convert_config._make(list_of_dicts)
-
-    # Convert value types.  Items are tomlkit.items.String or tomlkit.items.Integer,
-    # which for some reason don't work with some functions ¯\_(ツ)_/¯
-    # for sectionkey, sectionvals in cfg.items():
-    #     for ikey, ival in sectionvals.items():
-
-    #         print(type(ival))
-
-    # type(config_values[1])
-    #     cfg = parser.parse_config(config_file_path, "database")
-    #     self.address = str(cfg.database["address"])
-    #     self.port = int(cfg.database["port"])
-    #     self.db_name = cfg.database["db_name"]
-    #     self.collection_name = cfg.database["collection_name"]
-
-    #                 cfg = parser.parse_config(requested_projections, "projections")
-    #         requested_projections = dict.fromkeys(list(cfg.projections.values()), 1)
-
-    #                     cfg = parser.parse_config(requested_projections, "projections")
-    #         requested_projections = dict.fromkeys(list(cfg.projections.values()), 1)
-
-    return cfg#config_values
+    return cfg

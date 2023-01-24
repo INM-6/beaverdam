@@ -2,8 +2,6 @@ from dash import Dash, html, dcc, dash_table, Input, Output, State, MATCH, ALL
 import plotly.express as px
 import uuid
 
-import parser
-
 
 class View:
     def __init__(self):
