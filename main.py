@@ -19,12 +19,16 @@ fp_cfg = "config.toml"
 
 class BeaverApp:
     def __init__(self, fp_cfg):
+        # Read config file
         self.cfg = parser.parse_config(fp_cfg)
+        
+        # Set modules
         self.core = bd.Core(self.cfg)
         self.presenter = bdp.Presenter(self.cfg)
         self.view = bdv.DashView()
         self.controller = bdc.Controller()
 
+        # Tell modules about each other
         self.presenter.set_core(self.core)
         self.controller.set_core(self.core)
         self.view.set_presenter(self.presenter)
