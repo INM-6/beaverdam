@@ -21,14 +21,12 @@ class Core:
 
         # Define database info
         self.db = MongoDbDatabase(cfg["database"])
-        self.db.set_fields(cfg["fields"])
-
         # Store information about fields to query and their display names
         # keys = display names, vals = access information for database (e.g. location)
-        self.fields = cfg["fields"]
+        self.db.set_fields(cfg["fields"])
 
         # Query database for data table
-        data_table = DataTable(self.db.query({}, list(self.fields.keys())))
+        data_table = DataTable(self.db.query({}, list(self.db.fields.keys())))
 
         # Initialize filter options
         filter_criteria = FilterCriteria({})
