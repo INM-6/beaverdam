@@ -66,10 +66,10 @@ class MongoDbDatabase(MetadataSource):
                 documents you want to view
         """
         # Get database information
-        self.address = cfg["address"]
-        self.port = cfg["port"]
-        self.db_name = cfg["db_name"]
-        self.collection_name = cfg["collection_name"]
+        self.__address = cfg["address"]
+        self.__port = cfg["port"]
+        self.__db_name = cfg["db_name"]
+        self.__collection_name = cfg["collection_name"]
 
     def set_fields(self, field_dict):
         """Store display name and access information for each metadata field
@@ -162,9 +162,9 @@ class MongoDbDatabase(MetadataSource):
         index_id = "_id"
 
         # Set up pointers to the database
-        client = MongoClient(self.address, self.port)
-        db = getattr(client, self.db_name)
-        collection = getattr(db, self.collection_name)
+        client = MongoClient(self.__address, self.__port)
+        db = getattr(client, self.__db_name)
+        collection = getattr(db, self.__collection_name)
 
         # Query the database
         cursor = collection.find(query_input, projection=query_output)
