@@ -20,16 +20,20 @@ class DashView(View):
 
         self.app = Dash(__name__)
 
+        # Initialize element to store IDs of each UI component
+        self.component_ids = []
+
     def set_presenter(self, presenter):
         self.presenter = presenter
+
         self.app.layout = html.Div(
             [
-                build_checklist(self.presenter.checklists),
-                build_data_figure(self.presenter.graphs),
+                self.build_checklist(self.presenter.checklists),
+                self.build_data_figure(self.presenter.graphs),
                 html.Div(
                     id="test_output"
                 ),  # {"id": "test_output", "type": "TestType"}),
-                build_data_table(self.presenter.data_tables),
+                self.build_data_table(self.presenter.data_tables),
             ]
         )
 
@@ -40,6 +44,7 @@ class DashView(View):
 
         @app.callback(
             Output("test_output", "children"),
+            # Output(
             Input({"type": "Checklist", "idx": ALL}, "value"),
         )
         def filter_data(values):
@@ -50,70 +55,83 @@ class DashView(View):
                 )
             except:
                 pass
+            self.presenter.update()
             return html.Div(str(values))
 
     def launch_app(self):
         if __name__ == "view_dash":
             self.app.run_server(debug=False)
 
+    # Initialize structure to keep track of ids of dashboard components.
+    # dict with keys=id, vals=type of component, named as per the Dash component name
+    # ui_ids = {}
 
-# Initialize structure to keep track of ids of dashboard components.
-# dict with keys=id, vals=type of component, named as per the Dash component name
-ui_ids = {}
+    def build_checklist(self, filter_checklist):
+        """Build checklist for Dash dashboard
 
+        Args:
+            filter_checklist (FilterChecklist): checklist options, ID, and title
+        """
 
-def build_checklist(filter_checklist):
-    """Build checklist for Dash dashboard
+        # TODO:  iterate over list of checklists
 
-    Args:
-        filter_checklist (FilterChecklist): checklist options, ID, and title
-    """
-    return html.Div(
-        children=[
-            html.Div(children=filter_checklist.title),
-            html.Div(
-                children=dcc.Checklist(
-                    options=filter_checklist.checklist_options,
-                    id={
-                        "idx": "Checklist_"
-                        + filter_checklist.title.replace(" ", "-")
-                        + "_"
-                        + str(uuid.uuid4()),
-                        "type": "Checklist",
-                    },
-                    labelStyle={"display": "block"},
-                )
-            ),
-        ]
-    )
-
-
-def build_data_table(data_table):
-    """Build table for Dash dashboard
-
-    Args:
-        data_table (DataTable):  data to display in the table
-    """
-    return dash_table.DataTable(
-        id={"idx": "DataTable_" + str(uuid.uuid4()), "type": "DataTable"},
-        data=data_table.df.to_dict("records"),
-    )
-
-
-def build_data_figure(data_figure):
-    """Build figure for Dash dashboard
-
-    Args:
-        data_figure (DataFigure): data to plot and information about how to plot it
-    """
-    if data_figure.graph_type == "pie":
-        return dcc.Graph(
-            id={"idx": "Graph_pie_" + str(uuid.uuid4()), "type": "Graph_pie"},
-            figure=px.pie(
-                data_figure.df,
-                names=list(data_figure.df.columns.values)[0],
-                title=data_figure.title,
-            ),
+        # Store ID of each checklist
+        self.component_ids.append(
+            "Checklist_"
+            + filter_checklist.title.replace(" ", "-")
+            + "_"
+            + str(uuid.uuid4())
         )
-    else:
-        raise Exception("Graph type " + data_figure.graph_type + " not defined.")
+
+        # Build the checklist elements
+        return html.Div(
+            children=[
+                html.Div(children=filter_checklist.title),
+                html.Div(
+                    children=dcc.Checklist(
+                        options=filter_checklist.checklist_options,
+                        id={"idx": self.component_ids[-1], "type": "Checklist"},
+                        labelStyle={"display": "block"},
+                    )
+                ),
+            ]
+        )
+
+    def build_data_table(self, data_table):
+        """Build table for Dash dashboard
+
+        Args:
+            data_table (DataTable):  data to display in the table
+        """
+        # TODO:  iterate over list of tables
+
+        # Store ID of each table
+        self.component_ids.append("DataTable_" + str(uuid.uuid4()))
+
+        return dash_table.DataTable(
+            id={"idx": self.component_ids[-1], "type": "DataTable"},
+            data=data_table.df.to_dict("records"),
+        )
+
+    def build_data_figure(self, data_figure):
+        """Build figure for Dash dashboard
+
+        Args:
+            data_figure (DataFigure): data to plot and information about how to plot it
+        """
+        # TODO:  iterate over list of figures
+
+        # Store ID of each checklist
+        self.component_ids.append("Graph-pie_" + str(uuid.uuid4()))
+
+        if data_figure.graph_type == "pie":
+            return dcc.Graph(
+                id={"idx": self.component_ids[-1], "type": "Graph_pie"},
+                figure=px.pie(
+                    data_figure.df,
+                    names=list(data_figure.df.columns.values)[0],
+                    title=data_figure.title,
+                ),
+            )
+        else:
+            raise Exception("Graph type " + data_figure.graph_type + " not defined.")

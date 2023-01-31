@@ -62,6 +62,10 @@ class Presenter:
 
     def set_core(self, core_to_use):
         self.core = core_to_use
+        # Load current info from core
+        self.update()
+
+    def update(self):
 
         # TODO:  use loops for tables/charts/checklists to account for possibility of multiples
 
