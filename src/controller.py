@@ -8,6 +8,6 @@ class Controller:
     def set_core(self, core_to_use):
         self.core = core_to_use
 
-
-# # Filter for sessions meeting criteria
-# session_table.filter(filter_criteria)
+    def trigger_update_filter_criteria(self, filter_criteria):
+        # Filter for sessions meeting criteria
+        self.core.data_table.set_filter(filter_criteria)

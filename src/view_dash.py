@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, dash_table, Input, Output, State, MATCH, ALL
+from dash import Dash, html, dcc, dash_table, Input, Output, ctx, State, MATCH, ALL
 import plotly.express as px
 import uuid
 
@@ -43,8 +43,14 @@ class DashView(View):
             Input({"type": "Checklist", "idx": ALL}, "value"),
         )
         def filter_data(values):
+            try:
+                display_name = ctx.triggered_id["idx"].split("_")[1]
+                self.controller.trigger_update_filter_criteria(
+                    {display_name: values[0]}
+                )
+            except:
+                pass
             return html.Div(str(values))
-            # bdc.trigger_update_filter_criteria(values)
 
     def launch_app(self):
         if __name__ == "view_dash":
@@ -68,7 +74,13 @@ def build_checklist(filter_checklist):
             html.Div(
                 children=dcc.Checklist(
                     options=filter_checklist.checklist_options,
-                    id={"idx": "Checklist_" + str(uuid.uuid4()), "type": "Checklist"},
+                    id={
+                        "idx": "Checklist_"
+                        + filter_checklist.title.replace(" ", "-")
+                        + "_"
+                        + str(uuid.uuid4()),
+                        "type": "Checklist",
+                    },
                     labelStyle={"display": "block"},
                 )
             ),

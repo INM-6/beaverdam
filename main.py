@@ -21,7 +21,7 @@ class BeaverApp:
     def __init__(self, fp_cfg):
         # Read config file
         self.cfg = parser.parse_config(fp_cfg)
-        
+
         # Set modules
         self.core = bd.Core(self.cfg)
         self.presenter = bdp.Presenter(self.cfg)

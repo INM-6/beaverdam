@@ -27,12 +27,10 @@ class Core:
 
         # Query database for data table
         data_table = DataTable(self.db.query({}, list(self.db.fields.keys())))
-
         # Initialize filter options
-        filter_criteria = FilterCriteria({})
-
+        data_table.set_filter({})
+        # Store data table
         self.data_table = data_table
-        self.filter_criteria = filter_criteria
 
 
 class MetadataSource:
@@ -203,7 +201,8 @@ class MongoDbDatabase(MetadataSource):
 
 
 class DataTable(pd.DataFrame):
-    """Store data and information about which data is currently selected by the user"""
+    """Store data and filter criteria, and indicates which data meets the current filter
+    criteria"""
 
     def __init__(self, df):
         selection_state_column_name = "selectionState"
@@ -216,48 +215,77 @@ class DataTable(pd.DataFrame):
             df[selection_state_column_name] = True
         # Store dataframe
         self.df = df
-        # Initialize place to store selection criteria -- will be a dict with key=column
+        # Initialize place to store filter criteria -- will be a dict with key=column
         # name, val=allowable values
-        self.selection_criteria = {}
+        self.filter_criteria = {}
 
-    def filter(self, filter_criteria):
-        """Identify rows that meet the filter criteria and mark them as selected
+    def set_filter(self, filter_criteria):
+        """Set filter criteria as specified, and filter dataframe.  Overwrites previous
+        filter criteria.
 
         Args:
-        filter_criteria (FilterCriteria): dict of criteria, with key=column name,
-        val=allowable values.  Sessions must meet at least one allowable val for all
-        keys in the dict"""
+            filter_criteria (dict): dict of criteria, with key=column name,
+            val=allowable values.
+        """
 
-        # Initialize list containing one list for each filter criterion
-        is_row_selected = [[] for _ in range(len(self.df))]
-        # For each criterion, find out if each row meets the criterion or not and add
-        # this information as additional elements to each list inside the selected_rows
-        # list.
-        # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
-        for iCriteria, iVal in filter_criteria.criteria.items():
-            is_row_selected = [
-                x + [y] for x, y in zip(is_row_selected, self.df[iCriteria].isin(iVal))
-            ]
+        self.filter_criteria = filter_criteria
 
-        # Only accept rows where all criteria are met
-        is_row_selected = [all(x) for x in is_row_selected]
-        # Replace the column in the dataframe that denotes whether a row is selected or
-        # not
-        self.df[self.selection_state_column_name] = is_row_selected
+        # Update selection status of rows
+        self = filter_data_table(self)
 
+    def update_filter(self, new_filter_criteria):
+        """Add additional filter criteria, without removing existing criteria, and
+        filter dataframe.
 
-class FilterCriteria:
-    """Store and update selection criteria"""
-
-    def __init__(self, criteria_dict={}):
-        """Create a new object with a defined list of criteria
         Args:
-        criteria_dict (dict):  keys=projection, vals=list of allowable options"""
-        self.criteria = criteria_dict
+            new_filter_criteria (dict): dict of criteria, with key=column name,
+            val=allowable values.
+        """
 
-    def update(self, new_criteria_dict):
-        """Update existing criteria or add new ones"""
-        # Check if criteria exists
-        # If it exists, update with new val
-        # If it does not exist, add it
-        pass
+        self.filter_criteria = new_filter_criteria
+
+        # Update selection status of rows
+        self = filter_data_table(self)
+
+    def clear_filter(self):
+        """Remove all filter criteria and reset dataframe selection status."""
+
+        self.filter_criteria = {}
+
+        # Update selection status of rows
+        self = filter_data_table(self)
+
+
+def filter_data_table(data_table):
+    """Determine which rows of a DataTable meet filter criteria placed on columns.
+
+    Args:
+        data_table (DataTable): object containing:
+            data_table.df = dataframe with one column indicating selection status of
+            each row
+            data_table.selection_state_column_name = name of column indicating selection
+            state of rows
+            data_table.filter_criteria = dict of criteria, with key=column name,
+            val=allowable values.  To be selected, sessions must meet at least one
+            allowable val for all keys in the dict
+    """
+    # Initialize list containing one list for each filter criterion
+    is_row_selected = [[] for _ in range(len(data_table.df))]
+
+    # For each criterion, find out if each row meets the criterion or not and add
+    # this information as additional elements to each list inside the selected_rows
+    # list.
+    # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
+    for iCriteria, iVal in data_table.filter_criteria.items():
+        is_row_selected = [
+            x + [y]
+            for x, y in zip(is_row_selected, data_table.df[iCriteria].isin(iVal))
+        ]
+
+    # Only accept rows where all criteria are met
+    is_row_selected = [all(x) for x in is_row_selected]
+    # Replace the column in the dataframe that denotes whether a row is selected or
+    # not
+    data_table.df[data_table.selection_state_column_name] = is_row_selected
+
+    return data_table
