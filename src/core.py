@@ -231,7 +231,7 @@ class DataTable(pd.DataFrame):
         self.filter_criteria = filter_criteria
 
         # Update selection status of rows
-        self = filter_data_table(self)
+        self.apply_filter()
 
     def update_filter(self, new_filter_criteria):
         """Add additional filter criteria, without removing existing criteria, and
@@ -245,7 +245,7 @@ class DataTable(pd.DataFrame):
         self.filter_criteria = new_filter_criteria
 
         # Update selection status of rows
-        self = filter_data_table(self)
+        self.apply_filter()
 
     def clear_filter(self):
         """Remove all filter criteria and reset dataframe selection status."""
@@ -253,39 +253,35 @@ class DataTable(pd.DataFrame):
         self.filter_criteria = {}
 
         # Update selection status of rows
-        self = filter_data_table(self)
+        self.apply_filter()
 
+    def apply_filter(self):
+        """Determine which rows of a DataTable meet filter criteria placed on columns.
 
-def filter_data_table(data_table):
-    """Determine which rows of a DataTable meet filter criteria placed on columns.
+        Args:
+            data_table (DataTable): object containing:
+                data_table.df = dataframe with one column indicating selection status of
+                each row
+                data_table.selection_state_column_name = name of column indicating selection
+                state of rows
+                data_table.filter_criteria = dict of criteria, with key=column name,
+                val=allowable values.  To be selected, sessions must meet at least one
+                allowable val for all keys in the dict
+        """
+        # Initialize list containing one list for each filter criterion
+        is_row_selected = [[] for _ in range(len(self.df))]
 
-    Args:
-        data_table (DataTable): object containing:
-            data_table.df = dataframe with one column indicating selection status of
-            each row
-            data_table.selection_state_column_name = name of column indicating selection
-            state of rows
-            data_table.filter_criteria = dict of criteria, with key=column name,
-            val=allowable values.  To be selected, sessions must meet at least one
-            allowable val for all keys in the dict
-    """
-    # Initialize list containing one list for each filter criterion
-    is_row_selected = [[] for _ in range(len(data_table.df))]
+        # For each criterion, find out if each row meets the criterion or not and add
+        # this information as additional elements to each list inside the selected_rows
+        # list.
+        # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
+        for iCriteria, iVal in self.filter_criteria.items():
+            is_row_selected = [
+                x + [y] for x, y in zip(is_row_selected, self.df[iCriteria].isin(iVal))
+            ]
 
-    # For each criterion, find out if each row meets the criterion or not and add
-    # this information as additional elements to each list inside the selected_rows
-    # list.
-    # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
-    for iCriteria, iVal in data_table.filter_criteria.items():
-        is_row_selected = [
-            x + [y]
-            for x, y in zip(is_row_selected, data_table.df[iCriteria].isin(iVal))
-        ]
-
-    # Only accept rows where all criteria are met
-    is_row_selected = [all(x) for x in is_row_selected]
-    # Replace the column in the dataframe that denotes whether a row is selected or
-    # not
-    data_table.df[data_table.selection_state_column_name] = is_row_selected
-
-    return data_table
+        # Only accept rows where all criteria are met
+        is_row_selected = [all(x) for x in is_row_selected]
+        # Replace the column in the dataframe that denotes whether a row is selected or
+        # not
+        self.df[self.selection_state_column_name] = is_row_selected

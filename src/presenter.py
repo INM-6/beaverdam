@@ -2,7 +2,7 @@
 """
 
 
-def remove_unselected_rows(data_table):
+def remove_unselected_rows(data_table):  # veronica:  make class method
     """Remove rows of a dataframe that aren't contained in the selection-state column
 
     Args:
@@ -13,18 +13,23 @@ def remove_unselected_rows(data_table):
         pretty_df (dataframe):  dataframe WITHOUT (1) the selection-state column and
         (2) any unselected rows
     """
+    # Make sure to explicitly make a deep copy of the df, otherwise changes to pretty_df
+    # will be reflected in data_table.df
+    # pretty_df = data_table.df.copy(deep=True)
 
-    pretty_df = data_table.df
-
-    if data_table.selection_state_column_name in pretty_df.columns:
-        # Drop any unselected rows
-        pretty_df.drop(
-            pretty_df[pretty_df[data_table.selection_state_column_name] == False].index
+    if data_table.selection_state_column_name in data_table.df.columns:
+        # Drop any unselected rows.  Use the default of inplace=False so that df.drop
+        # returns a new dataframe rather than modifying the original dataframe.
+        pretty_df = data_table.df.drop(
+            data_table.df[
+                data_table.df[data_table.selection_state_column_name] == False
+            ].index
         )
-        # Remove column denoting selection state
+        # Remove column denoting selection state.  Use inplace=True so that df.drop
+        # modifies the dataframe it's called on, rather than returning a new dataframe.
         pretty_df.drop([data_table.selection_state_column_name], axis=1, inplace=True)
     else:
-        pass
+        pretty_df = data_table.df.copy(deep=True)
     return pretty_df
 
 
@@ -97,6 +102,7 @@ class PrettyDataTable:
             self.df (dataframe):  data to be shown in the table; column names are the
             same as column headers to display
         """
+
         self.df = remove_unselected_rows(data_table)
 
         self.df = rename_df_columns(self.df, new_column_names)

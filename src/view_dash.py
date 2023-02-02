@@ -44,19 +44,24 @@ class DashView(View):
 
         @app.callback(
             Output("test_output", "children"),
-            # Output(
+            Output("testtable", "data"),  # {"type": "DataTable", "idx": ALL}, "data"),
             Input({"type": "Checklist", "idx": ALL}, "value"),
         )
         def filter_data(values):
-            try:
+            if ctx.triggered_id is None:
+                # The first time the callback runs is when the page is loaded; no
+                # filtering is needed here
+                # pass
+                display_name = "empty"
+            else:
                 display_name = ctx.triggered_id["idx"].split("_")[1]
                 self.controller.trigger_update_filter_criteria(
                     {display_name: values[0]}
                 )
-            except:
-                pass
             self.presenter.update()
-            return html.Div(str(values))
+            return html.Div(
+                str(values[0]) + str(self.presenter.core.data_table.filter_criteria)
+            ), self.presenter.data_tables.df.to_dict("records")
 
     def launch_app(self):
         if __name__ == "view_dash":
@@ -109,7 +114,7 @@ class DashView(View):
         self.component_ids.append("DataTable_" + str(uuid.uuid4()))
 
         return dash_table.DataTable(
-            id={"idx": self.component_ids[-1], "type": "DataTable"},
+            id="testtable",  # {"idx": self.component_ids[-1], "type": "DataTable"},
             data=data_table.df.to_dict("records"),
         )
 
