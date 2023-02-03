@@ -46,21 +46,34 @@ class DashView(View):
             Output("test_output", "children"),
             Output("testtable", "data"),  # {"type": "DataTable", "idx": ALL}, "data"),
             Input({"type": "Checklist", "idx": ALL}, "value"),
+            Input({"type": "Graph-pie", "idx": ALL}, "clickData"),
         )
-        def filter_data(values):
+        def filter_data(values, clickData):
+            new_filter_criteria = ""
             if ctx.triggered_id is None:
                 # The first time the callback runs is when the page is loaded; no
                 # filtering is needed here
-                # pass
-                display_name = "empty"
+                pass
             else:
+                # Get display name
                 display_name = ctx.triggered_id["idx"].split("_")[1]
+                # Get new filter values -- the method is different for the different
+                # types of input
+                input_type = ctx.triggered_id["type"]
+                if input_type == "Checklist":
+                    new_filter_criteria = values[0]
+                elif input_type == "Graph-pie":
+                    new_filter_criteria = [clickData[0]["points"][0]["label"]]
+                else:
+                    raise Exception("Undefined UI input")
+                # Update filter criteria
                 self.controller.trigger_update_filter_criteria(
-                    {display_name: values[0]}
+                    {display_name: new_filter_criteria}
                 )
             self.presenter.update()
             return html.Div(
-                str(values[0]) + str(self.presenter.core.data_table.filter_criteria)
+                str(new_filter_criteria)
+                + str(self.presenter.core.data_table.filter_criteria)
             ), self.presenter.data_tables.df.to_dict("records")
 
     def launch_app(self):
@@ -82,10 +95,7 @@ class DashView(View):
 
         # Store ID of each checklist
         self.component_ids.append(
-            "Checklist_"
-            + filter_checklist.title.replace(" ", "-")
-            + "_"
-            + str(uuid.uuid4())
+            "Checklist_" + filter_checklist.display_name + "_" + str(uuid.uuid4())
         )
 
         # Build the checklist elements
@@ -127,11 +137,13 @@ class DashView(View):
         # TODO:  iterate over list of figures
 
         # Store ID of each checklist
-        self.component_ids.append("Graph-pie_" + str(uuid.uuid4()))
+        self.component_ids.append(
+            "Graph-pie_" + data_figure.col_to_plot + "_" + str(uuid.uuid4())
+        )
 
         if data_figure.graph_type == "pie":
             return dcc.Graph(
-                id={"idx": self.component_ids[-1], "type": "Graph_pie"},
+                id={"idx": self.component_ids[-1], "type": "Graph-pie"},
                 figure=px.pie(
                     data_figure.df,
                     names=list(data_figure.df.columns.values)[0],

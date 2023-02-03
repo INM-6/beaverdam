@@ -241,8 +241,8 @@ class DataTable(pd.DataFrame):
             new_filter_criteria (dict): dict of criteria, with key=column name,
             val=allowable values.
         """
-
-        self.filter_criteria = new_filter_criteria
+        raise Exception("This function isn't defined yet.")
+        # self.filter_criteria = new_filter_criteria
 
         # Update selection status of rows
         self.apply_filter()

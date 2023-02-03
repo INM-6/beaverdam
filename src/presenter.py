@@ -131,6 +131,7 @@ class DataFigure:
             self.title (str):  title of plot
         """
         self.graph_type = "undefined"
+        self.col_to_plot = col_to_plot
 
         # Filter dataframe
         self.df = remove_unselected_rows(data_table)
@@ -180,6 +181,9 @@ class FilterChecklist:
             checklist_title (str):  title for the checklist (optional; if not given,
             field_location will be used)
         """
+        # Store display name for access later
+        self.display_name = display_name
+
         # Find options for the checklist
         checklist_query_results = metadata_source.query(query_output=display_name)
         self.checklist_options = (
