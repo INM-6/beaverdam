@@ -2,7 +2,7 @@
 """
 
 
-def remove_unselected_rows(data_table):  # veronica:  make class method
+def remove_unselected_rows(data_table):
     """Remove rows of a dataframe that aren't contained in the selection-state column
 
     Args:
