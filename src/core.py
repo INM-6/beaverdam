@@ -276,9 +276,15 @@ class DataTable(pd.DataFrame):
         # list.
         # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
         for iCriteria, iVal in self.filter_criteria.items():
-            is_row_selected = [
-                x + [y] for x, y in zip(is_row_selected, self.df[iCriteria].isin(iVal))
-            ]
+            if len(iVal) > 0:
+                is_row_selected = [
+                    x + [y]
+                    for x, y in zip(is_row_selected, self.df[iCriteria].isin(iVal))
+                ]
+            else:
+                # Sometimes there might be an criteria with no values listed; in that
+                # case, don't do anything
+                pass
 
         # Only accept rows where all criteria are met
         is_row_selected = [all(x) for x in is_row_selected]
