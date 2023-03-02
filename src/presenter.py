@@ -1,6 +1,8 @@
 """Prepare data for visualization
 """
 
+import uuid
+
 
 def remove_unselected_rows(data_table):
     """Remove rows of a dataframe that aren't contained in the selection-state column
@@ -68,9 +70,9 @@ class Presenter:
     def set_core(self, core_to_use):
         self.core = core_to_use
         # Load current info from core
-        self.update()
-
-    def update(self):
+        self.build()
+    
+    def build(self):
 
         # TODO:  use loops for tables/charts/checklists to account for possibility of multiples
 
@@ -81,8 +83,17 @@ class Presenter:
             title="Make nice plot titles",
         )
         self.checklists = FilterChecklist(
-            self.core.db, self.cfg["filters"]["headings"][0]
+            metadata_source = self.core.db, display_name = self.cfg["filters"]["headings"][0]#, checklist_title = self.core.filter_criteria
         )
+
+        # self.update()
+
+    def update(self):
+        # self.filter_criteria = self.core.data_table.filter_criteria
+        self.data_tables.update(self.core.data_table)
+        self.graphs.update(self.core.data_table)
+        self.checklists.update(self.core.data_table.filter_criteria)
+        
 
 
 class PrettyDataTable:
@@ -103,9 +114,24 @@ class PrettyDataTable:
             same as column headers to display
         """
 
-        self.df = remove_unselected_rows(data_table)
+        # Set ID for UI element
+        self.id = "testtable"#"DataTable_" + str(uuid.uuid4())
 
+        self.build(data_table, new_column_names)
+
+    def build(self, data_table, new_column_names={}):
+        # veronica - find a nice way to build and then update this
+        # Remove rows that won't be shown in data table
+        self.df = remove_unselected_rows(data_table)
+        # Rename columns to human-readable names
         self.df = rename_df_columns(self.df, new_column_names)
+
+    def update(self, data_table, new_column_names={}):
+        # Remove rows that won't be shown in data table
+        self.df = remove_unselected_rows(data_table)
+        # Rename columns to human-readable names
+        self.df = rename_df_columns(self.df, new_column_names)
+
 
 
 class DataFigure:
@@ -130,6 +156,9 @@ class DataFigure:
             with display names
             self.title (str):  title of plot
         """
+        # Set ID for UI element
+        self.id = "Graph_" + str(uuid.uuid4())
+
         self.graph_type = "undefined"
         self.col_to_plot = col_to_plot
 
@@ -143,10 +172,24 @@ class DataFigure:
             pass
 
         # Rename columns
+        self.col_labels = col_labels
         self.df = rename_df_columns(self.df, col_labels)
 
         # Set title
         self.title = title
+
+    def update(self, data_table):
+        # Filter dataframe
+        self.df = remove_unselected_rows(data_table)
+
+        # Extract the specified columns; if none are specified, keep the whole dataframe
+        if len(self.col_to_plot) > 0:
+            self.df = self.df[[self.col_to_plot]].copy()
+        else:
+            pass
+
+        # Rename columns
+        self.df = rename_df_columns(self.df, self.col_labels)
 
 
 class PieChart(DataFigure):
@@ -155,6 +198,8 @@ class PieChart(DataFigure):
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
+        self.id = "testplot"
+
         # TODO: Manipulate dataframe so that there is one column for categories and one for counts
         # Example:
         #   df:
@@ -172,7 +217,7 @@ class PieChart(DataFigure):
 class FilterChecklist:
     """Information for lists of checkboxes to filter data"""
 
-    def __init__(self, metadata_source, display_name, checklist_title=[]):
+    def __init__(self, metadata_source, display_name, checklist_title=[], selected_options = []):
         """Set checklist properties and find options
 
         Args:
@@ -180,7 +225,13 @@ class FilterChecklist:
             display_name (str):  which metadata attribute the checklist represents
             checklist_title (str):  title for the checklist (optional; if not given,
             field_location will be used)
+            selected_values (list):  which checklist options are selected (optional; if
+            not given, no options will be selected)
         """
+
+        # Set ID for UI element
+        self.id = "testchecklist"#"Checklist_" + display_name + "_" + str(uuid.uuid4())
+
         # Store display name for access later
         self.display_name = display_name
 
@@ -189,6 +240,15 @@ class FilterChecklist:
         self.checklist_options = (
             checklist_query_results[display_name].drop_duplicates().to_list()
         )
+        # Find which options are selected
+        # self.selected_options = []
+        # for ioption in selected_options:
+        #     if ioption in self.checklist_options:
+        #         self.selected_options.append(ioption)
+        try:
+            self.selected_options = selected_options[self.display_name]
+        except:
+            self.selected_options = []
 
         # Set title for the checklist.  Default to field_location if checklist_title
         # isn't provided
@@ -196,3 +256,10 @@ class FilterChecklist:
             self.title = checklist_title
         else:
             self.title = display_name
+
+    def update(self, selected_options):
+        # Find which selected options are in the current checklist and store them
+        try:
+            self.selected_options = selected_options[self.display_name]
+        except:
+            self.selected_options = []
