@@ -56,9 +56,9 @@ class DashView(View):
         @app.callback(
             Output("test_output", "children"),
             Output("testtable", "data"),#self.component_ids[2], "data"),##Output(''.join([i for i in self.component_ids if "DataTable" in i]), "data"), # Output("testtable", "data"),  # Output({"type": "DataTable", "idx": ALL}, "data"),
-            Output("testplot", "figure"), # veronica:  try using the "figure" property and returning an entire new plot?
+            Output("testplot", "figure"),
             Input({"type": "Checklist", "idx": ALL}, "value"),#Input("testchecklist", "value"),#self.component_ids[0], "value"),#
-            Input({"type": "Graph", "idx": ALL}, "clickData"),#Input("testplot", "clickData"),#self.component_ids[1], "clickData"),#
+            Input("testplot", "clickData"),#{"type": "Graph", "idx": ALL}, "clickData"),# veronica:  check properties here to make sure clickData is correct:  https://dash.plot.ly/interactive-graphing #Input("testplot", "clickData"),#self.component_ids[1], "clickData"),#
         )
         def filter_data(values, clickData):
             new_filter_criteria = ""
@@ -77,14 +77,19 @@ class DashView(View):
             else:
                 # Get display name
                 # display_name = ctx.triggered_id["idx"].split("_")[1]
-                display_name = getattr(self, ctx.triggered_id["idx"]).display_name
+                try:
+                    display_name = getattr(self, ctx.triggered_id["idx"]).display_name
+                
                 # Get new filter values -- the method is different for the different
                 # types of input
-                input_type = ctx.triggered_id["type"]
+                    input_type = ctx.triggered_id["type"]
+                except:
+                    display_name = "GivenName"
+                    input_type = "Graph-pie"
                 if input_type == "Checklist":
                     new_filter_criteria = values[0]
                 elif input_type == "Graph-pie":
-                    new_filter_criteria = [clickData[0]["points"][0]["label"]]
+                    new_filter_criteria = [clickData["points"][0]["label"]]#[clickData[0]["points"][0]["label"]]
                 else:
                     raise Exception("Undefined UI input")
                 # Update filter criteria
