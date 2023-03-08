@@ -1,6 +1,5 @@
 from dash import Dash, html, dcc, dash_table, Input, Output, ctx, State, MATCH, ALL
 import plotly.express as px
-# import uuid
 
 
 class View:
@@ -15,7 +14,7 @@ class View:
 
 
 class DashView(View):
-    def __init__(self):  # TODO: make inputs more generic
+    def __init__(self):
         super().__init__()
 
         self.app = Dash(__name__)
@@ -31,7 +30,9 @@ class DashView(View):
         self.testfigure = PieChart(self.presenter.graphs)
         self.testtable = DataTable(self.presenter.data_tables)
         # Store IDs of UI elements
-        self.component_ids.extend([self.testchecklist.id, self.testfigure.id, self.testtable.id])
+        self.component_ids.extend(
+            [self.testchecklist.id, self.testfigure.id, self.testtable.id]
+        )
 
         self.app.layout = html.Div(
             [
@@ -49,16 +50,21 @@ class DashView(View):
 
         self.register_callbacks()
 
-
     def register_callbacks(self):
         app = self.app
 
         @app.callback(
             Output("test_output", "children"),
-            Output("testtable", "data"),#self.component_ids[2], "data"),##Output(''.join([i for i in self.component_ids if "DataTable" in i]), "data"), # Output("testtable", "data"),  # Output({"type": "DataTable", "idx": ALL}, "data"),
+            Output(
+                "testtable", "data"
+            ),  # self.component_ids[2], "data"),##Output(''.join([i for i in self.component_ids if "DataTable" in i]), "data"), # Output("testtable", "data"),  # Output({"type": "DataTable", "idx": ALL}, "data"),
             Output("testplot", "figure"),
-            Input({"type": "Checklist", "idx": ALL}, "value"),#Input("testchecklist", "value"),#self.component_ids[0], "value"),#
-            Input("testplot", "clickData"),#{"type": "Graph", "idx": ALL}, "clickData"),# veronica:  check properties here to make sure clickData is correct:  https://dash.plot.ly/interactive-graphing #Input("testplot", "clickData"),#self.component_ids[1], "clickData"),#
+            Input(
+                {"type": "Checklist", "idx": ALL}, "value"
+            ),  # Input("testchecklist", "value"),#self.component_ids[0], "value"),#
+            Input(
+                "testplot", "clickData"
+            ),  # {"type": "Graph", "idx": ALL}, "clickData"),# veronica:  check properties here to make sure clickData is correct:  https://dash.plot.ly/interactive-graphing #Input("testplot", "clickData"),#self.component_ids[1], "clickData"),#
         )
         def filter_data(values, clickData):
             new_filter_criteria = ""
@@ -66,22 +72,22 @@ class DashView(View):
                 # The first time the callback runs is when the page is loaded; no
                 # filtering is needed here
                 # pass
-                test_output = html.Div(
-                    ""
-                )
-                table_data = df_to_dict(self.presenter.data_tables.df)#self.testtable.get_updated_df(self.presenter.data_tables.df)
+                test_output = html.Div("")
+                table_data = df_to_dict(
+                    self.presenter.data_tables.df
+                )  # self.testtable.get_updated_df(self.presenter.data_tables.df)
                 plot_data = df_to_dict(self.presenter.graphs.df)
                 testfigure = PieChart(self.presenter.graphs).build()
 
-                return test_output, table_data, testfigure.figure#plot_data
+                return test_output, table_data, testfigure.figure  # plot_data
             else:
                 # Get display name
                 # display_name = ctx.triggered_id["idx"].split("_")[1]
                 try:
                     display_name = getattr(self, ctx.triggered_id["idx"]).display_name
-                
-                # Get new filter values -- the method is different for the different
-                # types of input
+
+                    # Get new filter values -- the method is different for the different
+                    # types of input
                     input_type = ctx.triggered_id["type"]
                 except:
                     display_name = "GivenName"
@@ -89,7 +95,9 @@ class DashView(View):
                 if input_type == "Checklist":
                     new_filter_criteria = values[0]
                 elif input_type == "Graph-pie":
-                    new_filter_criteria = [clickData["points"][0]["label"]]#[clickData[0]["points"][0]["label"]]
+                    new_filter_criteria = [
+                        clickData["points"][0]["label"]
+                    ]  # [clickData[0]["points"][0]["label"]]
                 else:
                     raise Exception("Undefined UI input")
                 # Update filter criteria
@@ -104,16 +112,21 @@ class DashView(View):
                     str(new_filter_criteria)
                     + str(self.presenter.core.data_table.filter_criteria)
                 )
-                new_table_data = df_to_dict(self.presenter.data_tables.df)#self.testtable.get_updated_df(self.presenter.data_tables.df)
+                new_table_data = df_to_dict(
+                    self.presenter.data_tables.df
+                )  # self.testtable.get_updated_df(self.presenter.data_tables.df)
                 new_plot_data = df_to_dict(self.presenter.graphs.df)
                 testfigure = PieChart(self.presenter.graphs).build()
 
                 # Return new UI stuff
 
-                    # self.build() # veronica - figure out why UI elements aren't updating -- do I need to set them as outputs to the callback?
+                # self.build() # veronica - figure out why UI elements aren't updating -- do I need to set them as outputs to the callback?
                 # self.presenter.update()
-                return new_test_output, new_table_data, testfigure.figure#new_plot_data#self.presenter.data_tables.df.to_dict("records")#, self.presenter.graphs.df
-
+                return (
+                    new_test_output,
+                    new_table_data,
+                    testfigure.figure,
+                )  # new_plot_data#self.presenter.data_tables.df.to_dict("records")#, self.presenter.graphs.df
 
     def launch_app(self):
         if __name__ == "view_dash":
@@ -121,54 +134,10 @@ class DashView(View):
             self.build()
             self.app.run_server(debug=False)
 
-    # Initialize structure to keep track of ids of dashboard components.
-    # dict with keys=id, vals=type of component, named as per the Dash component name
-    # ui_ids = {}
 
-    # def build_data_table(self, data_table):
-    #     """Build table for Dash dashboard
+class UiElement:
+    """General class for all UI elements"""
 
-    #     Args:
-    #         data_table (DataTable):  data to display in the table
-    #     """
-    #     # TODO:  iterate over list of tables
-
-    #     # Store ID of each table
-    #     self.component_ids.append("DataTable_" + str(uuid.uuid4()))
-
-    #     return dash_table.DataTable(
-    #         id="testtable",  # {"idx": self.component_ids[-1], "type": "DataTable"},
-    #         data=data_table.df.to_dict("records"),
-    #     )
-
-    # def build_data_figure(self, data_figure):
-    #     """Build figure for Dash dashboard
-
-    #     Args:
-    #         data_figure (DataFigure): data to plot and information about how to plot it
-    #     """
-    #     # TODO:  iterate over list of figures
-
-    #     # Store ID of each checklist
-    #     self.component_ids.append(
-    #         "Graph-pie_" + data_figure.col_to_plot + "_" + str(uuid.uuid4())
-    #     )
-
-    #     if data_figure.graph_type == "pie":
-    #         return dcc.Graph(
-    #             id="testplot",#{"idx": self.component_ids[-1], "type": "Graph-pie"},
-    #             figure=px.pie(
-    #                 data_figure.df,
-    #                 names=list(data_figure.df.columns.values)[0],
-    #                 title=data_figure.title,
-    #             ),
-    #         )
-    #     else:
-    #         raise Exception("Graph type " + data_figure.graph_type + " not defined.")
-
-class UiElement():
-    """General class for all UI elements
-    """
     def __init__(self, UIelement):
         # Set ID of element
         self.id = UIelement.id
@@ -183,18 +152,13 @@ class UiElement():
         # attributes of the element that need updating.
         pass
 
+
 class FilterChecklist(UiElement):
-    """Checklist containing filter criteria
-    """
+    """Checklist containing filter criteria"""
 
     def __init__(self, filter_checklist_object):
         super().__init__(filter_checklist_object)
-        # Store information for filter_checklist_object by assigning all fields to self
-        # [there's got to be a nicer way to do this]
-        # self.checklist_object = filter_checklist_object # veronica
-        # Set ID of UI element
-        # self.id = "Checklist_" + filter_checklist_object.display_name + "_" + str(uuid.uuid4())
-        # Duplicate fields from filter_checklist_object
+        # Duplicate fields from filter_checklist_object [there's got to be a nicer way to do this]
         self.checklist_options = filter_checklist_object.checklist_options
         self.display_name = filter_checklist_object.display_name
         self.title = filter_checklist_object.title
@@ -229,28 +193,23 @@ class FilterChecklist(UiElement):
         )
 
     def update(self, new_values):
-        """Update checklist
-        """
+        """Update checklist"""
         self.values = new_values
 
+
 class DataFigure(UiElement):
-    """General class for figures
-    """
+    """General class for figures"""
+
     def __init__(self, UIelement):
         super().__init__(UIelement)
 
+
 class PieChart(DataFigure):
-    """Pie chart figure
-    """
+    """Pie chart figure"""
 
     def __init__(self, graph_object):
         super().__init__(graph_object)
-        # Store information for graph_object by assigning all fields to self
-        # [there's got to be a nicer way to do this]
-        # self.checklist_object = filter_checklist_object # veronica
-        # Set ID of UI element
-        # self.id = "Graph-pie_" + str(uuid.uuid4())
-        # Duplicate fields from graph_object
+        # Duplicate fields from graph_object [there's got to be a nicer way to do this]
         self.col_to_plot = graph_object.col_to_plot
         self.df = graph_object.df
         self.graph_type = graph_object.graph_type
@@ -262,11 +221,9 @@ class PieChart(DataFigure):
         Returns:
             html.Div containing plot
         """
-        # Store ID of each checklist
-        # self.component_ids.append(self.id)
 
         return dcc.Graph(
-            id=self.id,#"testplot",#{"idx": self.component_ids[-1], "type": "Graph-pie"},
+            id=self.id,  # "testplot",#{"idx": self.component_ids[-1], "type": "Graph-pie"},
             figure=px.pie(
                 self.df,
                 names=list(self.df.columns.values)[0],
@@ -283,8 +240,8 @@ class PieChart(DataFigure):
 
 
 class DataTable(UiElement):
-    """Class for data tables
-    """
+    """Class for data tables"""
+
     def __init__(self, prettydatatable_object):
         super().__init__(prettydatatable_object)
         # Set ID of UI element
@@ -300,6 +257,7 @@ class DataTable(UiElement):
             id=self.id,  # {"idx": self.component_ids[-1], "type": "DataTable"},
             data=df_to_dict(self.df),
         )
+
 
 def df_to_dict(df):
     """Convert dataframe to the data format that Dash wants for a DataTable
