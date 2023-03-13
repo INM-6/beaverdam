@@ -40,9 +40,6 @@ class DashView(View):
                 self.testchecklist.build(),
                 self.testplot.build(),
                 # self.build_data_figure(self.presenter.graphs),
-                html.Div(
-                    id="test_output"
-                ),  # {"id": "test_output", "type": "TestType"}),
                 # self.build_data_table(self.presenter.data_tables),
                 self.testtable.build(),
             ]
@@ -54,7 +51,6 @@ class DashView(View):
         app = self.app
 
         @app.callback(
-            Output("test_output", "children"),
             Output(
                 "testtable", "data"
             ),  # self.component_ids[2], "data"),##Output(''.join([i for i in self.component_ids if "DataTable" in i]), "data"), # Output("testtable", "data"),  # Output({"type": "DataTable", "idx": ALL}, "data"),
@@ -71,15 +67,13 @@ class DashView(View):
             if ctx.triggered_id is None:
                 # The first time the callback runs is when the page is loaded; no
                 # filtering is needed here
-                # pass
-                test_output = html.Div("")
                 table_data = df_to_dict(
                     self.presenter.data_tables.df
                 )  # self.testtable.get_updated_df(self.presenter.data_tables.df)
                 plot_data = df_to_dict(self.presenter.graphs.df)
                 testfigure = PieChart(self.presenter.graphs).build()
 
-                return test_output, table_data, [], testfigure.figure  # plot_data
+                return table_data, [], testfigure.figure  # plot_data
             else:
                 # Get display name
                 # display_name = ctx.triggered_id["idx"].split("_")[1]
@@ -119,10 +113,6 @@ class DashView(View):
                 # Update presenter
                 self.presenter.update()
                 # Update data for UI components
-                new_test_output = html.Div(
-                    str(new_filter_criteria)
-                    + str(self.presenter.core.data_table.filter_criteria)
-                )
                 new_table_data = df_to_dict(
                     self.presenter.data_tables.df
                 )  # self.testtable.get_updated_df(self.presenter.data_tables.df)
@@ -135,7 +125,6 @@ class DashView(View):
                 # self.build() # veronica - figure out why UI elements aren't updating -- do I need to set them as outputs to the callback?
                 # self.presenter.update()
                 return (
-                    new_test_output,
                     new_table_data,
                     testchecklist_values,
                     testplot.figure,
