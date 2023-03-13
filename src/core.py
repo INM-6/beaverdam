@@ -242,7 +242,6 @@ class DataTable(pd.DataFrame):
             val=allowable values.
         """
         raise Exception("This function isn't defined yet.")
-        # self.filter_criteria = new_filter_criteria
 
         # Update selection status of rows
         self.apply_filter()

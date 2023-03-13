@@ -15,9 +15,6 @@ def remove_unselected_rows(data_table):
         pretty_df (dataframe):  dataframe WITHOUT (1) the selection-state column and
         (2) any unselected rows
     """
-    # Make sure to explicitly make a deep copy of the df, otherwise changes to pretty_df
-    # will be reflected in data_table.df
-    # pretty_df = data_table.df.copy(deep=True)
 
     if data_table.selection_state_column_name in data_table.df.columns:
         # Drop any unselected rows.  Use the default of inplace=False so that df.drop
@@ -71,10 +68,8 @@ class Presenter:
         self.core = core_to_use
         # Load current info from core
         self.build()
-    
-    def build(self):
 
-        # TODO:  use loops for tables/charts/checklists to account for possibility of multiples
+    def build(self):
 
         self.data_tables = PrettyDataTable(self.core.data_table)
         self.graphs = PieChart(
@@ -83,17 +78,16 @@ class Presenter:
             title="Make nice plot titles",
         )
         self.checklists = FilterChecklist(
-            metadata_source = self.core.db, display_name = self.cfg["filters"]["headings"][0]#, checklist_title = self.core.filter_criteria
+            metadata_source=self.core.db,
+            display_name=self.cfg["filters"]["headings"][
+                0
+            ],  # , checklist_title = self.core.filter_criteria
         )
 
-        # self.update()
-
     def update(self):
-        # self.filter_criteria = self.core.data_table.filter_criteria
         self.data_tables.update(self.core.data_table)
         self.graphs.update(self.core.data_table)
         self.checklists.update(self.core.data_table.filter_criteria)
-        
 
 
 class PrettyDataTable:
@@ -115,12 +109,11 @@ class PrettyDataTable:
         """
 
         # Set ID for UI element
-        self.id = "testtable"#"DataTable_" + str(uuid.uuid4())
+        self.id = "testtable"  # "DataTable_" + str(uuid.uuid4())
 
         self.build(data_table, new_column_names)
 
     def build(self, data_table, new_column_names={}):
-        # veronica - find a nice way to build and then update this
         # Remove rows that won't be shown in data table
         self.df = remove_unselected_rows(data_table)
         # Rename columns to human-readable names
@@ -131,7 +124,6 @@ class PrettyDataTable:
         self.df = remove_unselected_rows(data_table)
         # Rename columns to human-readable names
         self.df = rename_df_columns(self.df, new_column_names)
-
 
 
 class DataFigure:
@@ -200,24 +192,13 @@ class PieChart(DataFigure):
         self.graph_type = "pie"
         self.id = "testplot"
 
-        # TODO: Manipulate dataframe so that there is one column for categories and one for counts
-        # Example:
-        #   df:
-        #           colName
-        #       1   val1
-        #       2   val1
-        #       3   val2
-        #   manipulated df:
-        #       colName
-        #       val1    2
-        #       val2    1
-        # self.df = pd.DataFrame(self.df.value_counts()).reset_index()
-
 
 class FilterChecklist:
     """Information for lists of checkboxes to filter data"""
 
-    def __init__(self, metadata_source, display_name, checklist_title=[], selected_options = []):
+    def __init__(
+        self, metadata_source, display_name, checklist_title=[], selected_options=[]
+    ):
         """Set checklist properties and find options
 
         Args:
@@ -230,7 +211,9 @@ class FilterChecklist:
         """
 
         # Set ID for UI element
-        self.id = "testchecklist"#"Checklist_" + display_name + "_" + str(uuid.uuid4())
+        self.id = (
+            "testchecklist"  # "Checklist_" + display_name + "_" + str(uuid.uuid4())
+        )
 
         # Store display name for access later
         self.display_name = display_name
@@ -240,11 +223,6 @@ class FilterChecklist:
         self.checklist_options = (
             checklist_query_results[display_name].drop_duplicates().to_list()
         )
-        # Find which options are selected
-        # self.selected_options = []
-        # for ioption in selected_options:
-        #     if ioption in self.checklist_options:
-        #         self.selected_options.append(ioption)
         try:
             self.selected_options = selected_options[self.display_name]
         except:
