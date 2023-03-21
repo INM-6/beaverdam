@@ -56,24 +56,11 @@ class DashView(View):
             Input({"type": "PieChart", "index": ALL}, "clickData"),
         )
         def filter_data(values, clickData):
-            new_filter_criteria = ""
-            if ctx.triggered_id is None:
-                # The first time the callback runs is when the page is loaded; no
-                # filtering is needed here
-                table_data = df_to_dict(self.presenter.data_tables.df)
-                testfigure = PieChart(self.presenter.graphs).build()
-
-                return [
-                    # DataTables
-                    [table_data],
-                    # FilterChecklists
-                    [[]],
-                    # PieCharts
-                    [testfigure.figure],
-                ]
-            else:
-                # Get id of element that was clicked
-                triggered_id = ctx.triggered_id["index"]
+            # Get id of element that was clicked
+            triggered_id = ctx.triggered_id
+            # On load, ctx.triggered_id is None, and we don't have to filter anyway
+            if triggered_id is not None:
+                triggered_id = triggered_id["index"]
                 # Get display name
                 display_name = self.component_ids[
                     triggered_id
@@ -92,29 +79,28 @@ class DashView(View):
                 self.controller.trigger_update_filter_criteria(
                     {display_name: new_filter_criteria}
                 )
-
                 # Update presenter
                 self.presenter.update()
-                # Update data for UI components
-                new_table_data = df_to_dict(self.presenter.data_tables.df)
-                testchecklist_values = self.presenter.checklists.selected_options
-                testplot = PieChart(self.presenter.graphs).build()
+            # Update data for UI components
+            new_table_data = df_to_dict(self.presenter.data_tables.df)
+            testchecklist_values = self.presenter.checklists.selected_options
+            testplot = PieChart(self.presenter.graphs).build()
 
-                # Return new UI stuff:
-                # - If ONE Output() is pattern-matching, Dash expects the returned value
-                # to be a list containing one list for each of the detected output.
-                # - If MORE THAN ONE Output() is pattern-matching, Dash expects the
-                # returned value to be a list containing one list for each of the
-                # Output() elements, in turn containing one list for each of the
-                # detected outputs.
-                return [
-                    # DataTables
-                    [new_table_data],
-                    # FilterChecklists
-                    [testchecklist_values],
-                    # PieCharts
-                    [testplot.figure],
-                ]
+            # Return new UI stuff:
+            # - If ONE Output() is pattern-matching, Dash expects the returned value
+            # to be a list containing one list for each of the detected output.
+            # - If MORE THAN ONE Output() is pattern-matching, Dash expects the
+            # returned value to be a list containing one list for each of the
+            # Output() elements, in turn containing one list for each of the
+            # detected outputs.
+            return [
+                # DataTables
+                [new_table_data],
+                # FilterChecklists
+                [testchecklist_values],
+                # PieCharts
+                [testplot.figure],
+            ]
 
     def launch_app(self):
         if __name__ == "view_dash":
