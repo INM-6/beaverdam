@@ -20,20 +20,26 @@ class DashView(View):
         self.app = Dash(__name__)
 
         # Initialize element to store IDs of each UI component
-        self.component_ids = []
+        # self.component_ids = []
 
     def set_presenter(self, presenter):
         self.presenter = presenter
 
     def build(self):
+        # Create UI elements
         self.testchecklist = FilterChecklist(self.presenter.checklists)
         self.testplot = PieChart(self.presenter.graphs)
         self.testtable = DataTable(self.presenter.data_tables)
         # Store IDs of UI elements
-        self.component_ids.extend(
-            [self.testchecklist.id, self.testplot.id, self.testtable.id]
-        )
+        # self.component_ids.extend(
+        #     [self.testchecklist.id, self.testplot.id, self.testtable.id]
+        # )
+        # Get display name for each UI element, and associate it with the element id
+        self.component_ids = {self.testchecklist.id['index']: self.testchecklist.display_name,
+            self.testplot.id['index']: self.testplot.display_name
+        }
 
+        # Arrange UI elements into final layout
         self.app.layout = html.Div(
             [
                 self.testchecklist.build(),
@@ -42,33 +48,63 @@ class DashView(View):
             ]
         )
 
+        # Assign callbacks to UI
         self.register_callbacks()
 
     def register_callbacks(self):
         app = self.app
 
         @app.callback(
-            Output("testtable", "data"),
-            Output("testchecklist", "value"),
-            Output("testplot", "figure"),
-            Input("testchecklist", "value"),
-            Input("testplot", "clickData"),
+            # Output({'type': 'DataTable', 'index': 'test-table'}, "data"),
+            # Output({'type': 'FilterChecklist', 'index': 'test-checklist'}, "value"),
+            # Output({'type': 'PieChart', 'index': 'test-plot'}, "figure"),
+            Output({'type': 'DataTable', 'index': ALL}, "data"),
+            Output({'type': 'FilterChecklist', 'index': ALL}, "value"),
+            Output({'type': 'PieChart', 'index': ALL}, "figure"),
+            Input({'type': 'FilterChecklist', 'index': ALL}, "value"),
+            Input({'type': 'PieChart', 'index': ALL}, "clickData"),
+            # Input({'type': 'DataTable', 'index': ALL}, "data"),
+
+            # Output("testtable", "data"),
+            # Output("testchecklist", "value"),
+            # Output("testplot", "figure"),
+            # Input("testchecklist", "value"),
+            # Input("testplot", "clickData"),
         )
-        def filter_data(values, clickData):
+        def filter_data(values, clickData):#, tableData):
             new_filter_criteria = ""
             if ctx.triggered_id is None:
                 # The first time the callback runs is when the page is loaded; no
                 # filtering is needed here
                 table_data = df_to_dict(self.presenter.data_tables.df)
-                plot_data = df_to_dict(self.presenter.graphs.df)
                 testfigure = PieChart(self.presenter.graphs).build()
 
-                return table_data, [], testfigure.figure  # plot_data
+                return [
+                    # DataTables
+                    [
+                        table_data
+                    ],
+                    # FilterChecklists
+                    [
+                        []
+                    ],
+                    # PieCharts
+                    [
+                        testfigure.figure
+                    ]
+                ]
+                # output = [table_data, [], testfigure.figure]
+                # veronica - see these links for suggestions:
+                # https://community.plotly.com/t/pattern-matching-callback-with-all-in-output-is-this-syntax-seriously-correct/64702/2
+                # https://community.plotly.com/t/how-to-return-multiple-outputs-while-using-pattern-matching-callback/59191
+                # return [[opt for i in range(len(ctx.outputs_list))] for opt in output]
+
+                # return table_data, [], testfigure.figure  # plot_data
             else:
                 # Get id of element that was clicked
-                triggered_id = ctx.triggered_id
+                triggered_id = ctx.triggered_id['index']
                 # Get display name
-                display_name = getattr(self, triggered_id).display_name
+                display_name = self.component_ids[triggered_id]#getattr(self, triggered_id).display_name
                 # Get new filter criteria
                 # Note that this will be the case whether the box was already selected
                 # or not -- need to include a check somewhere (core?) to add or delete
@@ -91,12 +127,27 @@ class DashView(View):
                 testchecklist_values = self.presenter.checklists.selected_options
                 testplot = PieChart(self.presenter.graphs).build()
 
-                # Return new UI stuff
-                return (
-                    new_table_data,
-                    testchecklist_values,
-                    testplot.figure,
-                )
+                # Return new UI stuff:
+                # - If ONE Output() is pattern-matching, Dash expects the returned value
+                # to be a list containing one list for each of the detected output.
+                # - If MORE THAN ONE Output() is pattern-matching, Dash expects the
+                # returned value to be a list containing one list for each of the
+                # Output() elements, in turn containing one list for each of the
+                # detected outputs.
+                return [
+                    # DataTables
+                    [
+                        new_table_data
+                    ],
+                    # FilterChecklists
+                    [
+                        testchecklist_values
+                    ],
+                    # PieCharts
+                    [
+                        testplot.figure
+                    ]
+                ]
 
     def launch_app(self):
         if __name__ == "view_dash":
@@ -110,8 +161,8 @@ class UiElement:
 
     def __init__(self, UIelement):
         # Set ID of element
-        self.id = UIelement.id
-        pass
+        self.id = {"index": UIelement.id, "type": "undefined"}
+        # pass
 
     def build(self):
         # Use on first creation of element
@@ -128,6 +179,11 @@ class FilterChecklist(UiElement):
 
     def __init__(self, filter_checklist_object):
         super().__init__(filter_checklist_object)
+        # Set type of UI element
+        self.id["type"] = "FilterChecklist"
+        # Override default ID for debugging purposes
+        self.id["index"] = "test-checklist"
+
         # Duplicate fields from filter_checklist_object [there's got to be a nicer way
         # to do this]
         self.checklist_options = filter_checklist_object.checklist_options
@@ -166,13 +222,18 @@ class DataFigure(UiElement):
 
     def __init__(self, UIelement):
         super().__init__(UIelement)
-
+        # Set type of UI element
+        self.id["type"] = "DataFigure"
 
 class PieChart(DataFigure):
     """Pie chart figure"""
 
     def __init__(self, graph_object):
         super().__init__(graph_object)
+        # Set type of UI element
+        self.id["type"] = "PieChart"
+        # Override default ID for debugging purposes
+        self.id["index"] = "test-plot"
         # Duplicate fields from graph_object [there's got to be a nicer way to do this]
         self.col_to_plot = graph_object.col_to_plot
         self.display_name = self.col_to_plot
@@ -202,6 +263,10 @@ class DataTable(UiElement):
 
     def __init__(self, prettydatatable_object):
         super().__init__(prettydatatable_object)
+        # Set type of UI element
+        self.id["type"] = "DataTable"
+        # Override default ID for debugging purposes
+        self.id["index"] = "test-table"
         # Duplicate fields from prettydatatable_object
         self.df = prettydatatable_object.df
 

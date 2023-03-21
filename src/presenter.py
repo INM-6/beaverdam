@@ -89,8 +89,17 @@ class Presenter:
         self.graphs.update(self.core.data_table)
         self.checklists.update(self.core.data_table.filter_criteria)
 
+class VisualizedObject:
+    """General class for all output objects to visualize search results
+    """
 
-class PrettyDataTable:
+    def __init__(self):
+        """General attributes for all output objects
+        """
+        # Set ID for UI element
+        self.id = str(uuid.uuid4())
+
+class PrettyDataTable(VisualizedObject):
     """Store data to display in a table"""
 
     def __init__(self, data_table, new_column_names={}):
@@ -107,9 +116,9 @@ class PrettyDataTable:
             self.df (dataframe):  data to be shown in the table; column names are the
             same as column headers to display
         """
-
+        super().__init__()
         # Set ID for UI element
-        self.id = "testtable"  # "DataTable_" + str(uuid.uuid4())
+        # self.id = "testtable"  # "DataTable_" + str(uuid.uuid4())
 
         self.build(data_table, new_column_names)
 
@@ -126,7 +135,7 @@ class PrettyDataTable:
         self.df = rename_df_columns(self.df, new_column_names)
 
 
-class DataFigure:
+class DataFigure(VisualizedObject):
     """Store information to generate figures"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
@@ -148,8 +157,9 @@ class DataFigure:
             with display names
             self.title (str):  title of plot
         """
+        super().__init__()
         # Set ID for UI element
-        self.id = "Graph_" + str(uuid.uuid4())
+        # self.id = "Graph_" + str(uuid.uuid4())
 
         self.graph_type = "undefined"
         self.col_to_plot = col_to_plot
@@ -190,10 +200,10 @@ class PieChart(DataFigure):
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
-        self.id = "testplot"
+        # self.id = "testplot"
 
 
-class FilterChecklist:
+class FilterChecklist(VisualizedObject):
     """Information for lists of checkboxes to filter data"""
 
     def __init__(
@@ -209,11 +219,11 @@ class FilterChecklist:
             selected_values (list):  which checklist options are selected (optional; if
             not given, no options will be selected)
         """
-
+        super().__init__()
         # Set ID for UI element
-        self.id = (
-            "testchecklist"  # "Checklist_" + display_name + "_" + str(uuid.uuid4())
-        )
+        # self.id = (
+        #     "testchecklist"  # "Checklist_" + display_name + "_" + str(uuid.uuid4())
+        # )
 
         # Store display name for access later
         self.display_name = display_name
