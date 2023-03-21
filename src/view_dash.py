@@ -19,9 +19,6 @@ class DashView(View):
 
         self.app = Dash(__name__)
 
-        # Initialize element to store IDs of each UI component
-        # self.component_ids = []
-
     def set_presenter(self, presenter):
         self.presenter = presenter
 
@@ -30,13 +27,10 @@ class DashView(View):
         self.testchecklist = FilterChecklist(self.presenter.checklists)
         self.testplot = PieChart(self.presenter.graphs)
         self.testtable = DataTable(self.presenter.data_tables)
-        # Store IDs of UI elements
-        # self.component_ids.extend(
-        #     [self.testchecklist.id, self.testplot.id, self.testtable.id]
-        # )
         # Get display name for each UI element, and associate it with the element id
-        self.component_ids = {self.testchecklist.id['index']: self.testchecklist.display_name,
-            self.testplot.id['index']: self.testplot.display_name
+        self.component_ids = {
+            self.testchecklist.id["index"]: self.testchecklist.display_name,
+            self.testplot.id["index"]: self.testplot.display_name,
         }
 
         # Arrange UI elements into final layout
@@ -55,23 +49,13 @@ class DashView(View):
         app = self.app
 
         @app.callback(
-            # Output({'type': 'DataTable', 'index': 'test-table'}, "data"),
-            # Output({'type': 'FilterChecklist', 'index': 'test-checklist'}, "value"),
-            # Output({'type': 'PieChart', 'index': 'test-plot'}, "figure"),
-            Output({'type': 'DataTable', 'index': ALL}, "data"),
-            Output({'type': 'FilterChecklist', 'index': ALL}, "value"),
-            Output({'type': 'PieChart', 'index': ALL}, "figure"),
-            Input({'type': 'FilterChecklist', 'index': ALL}, "value"),
-            Input({'type': 'PieChart', 'index': ALL}, "clickData"),
-            # Input({'type': 'DataTable', 'index': ALL}, "data"),
-
-            # Output("testtable", "data"),
-            # Output("testchecklist", "value"),
-            # Output("testplot", "figure"),
-            # Input("testchecklist", "value"),
-            # Input("testplot", "clickData"),
+            Output({"type": "DataTable", "index": ALL}, "data"),
+            Output({"type": "FilterChecklist", "index": ALL}, "value"),
+            Output({"type": "PieChart", "index": ALL}, "figure"),
+            Input({"type": "FilterChecklist", "index": ALL}, "value"),
+            Input({"type": "PieChart", "index": ALL}, "clickData"),
         )
-        def filter_data(values, clickData):#, tableData):
+        def filter_data(values, clickData):
             new_filter_criteria = ""
             if ctx.triggered_id is None:
                 # The first time the callback runs is when the page is loaded; no
@@ -81,30 +65,19 @@ class DashView(View):
 
                 return [
                     # DataTables
-                    [
-                        table_data
-                    ],
+                    [table_data],
                     # FilterChecklists
-                    [
-                        []
-                    ],
+                    [[]],
                     # PieCharts
-                    [
-                        testfigure.figure
-                    ]
+                    [testfigure.figure],
                 ]
-                # output = [table_data, [], testfigure.figure]
-                # veronica - see these links for suggestions:
-                # https://community.plotly.com/t/pattern-matching-callback-with-all-in-output-is-this-syntax-seriously-correct/64702/2
-                # https://community.plotly.com/t/how-to-return-multiple-outputs-while-using-pattern-matching-callback/59191
-                # return [[opt for i in range(len(ctx.outputs_list))] for opt in output]
-
-                # return table_data, [], testfigure.figure  # plot_data
             else:
                 # Get id of element that was clicked
-                triggered_id = ctx.triggered_id['index']
+                triggered_id = ctx.triggered_id["index"]
                 # Get display name
-                display_name = self.component_ids[triggered_id]#getattr(self, triggered_id).display_name
+                display_name = self.component_ids[
+                    triggered_id
+                ]  # getattr(self, triggered_id).display_name
                 # Get new filter criteria
                 # Note that this will be the case whether the box was already selected
                 # or not -- need to include a check somewhere (core?) to add or delete
@@ -136,17 +109,11 @@ class DashView(View):
                 # detected outputs.
                 return [
                     # DataTables
-                    [
-                        new_table_data
-                    ],
+                    [new_table_data],
                     # FilterChecklists
-                    [
-                        testchecklist_values
-                    ],
+                    [testchecklist_values],
                     # PieCharts
-                    [
-                        testplot.figure
-                    ]
+                    [testplot.figure],
                 ]
 
     def launch_app(self):
@@ -224,6 +191,7 @@ class DataFigure(UiElement):
         super().__init__(UIelement)
         # Set type of UI element
         self.id["type"] = "DataFigure"
+
 
 class PieChart(DataFigure):
     """Pie chart figure"""

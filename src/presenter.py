@@ -79,9 +79,7 @@ class Presenter:
         )
         self.checklists = FilterChecklist(
             metadata_source=self.core.db,
-            display_name=self.cfg["filters"]["headings"][
-                0
-            ],  # , checklist_title = self.core.filter_criteria
+            display_name=self.cfg["filters"]["headings"][0],
         )
 
     def update(self):
@@ -89,15 +87,15 @@ class Presenter:
         self.graphs.update(self.core.data_table)
         self.checklists.update(self.core.data_table.filter_criteria)
 
+
 class VisualizedObject:
-    """General class for all output objects to visualize search results
-    """
+    """General class for all output objects to visualize search results"""
 
     def __init__(self):
-        """General attributes for all output objects
-        """
+        """General attributes for all output objects"""
         # Set ID for UI element
         self.id = str(uuid.uuid4())
+
 
 class PrettyDataTable(VisualizedObject):
     """Store data to display in a table"""
