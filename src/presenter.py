@@ -71,21 +71,24 @@ class Presenter:
 
     def build(self):
 
-        self.data_tables = PrettyDataTable(self.core.data_table)
-        self.graphs = PieChart(
+        self.data_tables = [PrettyDataTable(self.core.data_table)]
+        self.graphs = [PieChart(
             data_table=self.core.data_table,
             col_to_plot=self.cfg["plots"]["monkey_name"]["data_field"],
             title="Make nice plot titles",
-        )
-        self.checklists = FilterChecklist(
+        )]
+        self.checklists = [FilterChecklist(
             metadata_source=self.core.db,
             display_name=self.cfg["filters"]["headings"][0],
-        )
+        )]
 
     def update(self):
-        self.data_tables.update(self.core.data_table)
-        self.graphs.update(self.core.data_table)
-        self.checklists.update(self.core.data_table.filter_criteria)
+        for itable in self.data_tables:
+            itable.update(self.core.data_table)
+        for igraph in self.graphs:
+            igraph.update(self.core.data_table)
+        for ichecklist in self.checklists:
+            ichecklist.update(self.core.data_table.filter_criteria)
 
 
 class VisualizedObject:
@@ -115,8 +118,6 @@ class PrettyDataTable(VisualizedObject):
             same as column headers to display
         """
         super().__init__()
-        # Set ID for UI element
-        # self.id = "testtable"  # "DataTable_" + str(uuid.uuid4())
 
         self.build(data_table, new_column_names)
 
@@ -156,8 +157,6 @@ class DataFigure(VisualizedObject):
             self.title (str):  title of plot
         """
         super().__init__()
-        # Set ID for UI element
-        # self.id = "Graph_" + str(uuid.uuid4())
 
         self.graph_type = "undefined"
         self.col_to_plot = col_to_plot
@@ -198,7 +197,6 @@ class PieChart(DataFigure):
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
-        # self.id = "testplot"
 
 
 class FilterChecklist(VisualizedObject):
@@ -218,10 +216,6 @@ class FilterChecklist(VisualizedObject):
             not given, no options will be selected)
         """
         super().__init__()
-        # Set ID for UI element
-        # self.id = (
-        #     "testchecklist"  # "Checklist_" + display_name + "_" + str(uuid.uuid4())
-        # )
 
         # Store display name for access later
         self.display_name = display_name

@@ -241,7 +241,17 @@ class DataTable(pd.DataFrame):
             new_filter_criteria (dict): dict of criteria, with key=column name,
             val=allowable values.
         """
-        raise Exception("This function isn't defined yet.")
+        # raise Exception("This function isn't defined yet.")
+
+        # Find keys of new criteria
+        new_filter_criteria_keys = list(new_filter_criteria.keys())
+        # Check for existing filter criteria with the same key
+        # existing_filter_criteria_keys = list(self.filter_criteria.keys())
+        # Go through new criteria and update existing criteria.
+        # NOTE:  This assumes that the vals in new_filter_criteria represent ALL the
+        # allowable values for that key.
+        for ikey in new_filter_criteria_keys:
+            self.filter_criteria[ikey] = new_filter_criteria[ikey]
 
         # Update selection status of rows
         self.apply_filter()

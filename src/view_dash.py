@@ -23,23 +23,36 @@ class DashView(View):
         self.presenter = presenter
 
     def build(self):
-        # Create UI elements
-        self.testchecklist = FilterChecklist(self.presenter.checklists)
-        self.testplot = PieChart(self.presenter.graphs)
-        self.testtable = DataTable(self.presenter.data_tables)
-        # Get display name for each UI element, and associate it with the element id
-        self.component_ids = {
-            self.testchecklist.id["index"]: self.testchecklist.display_name,
-            self.testplot.id["index"]: self.testplot.display_name,
-        }
+        # Make sure we are starting with clean variables
+        self.checklists = []
+        self.plots = []
+        self.tables = []
 
-        # Arrange UI elements into final layout
+        # Create UI elements
+        for ichecklist in self.presenter.checklists:
+            self.checklists.append(FilterChecklist(ichecklist))
+        for iplot in self.presenter.graphs:
+            self.plots.append(PieChart(iplot))
+        for itable in self.presenter.data_tables:
+            self.tables.append(DataTable(itable))
+
+        # Get display name for each interactive element and associate it with the element id
+        self.component_display_names = {}
+        for ichecklist in self.checklists:
+            self.component_display_names[ichecklist.id["index"]] = ichecklist.display_name
+        for iplot in self.plots:
+            self.component_display_names[iplot.id["index"]] = iplot.display_name
+        
+        # Assemble UI elements into user interface
+        UIelements = []
+        for ichecklist in self.checklists:
+            UIelements.append(ichecklist.build())
+        for iplot in self.plots:
+            UIelements.append(iplot.build())
+        for itable in self.tables:
+            UIelements.append(itable.build())
         self.app.layout = html.Div(
-            [
-                self.testchecklist.build(),
-                self.testplot.build(),
-                self.testtable.build(),
-            ]
+            UIelements
         )
 
         # Assign callbacks to UI
@@ -60,11 +73,10 @@ class DashView(View):
             triggered_id = ctx.triggered_id
             # On load, ctx.triggered_id is None, and we don't have to filter anyway
             if triggered_id is not None:
-                triggered_id = triggered_id["index"]
+
                 # Get display name
-                display_name = self.component_ids[
-                    triggered_id
-                ]  # getattr(self, triggered_id).display_name
+                display_name = self.component_display_names[triggered_id["index"]]
+
                 # Get new filter criteria
                 # Note that this will be the case whether the box was already selected
                 # or not -- need to include a check somewhere (core?) to add or delete
@@ -79,13 +91,43 @@ class DashView(View):
                 self.controller.trigger_update_filter_criteria(
                     {display_name: new_filter_criteria}
                 )
+
                 # Update presenter
                 self.presenter.update()
-            # Update data for UI components
-            new_table_data = df_to_dict(self.presenter.data_tables.df)
-            testchecklist_values = self.presenter.checklists.selected_options
-            testplot = PieChart(self.presenter.graphs).build()
 
+            # Update tables
+            new_table_data = []
+            presenter_table_ids = {itable.id: idx for idx, itable in enumerate(self.presenter.data_tables)}
+            for itable in ctx.outputs_list[0]:
+                # Get ID of UI table
+                ui_id = itable["id"]["index"]
+                # Find table in the presenter with the same ID as the UI table
+                presenter_id = presenter_table_ids[ui_id]
+                # Add the updated data for the table to the list of data_table data
+                new_table_data.append(df_to_dict(self.presenter.data_tables[presenter_id].df))
+
+            # Update FilterChecklists
+            new_checklist_data = []
+            presenter_checklist_ids = {ichecklist.id: idx for idx, ichecklist in enumerate(self.presenter.checklists)}
+            for ichecklist in ctx.outputs_list[1]:
+                # Get ID of UI checklist
+                ui_id = ichecklist["id"]["index"]
+                # Find table in the presenter with the same ID as the UI table
+                presenter_id = presenter_checklist_ids[ui_id]
+                # Add the updated data for the table to the list of data_table data
+                new_checklist_data.append(self.presenter.checklists[presenter_id].selected_options)
+                
+            # Update plots
+            new_plot_data = []
+            presenter_plot_ids = {iplot.id: idx for idx, iplot in enumerate(self.presenter.graphs)}
+            for iplot in ctx.outputs_list[2]:
+                # Get ID of UI table
+                ui_id = iplot["id"]["index"]
+                # Find table in the presenter with the same ID as the UI table
+                presenter_id = presenter_plot_ids[ui_id]
+                # Add the updated data for the table to the list of data_table data
+                new_plot_data.append(PieChart(self.presenter.graphs[presenter_id]).build().figure)
+            
             # Return new UI stuff:
             # - If ONE Output() is pattern-matching, Dash expects the returned value
             # to be a list containing one list for each of the detected output.
@@ -93,13 +135,10 @@ class DashView(View):
             # returned value to be a list containing one list for each of the
             # Output() elements, in turn containing one list for each of the
             # detected outputs.
-            return [
-                # DataTables
-                [new_table_data],
-                # FilterChecklists
-                [testchecklist_values],
-                # PieCharts
-                [testplot.figure],
+            return[
+                new_table_data,
+                new_checklist_data,
+                new_plot_data
             ]
 
     def launch_app(self):
@@ -115,7 +154,6 @@ class UiElement:
     def __init__(self, UIelement):
         # Set ID of element
         self.id = {"index": UIelement.id, "type": "undefined"}
-        # pass
 
     def build(self):
         # Use on first creation of element
@@ -132,10 +170,9 @@ class FilterChecklist(UiElement):
 
     def __init__(self, filter_checklist_object):
         super().__init__(filter_checklist_object)
+
         # Set type of UI element
         self.id["type"] = "FilterChecklist"
-        # Override default ID for debugging purposes
-        self.id["index"] = "test-checklist"
 
         # Duplicate fields from filter_checklist_object [there's got to be a nicer way
         # to do this]
@@ -184,10 +221,10 @@ class PieChart(DataFigure):
 
     def __init__(self, graph_object):
         super().__init__(graph_object)
+
         # Set type of UI element
         self.id["type"] = "PieChart"
-        # Override default ID for debugging purposes
-        self.id["index"] = "test-plot"
+
         # Duplicate fields from graph_object [there's got to be a nicer way to do this]
         self.col_to_plot = graph_object.col_to_plot
         self.display_name = self.col_to_plot
@@ -217,10 +254,10 @@ class DataTable(UiElement):
 
     def __init__(self, prettydatatable_object):
         super().__init__(prettydatatable_object)
+
         # Set type of UI element
         self.id["type"] = "DataTable"
-        # Override default ID for debugging purposes
-        self.id["index"] = "test-table"
+
         # Duplicate fields from prettydatatable_object
         self.df = prettydatatable_object.df
 
