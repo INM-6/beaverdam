@@ -72,15 +72,19 @@ class Presenter:
     def build(self):
 
         self.data_tables = [PrettyDataTable(self.core.data_table)]
-        self.graphs = [PieChart(
-            data_table=self.core.data_table,
-            col_to_plot=self.cfg["plots"]["monkey_name"]["data_field"],
-            title="Make nice plot titles",
-        )]
-        self.checklists = [FilterChecklist(
-            metadata_source=self.core.db,
-            display_name=self.cfg["filters"]["headings"][0],
-        )]
+        self.graphs = [
+            PieChart(
+                data_table=self.core.data_table,
+                col_to_plot=self.cfg["plots"]["monkey_name"]["data_field"],
+                title="Make nice plot titles",
+            )
+        ]
+        self.checklists = [
+            FilterChecklist(
+                metadata_source=self.core.db,
+                display_name=self.cfg["filters"]["headings"][0],
+            )
+        ]
 
     def update(self):
         for itable in self.data_tables:

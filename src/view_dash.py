@@ -39,10 +39,12 @@ class DashView(View):
         # Get display name for each interactive element and associate it with the element id
         self.component_display_names = {}
         for ichecklist in self.checklists:
-            self.component_display_names[ichecklist.id["index"]] = ichecklist.display_name
+            self.component_display_names[
+                ichecklist.id["index"]
+            ] = ichecklist.display_name
         for iplot in self.plots:
             self.component_display_names[iplot.id["index"]] = iplot.display_name
-        
+
         # Assemble UI elements into user interface
         UIelements = []
         for ichecklist in self.checklists:
@@ -51,9 +53,7 @@ class DashView(View):
             UIelements.append(iplot.build())
         for itable in self.tables:
             UIelements.append(itable.build())
-        self.app.layout = html.Div(
-            UIelements
-        )
+        self.app.layout = html.Div(UIelements)
 
         # Assign callbacks to UI
         self.register_callbacks()
@@ -97,37 +97,50 @@ class DashView(View):
 
             # Update tables
             new_table_data = []
-            presenter_table_ids = {itable.id: idx for idx, itable in enumerate(self.presenter.data_tables)}
+            presenter_table_ids = {
+                itable.id: idx for idx, itable in enumerate(self.presenter.data_tables)
+            }
             for itable in ctx.outputs_list[0]:
                 # Get ID of UI table
                 ui_id = itable["id"]["index"]
                 # Find table in the presenter with the same ID as the UI table
                 presenter_id = presenter_table_ids[ui_id]
                 # Add the updated data for the table to the list of data_table data
-                new_table_data.append(df_to_dict(self.presenter.data_tables[presenter_id].df))
+                new_table_data.append(
+                    df_to_dict(self.presenter.data_tables[presenter_id].df)
+                )
 
             # Update FilterChecklists
             new_checklist_data = []
-            presenter_checklist_ids = {ichecklist.id: idx for idx, ichecklist in enumerate(self.presenter.checklists)}
+            presenter_checklist_ids = {
+                ichecklist.id: idx
+                for idx, ichecklist in enumerate(self.presenter.checklists)
+            }
             for ichecklist in ctx.outputs_list[1]:
                 # Get ID of UI checklist
                 ui_id = ichecklist["id"]["index"]
                 # Find table in the presenter with the same ID as the UI table
                 presenter_id = presenter_checklist_ids[ui_id]
                 # Add the updated data for the table to the list of data_table data
-                new_checklist_data.append(self.presenter.checklists[presenter_id].selected_options)
-                
+                new_checklist_data.append(
+                    self.presenter.checklists[presenter_id].selected_options
+                )
+
             # Update plots
             new_plot_data = []
-            presenter_plot_ids = {iplot.id: idx for idx, iplot in enumerate(self.presenter.graphs)}
+            presenter_plot_ids = {
+                iplot.id: idx for idx, iplot in enumerate(self.presenter.graphs)
+            }
             for iplot in ctx.outputs_list[2]:
                 # Get ID of UI table
                 ui_id = iplot["id"]["index"]
                 # Find table in the presenter with the same ID as the UI table
                 presenter_id = presenter_plot_ids[ui_id]
                 # Add the updated data for the table to the list of data_table data
-                new_plot_data.append(PieChart(self.presenter.graphs[presenter_id]).build().figure)
-            
+                new_plot_data.append(
+                    PieChart(self.presenter.graphs[presenter_id]).build().figure
+                )
+
             # Return new UI stuff:
             # - If ONE Output() is pattern-matching, Dash expects the returned value
             # to be a list containing one list for each of the detected output.
@@ -135,11 +148,7 @@ class DashView(View):
             # returned value to be a list containing one list for each of the
             # Output() elements, in turn containing one list for each of the
             # detected outputs.
-            return[
-                new_table_data,
-                new_checklist_data,
-                new_plot_data
-            ]
+            return [new_table_data, new_checklist_data, new_plot_data]
 
     def launch_app(self):
         if __name__ == "view_dash":

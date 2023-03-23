@@ -6,6 +6,6 @@ class Controller:
         self.core = core_to_use
 
     def trigger_update_filter_criteria(self, filter_criteria):
-        
+
         # Filter for sessions meeting criteria
         self.core.data_table.update_filter(filter_criteria)
