@@ -30,6 +30,7 @@ Modality3 = "Document.sections.session.sections.Session.properties.Modality3.val
 # Which fields you will be able to place conditions on to filter trials
 headings = [
     "GivenName",
+    "ShortName",
 ]
 
 [table]
@@ -57,3 +58,6 @@ columns = [
 # Which fields to plot, and how to plot them
 monkey_name.data_field = "GivenName"
 monkey_name.plot_type = "pie"
+
+task_name.data_field = "ShortName"
+task_name.plot_type = "pie"

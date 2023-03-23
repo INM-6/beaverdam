@@ -71,20 +71,29 @@ class Presenter:
 
     def build(self):
 
+        # Make data table
         self.data_tables = [PrettyDataTable(self.core.data_table)]
-        self.graphs = [
-            PieChart(
-                data_table=self.core.data_table,
-                col_to_plot=self.cfg["plots"]["monkey_name"]["data_field"],
-                title="Make nice plot titles",
+
+        # Make graphs
+        self.graphs = []
+        for plot_info in self.cfg["plots"].values():
+            if plot_info["plot_type"] == "pie":
+                self.graphs.append(
+                    PieChart(
+                        data_table=self.core.data_table,
+                        col_to_plot=plot_info["data_field"],
+                        title=plot_info["data_field"],
+                    )
+                )
+            else:
+                pass
+
+        # Make checklists
+        self.checklists = []
+        for ichecklist in self.cfg["filters"]["headings"]:
+            self.checklists.append(
+                FilterChecklist(metadata_source=self.core.db, display_name=ichecklist)
             )
-        ]
-        self.checklists = [
-            FilterChecklist(
-                metadata_source=self.core.db,
-                display_name=self.cfg["filters"]["headings"][0],
-            )
-        ]
 
     def update(self):
         for itable in self.data_tables:
