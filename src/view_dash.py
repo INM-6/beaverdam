@@ -32,7 +32,12 @@ class DashView(View):
         for ichecklist in self.presenter.checklists:
             self.checklists.append(FilterChecklist(ichecklist))
         for iplot in self.presenter.graphs:
-            self.plots.append(PieChart(iplot))
+            if iplot.graph_type == "pie":
+                self.plots.append(PieChart(iplot))
+            elif iplot.graph_type == "scatter":
+                self.plots.append(ScatterPlot(iplot))
+            else:
+                pass
         for itable in self.presenter.data_tables:
             self.tables.append(DataTable(itable))
 
@@ -251,9 +256,43 @@ class PieChart(DataFigure):
         return dcc.Graph(
             id=self.id,
             figure=px.pie(
-                self.df,
+                data_frame=self.df,
                 names=list(self.df.columns.values)[0],
                 title=self.title,
+            ),
+        )
+
+class ScatterPlot(DataFigure):
+    """Scatterplot figure"""
+
+    def __init__(self, graph_object):
+        super().__init__(graph_object)
+
+        # Set type of UI element
+        self.id["type"] = "ScatterPlot"
+
+        # Duplicate fields from graph_object [there's got to be a nicer way to do this]
+        self.col_to_plot = graph_object.col_to_plot
+        self.display_name = self.col_to_plot
+        self.df = graph_object.df
+        self.graph_type = graph_object.graph_type
+        self.title = graph_object.title
+
+    def build(self):
+        """Build plot for Dash dashboard
+
+        Returns:
+            html.Div containing plot
+        """
+
+        return dcc.Graph(
+            id=self.id,
+            figure=px.scatter(
+                data_frame = self.df,
+                x = self.col_to_plot[1],
+                y = self.col_to_plot[0],
+                # names = list(self.df.columns.values)[0],
+                title = self.title,
             ),
         )
 

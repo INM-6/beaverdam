@@ -42,8 +42,8 @@ def rename_df_columns(df, col_name_dict):
         renamed_df (dataframe): dataframe with renamed columns
     """
     # Reverse the dict so keys=old names, vals=new names
-    col_name_dict = {y: x for x, y in col_name_dict.items()}
-    renamed_df = df.rename(columns=col_name_dict)
+    col_name_dict_reversed = {y: x for x, y in col_name_dict.items()}
+    renamed_df = df.rename(columns=col_name_dict_reversed)
     return renamed_df
 
 
@@ -85,6 +85,14 @@ class Presenter:
                         title=plot_info["data_field"],
                     )
                 )
+            elif plot_info["plot_type"] == "scatter":
+                self.graphs.append(
+                    ScatterPlot(
+                        data_table=self.core.data_table,
+                        col_to_plot=plot_info["data_field"],
+                        title=plot_info["data_field"],
+                    )
+                )
             else:
                 pass
 
@@ -96,7 +104,7 @@ class Presenter:
             )
 
     def update(self):
-        for itable in self.data_tables:
+        for itable in self.data_tables:  # veronica - figure out why dataframe changes to series when updating data table pie graphs -- might be because scatter plot is now added but isn't built/updated correctly
             itable.update(self.core.data_table)
         for igraph in self.graphs:
             igraph.update(self.core.data_table)
@@ -157,8 +165,8 @@ class DataFigure(VisualizedObject):
             data_table (DataTable): object with data_table.df containing the dataframe
             with data to plot, and data_table.selection_state_column_names giving the
             name of the column indicating the selection state of each row
-            col_to_plot (list of strings matching dataframe column labels): which
-            columns of the dataframe contain data to plot
+            col_to_plot (string or list of strings matching dataframe column labels):
+            which columns of the dataframe contain data to plot
             col_labels (dict, optional): labels to use for each column of data, if you
             don't want to use the existing dataframe column labels. keys = new names to
             display, vals = column names in df. Defaults to {}.
@@ -172,6 +180,13 @@ class DataFigure(VisualizedObject):
         super().__init__()
 
         self.graph_type = "undefined"
+
+        # Make sure the columns to plot are given as a list, even if only a single
+        # string is given.  If you subset a column from a dataframe with a string, it
+        # returns a series rather than a dataframe, and this screws up future
+        # operations.
+        if isinstance(col_to_plot, str):
+            col_to_plot = [col_to_plot]
         self.col_to_plot = col_to_plot
 
         # Filter dataframe
@@ -179,13 +194,17 @@ class DataFigure(VisualizedObject):
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(col_to_plot) > 0:
-            self.df = self.df[[col_to_plot]].copy()
+            # Make sure the column(s) are given as a list
+            if isinstance(col_to_plot, list) is not True:
+                col_to_plot = [col_to_plot]
+            # Extract the columns
+            self.df = self.df[col_to_plot].copy()
         else:
             pass
 
         # Rename columns
         self.col_labels = col_labels
-        self.df = rename_df_columns(self.df, col_labels)
+        self.df = rename_df_columns(self.df, self.col_labels)
 
         # Set title
         self.title = title
@@ -196,7 +215,7 @@ class DataFigure(VisualizedObject):
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(self.col_to_plot) > 0:
-            self.df = self.df[[self.col_to_plot]].copy()
+            self.df = self.df[self.col_to_plot].copy()
         else:
             pass
 
@@ -210,6 +229,15 @@ class PieChart(DataFigure):
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
+
+class ScatterPlot(DataFigure):
+    """Store information to generate scatter plots"""
+
+    def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+        super().__init__(data_table, col_to_plot, col_labels, title)
+        self.graph_type = "scatter"
+        # Reset title
+        self.title = " vs. ".join(self.title)
 
 
 class FilterChecklist(VisualizedObject):
