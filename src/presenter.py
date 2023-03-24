@@ -104,7 +104,11 @@ class Presenter:
             )
 
     def update(self):
-        for itable in self.data_tables:  # veronica - figure out why dataframe changes to series when updating data table pie graphs -- might be because scatter plot is now added but isn't built/updated correctly
+        for (
+            itable
+        ) in (
+            self.data_tables
+        ):  # veronica - figure out why dataframe changes to series when updating data table pie graphs -- might be because scatter plot is now added but isn't built/updated correctly
             itable.update(self.core.data_table)
         for igraph in self.graphs:
             igraph.update(self.core.data_table)
@@ -229,6 +233,7 @@ class PieChart(DataFigure):
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
+
 
 class ScatterPlot(DataFigure):
     """Store information to generate scatter plots"""

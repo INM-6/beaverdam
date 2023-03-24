@@ -132,7 +132,7 @@ class DashView(View):
                     self.presenter.checklists[presenter_id].selected_options
                 )
 
-            # Update plots            
+            # Update plots
             presenter_plot_ids = {
                 iplot.id: idx for idx, iplot in enumerate(self.presenter.graphs)
             }
@@ -164,7 +164,12 @@ class DashView(View):
             # returned value to be a list containing one list for each of the
             # Output() elements, in turn containing one list for each of the
             # detected outputs.
-            return [new_table_data, new_checklist_data, new_piechart_data, new_scatterplot_data]
+            return [
+                new_table_data,
+                new_checklist_data,
+                new_piechart_data,
+                new_scatterplot_data,
+            ]
 
     def launch_app(self):
         if __name__ == "view_dash":
@@ -273,6 +278,7 @@ class PieChart(DataFigure):
             ),
         )
 
+
 class ScatterPlot(DataFigure):
     """Scatterplot figure"""
 
@@ -299,11 +305,11 @@ class ScatterPlot(DataFigure):
         return dcc.Graph(
             id=self.id,
             figure=px.scatter(
-                data_frame = self.df,
-                x = self.col_to_plot[1],
-                y = self.col_to_plot[0],
+                data_frame=self.df,
+                x=self.col_to_plot[1],
+                y=self.col_to_plot[0],
                 # names = list(self.df.columns.values)[0],
-                title = self.title,
+                title=self.title,
             ),
         )
 
