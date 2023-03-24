@@ -70,6 +70,7 @@ class DashView(View):
             Output({"type": "DataTable", "index": ALL}, "data"),
             Output({"type": "FilterChecklist", "index": ALL}, "value"),
             Output({"type": "PieChart", "index": ALL}, "figure"),
+            Output({"type": "ScatterPlot", "index": ALL}, "figure"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "PieChart", "index": ALL}, "clickData"),
         )
@@ -131,19 +132,29 @@ class DashView(View):
                     self.presenter.checklists[presenter_id].selected_options
                 )
 
-            # Update plots
-            new_plot_data = []
+            # Update plots            
             presenter_plot_ids = {
                 iplot.id: idx for idx, iplot in enumerate(self.presenter.graphs)
             }
+            new_piechart_data = []
             for iplot in ctx.outputs_list[2]:
                 # Get ID of UI table
                 ui_id = iplot["id"]["index"]
                 # Find table in the presenter with the same ID as the UI table
                 presenter_id = presenter_plot_ids[ui_id]
                 # Add the updated data for the table to the list of data_table data
-                new_plot_data.append(
+                new_piechart_data.append(
                     PieChart(self.presenter.graphs[presenter_id]).build().figure
+                )
+            new_scatterplot_data = []
+            for iplot in ctx.outputs_list[3]:
+                # Get ID of UI table
+                ui_id = iplot["id"]["index"]
+                # Find table in the presenter with the same ID as the UI table
+                presenter_id = presenter_plot_ids[ui_id]
+                # Add the updated data for the table to the list of data_table data
+                new_scatterplot_data.append(
+                    ScatterPlot(self.presenter.graphs[presenter_id]).build().figure
                 )
 
             # Return new UI stuff:
@@ -153,7 +164,7 @@ class DashView(View):
             # returned value to be a list containing one list for each of the
             # Output() elements, in turn containing one list for each of the
             # detected outputs.
-            return [new_table_data, new_checklist_data, new_plot_data]
+            return [new_table_data, new_checklist_data, new_piechart_data, new_scatterplot_data]
 
     def launch_app(self):
         if __name__ == "view_dash":
