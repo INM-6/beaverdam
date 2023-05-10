@@ -11,6 +11,7 @@ dash = "^2.6.2"
 dash-extensions = "^0.1.6"
 pandas = "^1.5.1"
 tomli = "^2.0.1"
+plotly = "^5.13.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
