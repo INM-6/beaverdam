@@ -78,12 +78,13 @@ class DashView(View):
             Output({"type": "PieChart", "index": ALL}, "figure"),
             Output({"type": "BarGraph", "index": ALL}, "figure"),
             Output({"type": "ScatterPlot", "index": ALL}, "figure"),
+            Input({"type": "ResetButton", "index": ALL}, "n_clicks"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "PieChart", "index": ALL}, "clickData"),
             Input({"type": "BarGraph", "index": ALL}, "clickData"),
             Input({"type": "ScatterPlot", "index": ALL}, "selectedData"),
         )
-        def filter_data(values, pieClickData, barClickData, selectionData):
+        def filter_data(values, resetButtonClicks, pieClickData, barClickData, selectionData):
             # Get id and type of element that was clicked
             triggered_element = ctx.triggered_id
             # On load, ctx.triggered_id is None, and we don't have to filter anyway
@@ -93,15 +94,22 @@ class DashView(View):
                 triggered_element_id = triggered_element["index"]
                 triggered_element_type = ctx.triggered_id["type"]
 
-                # Get display name
-                display_name = self.component_display_names[triggered_element_id]
-                # To be consistent, make sure display_name is a list, even if it's only
-                # one element
-                if isinstance(display_name, str):
-                    display_name = [display_name]
+                # Get display name, if it exists.
+                try:
+                    display_name = self.component_display_names[triggered_element_id]
+                    # To be consistent, make sure display_name is a list, even if it's only
+                    # one element
+                    if isinstance(display_name, str):
+                        display_name = [display_name]
+                except:
+                    pass
 
                 # Get new filter criteria.  How this happens depends on the type of
                 # element that was triggered.
+
+                # If the element triggered was the reset button, reset filter criteria
+                if triggered_element_type == "ResetButton":
+                    self.controller.trigger_clear_filter_criteria()
 
                 if triggered_element_type == "FilterChecklist":
                     # Note that filter criteria will be listed whether the box was
