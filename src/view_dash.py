@@ -41,7 +41,8 @@ class DashView(View):
         for itable in self.presenter.data_tables:
             self.tables.append(DataTable(itable))
 
-        # Get display name for each interactive element and associate it with the element id
+        # Get display name for each interactive element and associate it with the
+        # element id
         self.component_display_names = {}
         for ichecklist in self.checklists:
             self.component_display_names[
@@ -73,40 +74,64 @@ class DashView(View):
             Output({"type": "ScatterPlot", "index": ALL}, "figure"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "PieChart", "index": ALL}, "clickData"),
+            Input({"type": "ScatterPlot", "index": ALL}, "selectedData"),
         )
-        def filter_data(values, clickData):
-            # Get id of element that was clicked
-            triggered_id = ctx.triggered_id
+        def filter_data(values, clickData, selectionData):
+            # Get id and type of element that was clicked
+            triggered_element = ctx.triggered_id
             # On load, ctx.triggered_id is None, and we don't have to filter anyway
-            if triggered_id is not None:
+            if triggered_element is not None:
+
+                # Get specific information about the element that was triggered
+                triggered_element_id = triggered_element["index"]
+                triggered_element_type = ctx.triggered_id["type"]
 
                 # Get display name
-                display_name = self.component_display_names[triggered_id["index"]]
+                display_name = self.component_display_names[triggered_element_id]
+                # To be consistent, make sure display_name is a list, even if it's only
+                # one element
+                if isinstance(display_name, str):
+                    display_name = [display_name]
 
-                # Get new filter criteria
-                # Note that this will be the case whether the box was already selected
-                # or not -- need to include a check somewhere (core?) to add or delete
-                # from list of selected values
-                new_filter_criteria = ctx.triggered[0]["value"]
-                # If the object clicked was a graph, the new filter criteria will be a
-                # dict of information. Extract the specific criteria.
-                if isinstance(new_filter_criteria, dict):
-                    new_filter_criteria = [new_filter_criteria["points"][0]["label"]]
+                # Get new filter criteria.  How this happens depends on the type of
+                # element that was triggered.
 
-                # Update filter criteria
-                self.controller.trigger_update_filter_criteria(
-                    {display_name: new_filter_criteria}
-                )
+                if triggered_element_type == "FilterChecklist":
+                    # Note that filter criteria will be listed whether the box was
+                    # already selected or not -- need to include a check somewhere
+                    # (core?) to add or delete from list of selected values
+                    new_filter_criteria = ctx.triggered[0]["value"]
+                    self.controller.trigger_update_filter_criteria(
+                        {display_name[0]: new_filter_criteria}
+                    )
+                elif triggered_element_type=="PieChart":
+                    # If the object clicked was a graph, the new filter criteria will be a
+                    # dict of information. Extract the specific criteria.
+                    new_filter_criteria = [ctx.triggered[0]["value"]["points"][0]["label"]]
+                    self.controller.trigger_update_filter_criteria(
+                        {display_name[0]: new_filter_criteria}
+                    )
+                elif triggered_element_type=="ScatterPlot":
+                    # When I wrote this code, "pointNumber" and "pointIndex" were equal.
+                    selected_rows = [point["pointIndex"] for point in ctx.triggered[0]["value"]["points"]]
+                    self.controller.trigger_clear_filter_criteria()
+                    self.controller.trigger_select_dataframe_rows(selected_rows)
 
                 # Update presenter
                 self.presenter.update()
 
+            # Make sure that all the elements of ctx.outputs_list are lists of dicts.
+            # Default behaviour is for an element to be a dict if there is only one
+            # dict, or a list of dicts if there is more than one dict -- this screws up
+            # the loops later.
+            outputs_list = [[item] if isinstance(item, dict) else item for item in ctx.outputs_list]
+            
             # Update tables
             new_table_data = []
             presenter_table_ids = {
                 itable.id: idx for idx, itable in enumerate(self.presenter.data_tables)
             }
-            for itable in ctx.outputs_list[0]:
+            for itable in outputs_list[0]:
                 # Get ID of UI table
                 ui_id = itable["id"]["index"]
                 # Find table in the presenter with the same ID as the UI table
@@ -122,37 +147,37 @@ class DashView(View):
                 ichecklist.id: idx
                 for idx, ichecklist in enumerate(self.presenter.checklists)
             }
-            for ichecklist in ctx.outputs_list[1]:
+            for ichecklist in outputs_list[1]:
                 # Get ID of UI checklist
                 ui_id = ichecklist["id"]["index"]
-                # Find table in the presenter with the same ID as the UI table
+                # Find checklist in the presenter with the same ID as the UI checklist
                 presenter_id = presenter_checklist_ids[ui_id]
-                # Add the updated data for the table to the list of data_table data
+                # Add the updated data for the checklist to the list of checklist data
                 new_checklist_data.append(
                     self.presenter.checklists[presenter_id].selected_options
                 )
-
+            
             # Update plots
             presenter_plot_ids = {
                 iplot.id: idx for idx, iplot in enumerate(self.presenter.graphs)
             }
             new_piechart_data = []
-            for iplot in ctx.outputs_list[2]:
-                # Get ID of UI table
+            for iplot in outputs_list[2]:
+                # Get ID of UI plot
                 ui_id = iplot["id"]["index"]
-                # Find table in the presenter with the same ID as the UI table
+                # Find plot in the presenter with the same ID as the UI plot
                 presenter_id = presenter_plot_ids[ui_id]
-                # Add the updated data for the table to the list of data_table data
+                # Add the updated data for the plot to the list of piechart data
                 new_piechart_data.append(
                     PieChart(self.presenter.graphs[presenter_id]).build().figure
                 )
             new_scatterplot_data = []
-            for iplot in ctx.outputs_list[3]:
-                # Get ID of UI table
+            for iplot in outputs_list[3]:
+                # Get ID of UI plot
                 ui_id = iplot["id"]["index"]
-                # Find table in the presenter with the same ID as the UI table
+                # Find plot in the presenter with the same ID as the UI plot
                 presenter_id = presenter_plot_ids[ui_id]
-                # Add the updated data for the table to the list of data_table data
+                # Add the updated data for the plot to the list of scatterplot data
                 new_scatterplot_data.append(
                     ScatterPlot(self.presenter.graphs[presenter_id]).build().figure
                 )
@@ -302,7 +327,7 @@ class ScatterPlot(DataFigure):
             html.Div containing plot
         """
 
-        return dcc.Graph(
+        scatter_plot = dcc.Graph(
             id=self.id,
             figure=px.scatter(
                 data_frame=self.df,
@@ -312,6 +337,25 @@ class ScatterPlot(DataFigure):
                 title=self.title,
             ),
         )
+
+        # Update selection mode to avoid the error:
+        #   unrecognized GUI edit: selections[0].xref
+        # Otherwise, after selecting points in a dataframe, there is an error
+        # (use the inspector in the browser to see the error) on plotly.js
+        # versions 2.13.2 and 2.13.3.
+        # https://github.com/plotly/react-plotly.js/issues/290
+        # Here is a list of plotly versions and which version of plotly.js
+        # they use:
+        # https://github.com/plotly/plotly.py/releases
+        # I got the error in plotly v5.11.0, 5.13.1, 5.9.0, and 5.8.2.
+        # The error only occurs if the scatterplot data is updated as an output
+        # after selecting points from the scatterplot, not if the points are updated
+        # after selecting via checkboxes or pie graphs.
+        scatter_plot.figure.update_layout(
+            newselection_mode="gradual",
+        )
+
+        return scatter_plot
 
 
 class DataTable(UiElement):

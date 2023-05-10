@@ -277,26 +277,50 @@ class DataTable(pd.DataFrame):
                 val=allowable values.  To be selected, sessions must meet at least one
                 allowable val for all keys in the dict
         """
-        # Initialize list containing one list for each filter criterion
-        is_row_selected = [[] for _ in range(len(self.df))]
+        # If there are no filter criteria, assume all rows are selected
+        if all(ele == [] for ele in list(self.filter_criteria.values())):
+            self.df[self.selection_state_column_name] = True
+        else:
+            # Initialize list containing one list for each filter criterion
+            is_row_selected = [[] for _ in range(len(self.df))]
 
-        # For each criterion, find out if each row meets the criterion or not and add
-        # this information as additional elements to each list inside the selected_rows
-        # list.
-        # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
-        for iCriteria, iVal in self.filter_criteria.items():
-            if len(iVal) > 0:
-                is_row_selected = [
-                    x + [y]
-                    for x, y in zip(is_row_selected, self.df[iCriteria].isin(iVal))
-                ]
-            else:
-                # Sometimes there might be an criteria with no values listed; in that
-                # case, don't do anything
-                pass
+            # For each criterion, find out if each row meets the criterion or not and
+            # add this information as additional elements to each list inside the
+            # selected_rows list.
+            # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
+            for iCriteria, iVal in self.filter_criteria.items():
+                if len(iVal) > 0:
+                    is_row_selected = [
+                        x + [y]
+                        for x, y in zip(is_row_selected, self.df[iCriteria].isin(iVal))
+                    ]
+                else:
+                    # Sometimes there might be an criteria with no values listed; in
+                    # that case, don't do anything
+                    pass
 
-        # Only accept rows where all criteria are met
-        is_row_selected = [all(x) for x in is_row_selected]
+            # Only accept rows where all criteria are met
+            is_row_selected = [all(x) for x in is_row_selected]
+            # Replace the column in the dataframe that denotes whether a row is selected
+            # or not
+            self.df[self.selection_state_column_name] = is_row_selected
+
+    def select_rows(self, row_inds):
+        """Select rows of dataframe based on row indices
+
+        Args:
+            row_inds (list): list of row indices as integers
+        """
+        # I also tried .loc but got an error.  A good description of the differences
+        # between .loc and .iloc (which might be relevant in future if we label the rows
+        # of the dataframe) is here: https://stackoverflow.com/a/55884102
+        # self.df = self.df.iloc[row_inds]
+
+        # Get selection status of each row in dataframe
+        is_row_selected = [False for _ in range(len(self.df))]
+        for idx in row_inds:
+            is_row_selected[idx] = True
+    
         # Replace the column in the dataframe that denotes whether a row is selected or
         # not
         self.df[self.selection_state_column_name] = is_row_selected

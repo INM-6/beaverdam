@@ -108,7 +108,7 @@ class Presenter:
             itable
         ) in (
             self.data_tables
-        ):  # veronica - figure out why dataframe changes to series when updating data table pie graphs -- might be because scatter plot is now added but isn't built/updated correctly
+        ):
             itable.update(self.core.data_table)
         for igraph in self.graphs:
             igraph.update(self.core.data_table)
