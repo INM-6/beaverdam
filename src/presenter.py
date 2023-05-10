@@ -85,6 +85,14 @@ class Presenter:
                         title=plot_info["data_field"],
                     )
                 )
+            elif plot_info["plot_type"] == "bar":
+                self.graphs.append(
+                    BarGraph(
+                        data_table=self.core.data_table,
+                        col_to_plot=plot_info["data_field"],
+                        title=plot_info["data_field"],
+                    )
+                )
             elif plot_info["plot_type"] == "scatter":
                 self.graphs.append(
                     ScatterPlot(
@@ -234,6 +242,12 @@ class PieChart(DataFigure):
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
 
+class BarGraph(DataFigure):
+    """Store information to generate bar graphs"""
+
+    def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+        super().__init__(data_table, col_to_plot, col_labels, title)
+        self.graph_type = "bar"
 
 class ScatterPlot(DataFigure):
     """Store information to generate scatter plots"""

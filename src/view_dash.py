@@ -34,6 +34,8 @@ class DashView(View):
         for iplot in self.presenter.graphs:
             if iplot.graph_type == "pie":
                 self.plots.append(PieChart(iplot))
+            elif iplot.graph_type == "bar":
+                self.plots.append(BarGraph(iplot))
             elif iplot.graph_type == "scatter":
                 self.plots.append(ScatterPlot(iplot))
             else:
@@ -71,6 +73,7 @@ class DashView(View):
             Output({"type": "DataTable", "index": ALL}, "data"),
             Output({"type": "FilterChecklist", "index": ALL}, "value"),
             Output({"type": "PieChart", "index": ALL}, "figure"),
+            Output({"type": "BarGraph", "index": ALL}, "figure"),
             Output({"type": "ScatterPlot", "index": ALL}, "figure"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "PieChart", "index": ALL}, "clickData"),
@@ -171,8 +174,18 @@ class DashView(View):
                 new_piechart_data.append(
                     PieChart(self.presenter.graphs[presenter_id]).build().figure
                 )
-            new_scatterplot_data = []
+            new_bargraph_data = []
             for iplot in outputs_list[3]:
+                # Get ID of UI plot
+                ui_id = iplot["id"]["index"]
+                # Find plot in the presenter with the same ID as the UI plot
+                presenter_id = presenter_plot_ids[ui_id]
+                # Add the updated data for the plot to the list of piechart data
+                new_bargraph_data.append(
+                    BarGraph(self.presenter.graphs[presenter_id]).build().figure
+                )
+            new_scatterplot_data = []
+            for iplot in outputs_list[4]:
                 # Get ID of UI plot
                 ui_id = iplot["id"]["index"]
                 # Find plot in the presenter with the same ID as the UI plot
@@ -193,6 +206,7 @@ class DashView(View):
                 new_table_data,
                 new_checklist_data,
                 new_piechart_data,
+                new_bargraph_data,
                 new_scatterplot_data,
             ]
 
@@ -303,6 +317,37 @@ class PieChart(DataFigure):
             ),
         )
 
+class BarGraph(DataFigure):
+    """Bar graph figure"""
+
+    def __init__(self, graph_object):
+        super().__init__(graph_object)
+
+        # Set type of UI element
+        self.id["type"] = "BarGraph"
+
+        # Duplicate fields from graph_object [there's got to be a nicer way to do this]
+        self.col_to_plot = graph_object.col_to_plot
+        self.display_name = self.col_to_plot
+        self.df = graph_object.df
+        self.graph_type = graph_object.graph_type
+        self.title = graph_object.title
+
+    def build(self):
+        """Build plot for Dash dashboard
+
+        Returns:
+            html.Div containing plot
+        """
+
+        return dcc.Graph(
+            id=self.id,
+            figure=px.histogram(
+                data_frame=self.df,
+                x = self.col_to_plot,
+                title=self.title,
+            ),
+        )
 
 class ScatterPlot(DataFigure):
     """Scatterplot figure"""
