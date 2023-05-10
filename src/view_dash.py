@@ -77,9 +77,10 @@ class DashView(View):
             Output({"type": "ScatterPlot", "index": ALL}, "figure"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "PieChart", "index": ALL}, "clickData"),
+            Input({"type": "BarGraph", "index": ALL}, "clickData"),
             Input({"type": "ScatterPlot", "index": ALL}, "selectedData"),
         )
-        def filter_data(values, clickData, selectionData):
+        def filter_data(values, pieClickData, barClickData, selectionData):
             # Get id and type of element that was clicked
             triggered_element = ctx.triggered_id
             # On load, ctx.triggered_id is None, and we don't have to filter anyway
@@ -111,6 +112,13 @@ class DashView(View):
                     # If the object clicked was a graph, the new filter criteria will be a
                     # dict of information. Extract the specific criteria.
                     new_filter_criteria = [ctx.triggered[0]["value"]["points"][0]["label"]]
+                    self.controller.trigger_update_filter_criteria(
+                        {display_name[0]: new_filter_criteria}
+                    )
+                elif triggered_element_type=="BarGraph":
+                    # If the object clicked was a graph, the new filter criteria will be a
+                    # dict of information. Extract the specific criteria.
+                    new_filter_criteria = [ctx.triggered[0]["value"]["points"][0]["x"]]
                     self.controller.trigger_update_filter_criteria(
                         {display_name[0]: new_filter_criteria}
                     )
