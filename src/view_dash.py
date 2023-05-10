@@ -1,5 +1,6 @@
 from dash import Dash, html, dcc, dash_table, Input, Output, ctx, State, MATCH, ALL
 import plotly.express as px
+import uuid
 
 
 class View:
@@ -29,6 +30,7 @@ class DashView(View):
         self.tables = []
 
         # Create UI elements
+        self.resetbutton = ResetButton()
         for ichecklist in self.presenter.checklists:
             self.checklists.append(FilterChecklist(ichecklist))
         for iplot in self.presenter.graphs:
@@ -55,6 +57,7 @@ class DashView(View):
 
         # Assemble UI elements into user interface
         UIelements = []
+        UIelements.append(self.resetbutton.build())
         for ichecklist in self.checklists:
             UIelements.append(ichecklist.build())
         for iplot in self.plots:
@@ -228,9 +231,12 @@ class DashView(View):
 class UiElement:
     """General class for all UI elements"""
 
-    def __init__(self, UIelement):
+    def __init__(self, UIelement=[]):
         # Set ID of element
-        self.id = {"index": UIelement.id, "type": "undefined"}
+        if hasattr(UIelement, "id"):
+            self.id = {"index": UIelement.id, "type": "undefined"}
+        else:
+            self.id = {"index": str(uuid.uuid4()), "type": "undefined"}
 
     def build(self):
         # Use on first creation of element
@@ -438,3 +444,29 @@ def df_to_dict(df):
         df (dataframe): data to be shown in DataTable
     """
     return df.to_dict("records")
+
+class ResetButton(UiElement):
+    """Button to clear all filter criteria"""
+
+    def __init__(self):
+        super().__init__()
+        # Set type of UI element
+        self.id["type"] = "ResetButton"
+
+    def build(self):
+        """Build button for Dash dashboard
+
+        Returns:
+            html.Div containing button
+        """
+
+        # Build the button
+        return html.Div(
+            children=[
+                html.Button(
+                    "Reset",
+                    id = self.id,
+                    n_clicks = 0
+                ),
+            ]
+        )
