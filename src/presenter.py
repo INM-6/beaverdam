@@ -112,11 +112,7 @@ class Presenter:
             )
 
     def update(self):
-        for (
-            itable
-        ) in (
-            self.data_tables
-        ):
+        for itable in self.data_tables:
             itable.update(self.core.data_table)
         for igraph in self.graphs:
             igraph.update(self.core.data_table)
@@ -242,12 +238,14 @@ class PieChart(DataFigure):
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
 
+
 class BarGraph(DataFigure):
     """Store information to generate bar graphs"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "bar"
+
 
 class ScatterPlot(DataFigure):
     """Store information to generate scatter plots"""

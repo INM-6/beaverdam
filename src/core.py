@@ -320,7 +320,7 @@ class DataTable(pd.DataFrame):
         is_row_selected = [False for _ in range(len(self.df))]
         for idx in row_inds:
             is_row_selected[idx] = True
-    
+
         # Replace the column in the dataframe that denotes whether a row is selected or
         # not
         self.df[self.selection_state_column_name] = is_row_selected
