@@ -65,11 +65,18 @@ class Presenter:
         self.cfg = cfg
 
     def set_core(self, core_to_use):
+        """Set backend logic
+
+        Args:
+            core_to_use (Core): backend logic, e.g. database access information, filter
+            criteria, central data table, filtering functions
+        """
         self.core = core_to_use
         # Load current info from core
         self.build()
 
     def build(self):
+        """Assemble all information for user interface, e.g. plots, filters, data tables"""
 
         # Make data table
         self.data_tables = [PrettyDataTable(self.core.data_table)]
@@ -112,6 +119,7 @@ class Presenter:
             )
 
     def update(self):
+        """Apply the current filter to all UI elements"""
         for itable in self.data_tables:
             itable.update(self.core.data_table)
         for igraph in self.graphs:
@@ -151,12 +159,29 @@ class PrettyDataTable(VisualizedObject):
         self.build(data_table, new_column_names)
 
     def build(self, data_table, new_column_names={}):
+        """Create frontend data table
+
+        Args:
+            data_table (DataTable): backend data table containing all rows and columns
+            new_column_names (dict, optional): dictionary containing keys=new column
+            names, vals=original column names. Defaults to {}, which preserves original
+            column names.
+        """
         # Remove rows that won't be shown in data table
         self.df = remove_unselected_rows(data_table)
         # Rename columns to human-readable names
         self.df = rename_df_columns(self.df, new_column_names)
 
     def update(self, data_table, new_column_names={}):
+        """Update frontend table to reflect current selection state of backend data
+
+        Args:
+            data_table (DataTable): backend data table containing all rows and columns
+            and their selection states
+            new_column_names (dict, optional): dictionary containing keys=new column
+            names, vals=original column names. Defaults to {}, which preserves original
+            column names.
+        """
         # Remove rows that won't be shown in data table
         self.df = remove_unselected_rows(data_table)
         # Rename columns to human-readable names
@@ -218,6 +243,12 @@ class DataFigure(VisualizedObject):
         self.title = title
 
     def update(self, data_table):
+        """Update figure to reflect the current selection state of backend data
+
+        Args:
+            data_table (DataTable): backend data table containing all rows and columns
+            and their selection states
+        """
         # Filter dataframe
         self.df = remove_unselected_rows(data_table)
 
@@ -235,6 +266,17 @@ class PieChart(DataFigure):
     """Store information to generate pie charts"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+        """Get information for pie chart
+        Optionally include information for custom title, labels, etc.
+
+        Args:
+            data_table (DataTable): backend data table containing data to plot
+            col_to_plot (list, optional): which columns in the data table to plot.
+            Defaults to [].
+            col_labels (dict, optional): which labels to display for each plotted
+            column. Defaults to {}.
+            title (list, optional): title for the figure. Defaults to [].
+        """
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "pie"
 
@@ -243,6 +285,17 @@ class BarGraph(DataFigure):
     """Store information to generate bar graphs"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+        """Get information for bar graph
+        Optionally include information for custom title, labels, etc.
+
+        Args:
+            data_table (DataTable): backend data table containing data to plot
+            col_to_plot (list, optional): which columns in the data table to plot.
+            Defaults to [].
+            col_labels (dict, optional): which labels to display for each plotted
+            column. Defaults to {}.
+            title (list, optional): title for the figure. Defaults to [].
+        """
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "bar"
 
@@ -251,6 +304,17 @@ class ScatterPlot(DataFigure):
     """Store information to generate scatter plots"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+        """Get information for scatter plot
+        Optionally include information for custom title, labels, etc.
+
+        Args:
+            data_table (DataTable): backend data table containing data to plot
+            col_to_plot (list, optional): which columns in the data table to plot.
+            Defaults to [].
+            col_labels (dict, optional): which labels to display for each plotted
+            column. Defaults to {}.
+            title (list, optional): title for the figure. Defaults to [].
+        """
         super().__init__(data_table, col_to_plot, col_labels, title)
         self.graph_type = "scatter"
         # Reset title
@@ -296,6 +360,11 @@ class FilterChecklist(VisualizedObject):
             self.title = display_name
 
     def update(self, selected_options):
+        """Update checklist with currently selected options
+
+        Args:
+            selected_options (dict): dict with key=column, name, val=selected values
+        """
         # Find which selected options are in the current checklist and store them
         try:
             self.selected_options = selected_options[self.display_name]

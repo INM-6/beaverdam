@@ -10,8 +10,8 @@ import controller as bdc
 
 ## INPUTS
 
-# Path to config file
-fp_cfg = "config.toml"
+# Name of configuration file
+cfg_file_name = "config.toml"
 
 
 ## CODE
@@ -19,6 +19,11 @@ fp_cfg = "config.toml"
 
 class BeaverApp:
     def __init__(self, fp_cfg):
+        """Link modules to each other and provide them with configuration information
+
+        Args:
+            fp_cfg (str): name of configuration file
+        """
         # Read config file
         self.cfg = parser.parse_config(fp_cfg)
 
@@ -35,11 +40,13 @@ class BeaverApp:
         self.view.set_controller(self.controller)
 
     def run(self):
+        """Launch the user interface"""
         self.view.launch_app()
 
 
 def main():
-    app = BeaverApp(fp_cfg)
+    """Create and run the main application"""
+    app = BeaverApp(cfg_file_name)
     app.run()
 
 

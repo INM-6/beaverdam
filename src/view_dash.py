@@ -8,22 +8,32 @@ class View:
         pass
 
     def set_presenter(self, presenter):
+        """Set the source of information to create the user interface
+
+        Args:
+            presenter (Presenter): contains data and formatting information for
+            checklists, plots, and tables
+        """
         self.presenter = presenter
 
     def set_controller(self, controller):
+        """Set the source of functions to execute on interaction with the frontend
+
+        Args:
+            controller (Controller): contains function logic and connection to Core
+        """
         self.controller = controller
 
 
 class DashView(View):
     def __init__(self):
+        """Define Dash as a frontend"""
         super().__init__()
 
         self.app = Dash(__name__)
 
-    def set_presenter(self, presenter):
-        self.presenter = presenter
-
     def build(self):
+        """Create and assemble all elements for user interface; load callback functions"""
         # Make sure we are starting with clean variables
         self.checklists = []
         self.plots = []
@@ -70,6 +80,11 @@ class DashView(View):
         self.register_callbacks()
 
     def register_callbacks(self):
+        """Define actions that occur on user interaction; update frontend appropriately
+
+        Returns:
+            Updated versions of checklists, plots, and tables
+        """
         app = self.app
 
         @app.callback(
@@ -239,6 +254,7 @@ class DashView(View):
             ]
 
     def launch_app(self):
+        """Build and run frontend"""
         if __name__ == "view_dash":
 
             self.build()
@@ -249,6 +265,13 @@ class UiElement:
     """General class for all UI elements"""
 
     def __init__(self, UIelement=[]):
+        """Assign an identifier to the new element
+
+        Args:
+            UIelement (structure, optional): use this to manually define the ID for an
+            element by providing some kind of structure with an "id" field that can be
+            accessed by UIelement.id. Defaults to [], to auto-generate an ID.
+        """
         # Set ID of element
         if hasattr(UIelement, "id"):
             self.id = {"index": UIelement.id, "type": "undefined"}
@@ -256,12 +279,7 @@ class UiElement:
             self.id = {"index": str(uuid.uuid4()), "type": "undefined"}
 
     def build(self):
-        # Use on first creation of element
-        pass
-
-    def update(self):
-        # Use to update element with current info from presenter class.  Only return
-        # attributes of the element that need updating.
+        # Create the element
         pass
 
 
@@ -269,6 +287,12 @@ class FilterChecklist(UiElement):
     """Checklist containing filter criteria"""
 
     def __init__(self, filter_checklist_object):
+        """Get and store checklist options and other properties
+
+        Args:
+            filter_checklist_object (FilterChecklist from Presenter module): title and
+            options for the checklist
+        """
         super().__init__(filter_checklist_object)
 
         # Set type of UI element
@@ -281,7 +305,7 @@ class FilterChecklist(UiElement):
         self.title = filter_checklist_object.title
 
     def build(self):
-        """Build checklist for Dash dashboard
+        """Build checklist for the user interface
 
         Returns:
             html.Div containing checklist title and options
@@ -311,15 +335,27 @@ class DataFigure(UiElement):
     """General class for figures"""
 
     def __init__(self, UIelement):
+        """Set the type property of the data figure
+
+        Args:
+            UIelement (the appropriate DataFigure class from the Presenter module):
+            contains all information required to build the figure
+        """
         super().__init__(UIelement)
         # Set type of UI element
         self.id["type"] = "DataFigure"
 
 
 class PieChart(DataFigure):
-    """Pie chart figure"""
+    """Create pie chart"""
 
     def __init__(self, graph_object):
+        """Get and store figure options and other properties
+
+        Args:
+            graph_object (PieChart class from Presenter module): title and options for
+            the graph
+        """
         super().__init__(graph_object)
 
         # Set type of UI element
@@ -333,10 +369,10 @@ class PieChart(DataFigure):
         self.title = graph_object.title
 
     def build(self):
-        """Build plot for Dash dashboard
+        """Build plot for user interface
 
         Returns:
-            html.Div containing plot
+            dcc.Graph: Dash pie graph
         """
 
         return dcc.Graph(
@@ -350,9 +386,15 @@ class PieChart(DataFigure):
 
 
 class BarGraph(DataFigure):
-    """Bar graph figure"""
+    """Create bar graph"""
 
     def __init__(self, graph_object):
+        """Get and store figure options and other properties
+
+        Args:
+            graph_object (BarGraph class from Presenter module): title and options for
+            the graph
+        """
         super().__init__(graph_object)
 
         # Set type of UI element
@@ -366,10 +408,10 @@ class BarGraph(DataFigure):
         self.title = graph_object.title
 
     def build(self):
-        """Build plot for Dash dashboard
+        """Build plot for user interface
 
         Returns:
-            html.Div containing plot
+            dcc.Graph: Dash histogram
         """
 
         return dcc.Graph(
@@ -386,6 +428,12 @@ class ScatterPlot(DataFigure):
     """Scatterplot figure"""
 
     def __init__(self, graph_object):
+        """Get and store figure options and other properties
+
+        Args:
+            graph_object (ScatterPlot class from Presenter module): title and options for
+            the graph
+        """
         super().__init__(graph_object)
 
         # Set type of UI element
@@ -399,10 +447,10 @@ class ScatterPlot(DataFigure):
         self.title = graph_object.title
 
     def build(self):
-        """Build plot for Dash dashboard
+        """Build plot for user interface
 
         Returns:
-            html.Div containing plot
+            dcc.Graph: Dash scatter plot
         """
 
         scatter_plot = dcc.Graph(
@@ -440,6 +488,12 @@ class DataTable(UiElement):
     """Class for data tables"""
 
     def __init__(self, prettydatatable_object):
+        """Get and store data table options and other properties
+
+        Args:
+            graph_object (BarGraph class from Presenter module): title and options for
+            the graph
+        """
         super().__init__(prettydatatable_object)
 
         # Set type of UI element
@@ -449,7 +503,11 @@ class DataTable(UiElement):
         self.df = prettydatatable_object.df
 
     def build(self):
+        """Build table for user interface
 
+        Returns:
+            dash_table.DataTable: Dash DataTable
+        """
         return dash_table.DataTable(
             id=self.id,
             data=df_to_dict(self.df),
@@ -469,12 +527,13 @@ class ResetButton(UiElement):
     """Button to clear all filter criteria"""
 
     def __init__(self):
+        """Set type of UI element, so it's compatible with other UI elements"""
         super().__init__()
         # Set type of UI element
         self.id["type"] = "ResetButton"
 
     def build(self):
-        """Build button for Dash dashboard
+        """Build plot for user interface
 
         Returns:
             html.Div containing button
