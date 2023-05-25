@@ -9,8 +9,10 @@ from pymongo import MongoClient
 
 
 class Core:
+    """The core/model of the user interface"""
+
     def __init__(self, cfg):
-        """Main code for the core/model of the app
+        """Query database to create data table
 
         Args:
             cfg (dict):  contains dicts with information to configure each object that

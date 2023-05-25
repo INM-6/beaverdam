@@ -48,8 +48,11 @@ def rename_df_columns(df, col_name_dict):
 
 
 class Presenter:
+    """Collects and prepares data so it's ready to be presented"""
+
     def __init__(self, cfg):
-        """
+        """Store confituration information
+
         Args:
             cfg (namedtuple):  contains dicts for each heading of config file.  Example:
 

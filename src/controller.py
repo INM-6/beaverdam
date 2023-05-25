@@ -1,4 +1,6 @@
 class Controller:
+    """Define functions that can be called by View elements to trigger Core functions"""
+
     def __init__(self):
         pass
 

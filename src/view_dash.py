@@ -4,6 +4,8 @@ import uuid
 
 
 class View:
+    """Generate the user interface; define any user interactions and their results"""
+
     def __init__(self):
         pass
 
@@ -26,6 +28,12 @@ class View:
 
 
 class DashView(View):
+    """Use a Dash dashboard for the user interface
+
+    Args:
+        View (View): this class is based on the generic View class
+    """
+
     def __init__(self):
         """Define Dash as a frontend"""
         super().__init__()

@@ -18,6 +18,8 @@ cfg_file_name = "config.toml"
 
 
 class BeaverApp:
+    """Define and configure modules to be included in the user interface"""
+
     def __init__(self, fp_cfg):
         """Link modules to each other and provide them with configuration information
 
