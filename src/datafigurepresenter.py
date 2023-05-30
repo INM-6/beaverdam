@@ -38,7 +38,7 @@ class DataFigurePresenter(uiobj.UIElementPresenter):
         self.col_to_plot = col_to_plot
 
         # Filter dataframe
-        self.df = uiobj.remove_unselected_rows(data_table)
+        self.df = data_table.get_selected_rows()
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(col_to_plot) > 0:
@@ -65,7 +65,7 @@ class DataFigurePresenter(uiobj.UIElementPresenter):
             columns and their selection states
         """
         # Filter dataframe
-        self.df = uiobj.remove_unselected_rows(data_table)
+        self.df = data_table.get_selected_rows()
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(self.col_to_plot) > 0:

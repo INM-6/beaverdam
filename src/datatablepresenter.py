@@ -34,7 +34,7 @@ class DataTablePresenter(uiobj.UIElementPresenter):
             original column names.
         """
         # Remove rows that won't be shown in data table
-        self.df = uiobj.remove_unselected_rows(data_table)
+        self.df = data_table.get_selected_rows()
         # Rename columns to human-readable names
         self.df = uiobj.rename_df_columns(self.df, new_column_names)
 
@@ -49,6 +49,6 @@ class DataTablePresenter(uiobj.UIElementPresenter):
             column names.
         """
         # Remove rows that won't be shown in data table
-        self.df = uiobj.remove_unselected_rows(data_table)
+        self.df = data_table.get_selected_rows()
         # Rename columns to human-readable names
         self.df = uiobj.rename_df_columns(self.df, new_column_names)

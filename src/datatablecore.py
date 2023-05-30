@@ -126,3 +126,23 @@ class DataTableCore(pd.DataFrame):
         # Replace the column in the dataframe that denotes whether a row is selected or
         # not
         self.df[self.selection_state_column_name] = is_row_selected
+
+    def get_selected_rows(self):
+        """Remove dataframe rows not contained in the selection-state column
+
+        Returns:
+            filtered_df (dataframe):  dataframe WITHOUT (1) the selection-state column
+            and (2) any unselected rows
+        """
+
+        # Drop any unselected rows.  Use the default of inplace=False so that df.drop
+        # returns a new dataframe rather than modifying the original dataframe.
+        filtered_df = self.df.drop(
+            self.df[
+                self.df[self.selection_state_column_name] == False
+            ].index
+        )
+        # Remove column denoting selection state.  Use inplace=True so that df.drop
+        # modifies the dataframe it's called on, rather than returning a new dataframe.
+        filtered_df.drop([self.selection_state_column_name], axis=1, inplace=True)
+        return filtered_df
