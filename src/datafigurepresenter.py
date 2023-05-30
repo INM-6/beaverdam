@@ -1,9 +1,9 @@
 """Information to create plots and figures in a user interface"""
 
-import visualizedobjectpresenter as vobj
+import uielementpresenter as uiobj
 
 
-class DataFigurePresenter(vobj.VisualizedObjectPresenter):
+class DataFigurePresenter(uiobj.UIElementPresenter):
     """Store information to generate figures"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
@@ -38,7 +38,7 @@ class DataFigurePresenter(vobj.VisualizedObjectPresenter):
         self.col_to_plot = col_to_plot
 
         # Filter dataframe
-        self.df = vobj.remove_unselected_rows(data_table)
+        self.df = uiobj.remove_unselected_rows(data_table)
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(col_to_plot) > 0:
@@ -52,7 +52,7 @@ class DataFigurePresenter(vobj.VisualizedObjectPresenter):
 
         # Rename columns
         self.col_labels = col_labels
-        self.df = vobj.rename_df_columns(self.df, self.col_labels)
+        self.df = uiobj.rename_df_columns(self.df, self.col_labels)
 
         # Set title
         self.title = title
@@ -65,7 +65,7 @@ class DataFigurePresenter(vobj.VisualizedObjectPresenter):
             columns and their selection states
         """
         # Filter dataframe
-        self.df = vobj.remove_unselected_rows(data_table)
+        self.df = uiobj.remove_unselected_rows(data_table)
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(self.col_to_plot) > 0:
@@ -74,7 +74,7 @@ class DataFigurePresenter(vobj.VisualizedObjectPresenter):
             pass
 
         # Rename columns
-        self.df = vobj.rename_df_columns(self.df, self.col_labels)
+        self.df = uiobj.rename_df_columns(self.df, self.col_labels)
 
 
 class PieChartPresenter(DataFigurePresenter):

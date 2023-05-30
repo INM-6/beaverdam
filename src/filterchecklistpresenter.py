@@ -1,9 +1,9 @@
 """Information to create checklists in a user interface"""
 
-import visualizedobjectpresenter as vobj
+import uielementpresenter as uiobj
 
 
-class FilterChecklistPresenter(vobj.VisualizedObjectPresenter):
+class FilterChecklistPresenter(uiobj.UIElementPresenter):
     """Information for lists of checkboxes to filter data"""
 
     def __init__(

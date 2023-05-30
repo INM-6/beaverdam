@@ -3,8 +3,8 @@
 import uuid
 
 
-class VisualizedObjectPresenter:
-    """General class for all output objects to visualize search results"""
+class UIElementPresenter:
+    """General class for all user interface objects"""
 
     def __init__(self):
         """General attributes for all output objects"""
