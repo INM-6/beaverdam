@@ -1,37 +1,18 @@
-from dash import Dash, html, dcc, dash_table, Input, Output, ctx, State, MATCH, ALL
-import plotly.express as px
-import uuid
+"""Builds a user interface using Dash"""
+
+import view as view
+import datafigure_dash as fig
+import filterchecklist_dash as checklist
+import datatable_dash as dtable
+import resetbutton_dash as resetbutton
+from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 
 
-class View:
-    """Generate the user interface; define any user interactions and their results"""
-
-    def __init__(self):
-        pass
-
-    def set_presenter(self, presenter):
-        """Set the source of information to create the user interface
-
-        Args:
-            presenter (Presenter): contains data and formatting information for
-            checklists, plots, and tables
-        """
-        self.presenter = presenter
-
-    def set_controller(self, controller):
-        """Set the source of functions to execute on interaction with the frontend
-
-        Args:
-            controller (Controller): contains function logic and connection to Core
-        """
-        self.controller = controller
-
-
-class DashView(View):
+class DashView(view.View):
     """Use a Dash dashboard for the user interface
 
     Args:
-        View (View): this class is based on the generic View class
+        view.View (View): this class is based on the generic View class
     """
 
     def __init__(self):
@@ -48,20 +29,20 @@ class DashView(View):
         self.tables = []
 
         # Create UI elements
-        self.resetbutton = ResetButton()
+        self.resetbutton = resetbutton.DashResetButton()
         for ichecklist in self.presenter.checklists:
-            self.checklists.append(FilterChecklist(ichecklist))
+            self.checklists.append(checklist.DashFilterChecklist(ichecklist))
         for iplot in self.presenter.graphs:
             if iplot.graph_type == "pie":
-                self.plots.append(PieChart(iplot))
+                self.plots.append(fig.DashPieChart(iplot))
             elif iplot.graph_type == "bar":
-                self.plots.append(BarGraph(iplot))
+                self.plots.append(fig.DashBarGraph(iplot))
             elif iplot.graph_type == "scatter":
-                self.plots.append(ScatterPlot(iplot))
+                self.plots.append(fig.DashScatterPlot(iplot))
             else:
                 pass
         for itable in self.presenter.data_tables:
-            self.tables.append(DataTable(itable))
+            self.tables.append(dtable.DashDataTable(itable))
 
         # Get display name for each interactive element and associate it with the
         # element id
@@ -192,7 +173,7 @@ class DashView(View):
                 presenter_id = presenter_table_ids[ui_id]
                 # Add the updated data for the table to the list of data_table data
                 new_table_data.append(
-                    df_to_dict(self.presenter.data_tables[presenter_id].df)
+                    dtable.df_to_dict(self.presenter.data_tables[presenter_id].df)
                 )
 
             # Update FilterChecklists
@@ -223,7 +204,7 @@ class DashView(View):
                 presenter_id = presenter_plot_ids[ui_id]
                 # Add the updated data for the plot to the list of piechart data
                 new_piechart_data.append(
-                    PieChart(self.presenter.graphs[presenter_id]).build().figure
+                    fig.DashPieChart(self.presenter.graphs[presenter_id]).build().figure
                 )
             new_bargraph_data = []
             for iplot in outputs_list[3]:
@@ -233,7 +214,7 @@ class DashView(View):
                 presenter_id = presenter_plot_ids[ui_id]
                 # Add the updated data for the plot to the list of piechart data
                 new_bargraph_data.append(
-                    BarGraph(self.presenter.graphs[presenter_id]).build().figure
+                    fig.DashBarGraph(self.presenter.graphs[presenter_id]).build().figure
                 )
             new_scatterplot_data = []
             for iplot in outputs_list[4]:
@@ -243,7 +224,7 @@ class DashView(View):
                 presenter_id = presenter_plot_ids[ui_id]
                 # Add the updated data for the plot to the list of scatterplot data
                 new_scatterplot_data.append(
-                    ScatterPlot(self.presenter.graphs[presenter_id]).build().figure
+                    fig.DashScatterPlot(self.presenter.graphs[presenter_id]).build().figure
                 )
 
             # Return new UI stuff:
@@ -267,289 +248,3 @@ class DashView(View):
 
             self.build()
             self.app.run_server(debug=False)
-
-
-class UiElement:
-    """General class for all UI elements"""
-
-    def __init__(self, UIelement=[]):
-        """Assign an identifier to the new element
-
-        Args:
-            UIelement (structure, optional): use this to manually define the ID for an
-            element by providing some kind of structure with an "id" field that can be
-            accessed by UIelement.id. Defaults to [], to auto-generate an ID.
-        """
-        # Set ID of element
-        if hasattr(UIelement, "id"):
-            self.id = {"index": UIelement.id, "type": "undefined"}
-        else:
-            self.id = {"index": str(uuid.uuid4()), "type": "undefined"}
-
-    def build(self):
-        # Create the element
-        pass
-
-
-class FilterChecklist(UiElement):
-    """Checklist containing filter criteria"""
-
-    def __init__(self, filter_checklist_object):
-        """Get and store checklist options and other properties
-
-        Args:
-            filter_checklist_object (FilterChecklist from Presenter module): title and
-            options for the checklist
-        """
-        super().__init__(filter_checklist_object)
-
-        # Set type of UI element
-        self.id["type"] = "FilterChecklist"
-
-        # Duplicate fields from filter_checklist_object [there's got to be a nicer way
-        # to do this]
-        self.checklist_options = filter_checklist_object.checklist_options
-        self.display_name = filter_checklist_object.display_name
-        self.title = filter_checklist_object.title
-
-    def build(self):
-        """Build checklist for the user interface
-
-        Returns:
-            html.Div containing checklist title and options
-        """
-
-        # Build the checklist elements
-        return html.Div(
-            children=[
-                html.Div(children=self.title),
-                html.Div(
-                    children=dcc.Checklist(
-                        options=self.checklist_options,
-                        value=[],
-                        id=self.id,
-                        labelStyle={"display": "block"},
-                    )
-                ),
-            ]
-        )
-
-    def update(self, new_values):
-        """Update checklist"""
-        self.values = new_values
-
-
-class DataFigure(UiElement):
-    """General class for figures"""
-
-    def __init__(self, UIelement):
-        """Set the type property of the data figure
-
-        Args:
-            UIelement (the appropriate DataFigure class from the Presenter module):
-            contains all information required to build the figure
-        """
-        super().__init__(UIelement)
-        # Set type of UI element
-        self.id["type"] = "DataFigure"
-
-
-class PieChart(DataFigure):
-    """Create pie chart"""
-
-    def __init__(self, graph_object):
-        """Get and store figure options and other properties
-
-        Args:
-            graph_object (PieChart class from Presenter module): title and options for
-            the graph
-        """
-        super().__init__(graph_object)
-
-        # Set type of UI element
-        self.id["type"] = "PieChart"
-
-        # Duplicate fields from graph_object [there's got to be a nicer way to do this]
-        self.col_to_plot = graph_object.col_to_plot
-        self.display_name = self.col_to_plot
-        self.df = graph_object.df
-        self.graph_type = graph_object.graph_type
-        self.title = graph_object.title
-
-    def build(self):
-        """Build plot for user interface
-
-        Returns:
-            dcc.Graph: Dash pie graph
-        """
-
-        return dcc.Graph(
-            id=self.id,
-            figure=px.pie(
-                data_frame=self.df,
-                names=list(self.df.columns.values)[0],
-                title=self.title,
-            ),
-        )
-
-
-class BarGraph(DataFigure):
-    """Create bar graph"""
-
-    def __init__(self, graph_object):
-        """Get and store figure options and other properties
-
-        Args:
-            graph_object (BarGraph class from Presenter module): title and options for
-            the graph
-        """
-        super().__init__(graph_object)
-
-        # Set type of UI element
-        self.id["type"] = "BarGraph"
-
-        # Duplicate fields from graph_object [there's got to be a nicer way to do this]
-        self.col_to_plot = graph_object.col_to_plot
-        self.display_name = self.col_to_plot
-        self.df = graph_object.df
-        self.graph_type = graph_object.graph_type
-        self.title = graph_object.title
-
-    def build(self):
-        """Build plot for user interface
-
-        Returns:
-            dcc.Graph: Dash histogram
-        """
-
-        return dcc.Graph(
-            id=self.id,
-            figure=px.histogram(
-                data_frame=self.df,
-                x=self.col_to_plot,
-                title=self.title,
-            ),
-        )
-
-
-class ScatterPlot(DataFigure):
-    """Scatterplot figure"""
-
-    def __init__(self, graph_object):
-        """Get and store figure options and other properties
-
-        Args:
-            graph_object (ScatterPlot class from Presenter module): title and options for
-            the graph
-        """
-        super().__init__(graph_object)
-
-        # Set type of UI element
-        self.id["type"] = "ScatterPlot"
-
-        # Duplicate fields from graph_object [there's got to be a nicer way to do this]
-        self.col_to_plot = graph_object.col_to_plot
-        self.display_name = self.col_to_plot
-        self.df = graph_object.df
-        self.graph_type = graph_object.graph_type
-        self.title = graph_object.title
-
-    def build(self):
-        """Build plot for user interface
-
-        Returns:
-            dcc.Graph: Dash scatter plot
-        """
-
-        scatter_plot = dcc.Graph(
-            id=self.id,
-            figure=px.scatter(
-                data_frame=self.df,
-                x=self.col_to_plot[1],
-                y=self.col_to_plot[0],
-                # names = list(self.df.columns.values)[0],
-                title=self.title,
-            ),
-        )
-
-        # Update selection mode to avoid the error:
-        #   unrecognized GUI edit: selections[0].xref
-        # Otherwise, after selecting points in a dataframe, there is an error
-        # (use the inspector in the browser to see the error) on plotly.js
-        # versions 2.13.2 and 2.13.3.
-        # https://github.com/plotly/react-plotly.js/issues/290
-        # Here is a list of plotly versions and which version of plotly.js
-        # they use:
-        # https://github.com/plotly/plotly.py/releases
-        # I got the error in plotly v5.11.0, 5.13.1, 5.9.0, and 5.8.2.
-        # The error only occurs if the scatterplot data is updated as an output
-        # after selecting points from the scatterplot, not if the points are updated
-        # after selecting via checkboxes or pie graphs.
-        scatter_plot.figure.update_layout(
-            newselection_mode="gradual",
-        )
-
-        return scatter_plot
-
-
-class DataTable(UiElement):
-    """Class for data tables"""
-
-    def __init__(self, prettydatatable_object):
-        """Get and store data table options and other properties
-
-        Args:
-            graph_object (BarGraph class from Presenter module): title and options for
-            the graph
-        """
-        super().__init__(prettydatatable_object)
-
-        # Set type of UI element
-        self.id["type"] = "DataTable"
-
-        # Duplicate fields from prettydatatable_object
-        self.df = prettydatatable_object.df
-
-    def build(self):
-        """Build table for user interface
-
-        Returns:
-            dash_table.DataTable: Dash DataTable
-        """
-        return dash_table.DataTable(
-            id=self.id,
-            data=df_to_dict(self.df),
-        )
-
-
-def df_to_dict(df):
-    """Convert dataframe to the data format that Dash wants for a DataTable
-
-    Args:
-        df (dataframe): data to be shown in DataTable
-    """
-    return df.to_dict("records")
-
-
-class ResetButton(UiElement):
-    """Button to clear all filter criteria"""
-
-    def __init__(self):
-        """Set type of UI element, so it's compatible with other UI elements"""
-        super().__init__()
-        # Set type of UI element
-        self.id["type"] = "ResetButton"
-
-    def build(self):
-        """Build plot for user interface
-
-        Returns:
-            html.Div containing button
-        """
-
-        # Build the button
-        return html.Div(
-            children=[
-                html.Button("Reset", id=self.id, n_clicks=0),
-            ]
-        )
