@@ -1,4 +1,4 @@
-"""Class and functions to create all objects that are visualized in a user interface"""
+"""Class and functions to format core information in preparation for making UI objects"""
 
 import uuid
 
