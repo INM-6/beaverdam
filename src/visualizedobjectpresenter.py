@@ -3,7 +3,7 @@
 import uuid
 
 
-class VisualizedObject:
+class VisualizedObjectPresenter:
     """General class for all output objects to visualize search results"""
 
     def __init__(self):

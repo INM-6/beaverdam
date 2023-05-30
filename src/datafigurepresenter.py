@@ -1,9 +1,9 @@
 """Information to create plots and figures in a user interface"""
 
-import visualized_object
+import visualizedobjectpresenter
 
 
-class DataFigure(visualized_object.VisualizedObject):
+class DataFigurePresenter(visualizedobjectpresenter.VisualizedObjectPresenter):
     """Store information to generate figures"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
@@ -38,7 +38,7 @@ class DataFigure(visualized_object.VisualizedObject):
         self.col_to_plot = col_to_plot
 
         # Filter dataframe
-        self.df = visualized_object.remove_unselected_rows(data_table)
+        self.df = visualizedobjectpresenter.remove_unselected_rows(data_table)
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(col_to_plot) > 0:
@@ -52,7 +52,7 @@ class DataFigure(visualized_object.VisualizedObject):
 
         # Rename columns
         self.col_labels = col_labels
-        self.df = visualized_object.rename_df_columns(self.df, self.col_labels)
+        self.df = visualizedobjectpresenter.rename_df_columns(self.df, self.col_labels)
 
         # Set title
         self.title = title
@@ -65,7 +65,7 @@ class DataFigure(visualized_object.VisualizedObject):
             and their selection states
         """
         # Filter dataframe
-        self.df = visualized_object.remove_unselected_rows(data_table)
+        self.df = visualizedobjectpresenter.remove_unselected_rows(data_table)
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
         if len(self.col_to_plot) > 0:
@@ -74,10 +74,10 @@ class DataFigure(visualized_object.VisualizedObject):
             pass
 
         # Rename columns
-        self.df = visualized_object.rename_df_columns(self.df, self.col_labels)
+        self.df = visualizedobjectpresenter.rename_df_columns(self.df, self.col_labels)
 
 
-class PieChart(DataFigure):
+class PieChartPresenter(DataFigurePresenter):
     """Store information to generate pie charts"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
@@ -96,7 +96,7 @@ class PieChart(DataFigure):
         self.graph_type = "pie"
 
 
-class BarGraph(DataFigure):
+class BarGraphPresenter(DataFigurePresenter):
     """Store information to generate bar graphs"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
@@ -115,7 +115,7 @@ class BarGraph(DataFigure):
         self.graph_type = "bar"
 
 
-class ScatterPlot(DataFigure):
+class ScatterPlotPresenter(DataFigurePresenter):
     """Store information to generate scatter plots"""
 
     def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
