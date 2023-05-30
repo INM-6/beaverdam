@@ -10,9 +10,9 @@ class DataFigurePresenter(vobj.VisualizedObjectPresenter):
         """Store information to plot a figure from data
 
         Args:
-            data_table (DataTable): object with data_table.df containing the dataframe
-            with data to plot, and data_table.selection_state_column_names giving the
-            name of the column indicating the selection state of each row
+            data_table (DataTableCore): object with data_table.df containing the
+            dataframe with data to plot, and data_table.selection_state_column_names
+            giving the name of the column indicating the selection state of each row
             col_to_plot (string or list of strings matching dataframe column labels):
             which columns of the dataframe contain data to plot
             col_labels (dict, optional): labels to use for each column of data, if you
@@ -61,8 +61,8 @@ class DataFigurePresenter(vobj.VisualizedObjectPresenter):
         """Update figure to reflect the current selection state of backend data
 
         Args:
-            data_table (DataTable): backend data table containing all rows and columns
-            and their selection states
+            data_table (DataTableCore): backend data table containing all rows and
+            columns and their selection states
         """
         # Filter dataframe
         self.df = vobj.remove_unselected_rows(data_table)
@@ -85,7 +85,7 @@ class PieChartPresenter(DataFigurePresenter):
         Optionally include information for custom title, labels, etc.
 
         Args:
-            data_table (DataTable): backend data table containing data to plot
+            data_table (DataTableCore): backend data table containing data to plot
             col_to_plot (list, optional): which columns in the data table to plot.
             Defaults to [].
             col_labels (dict, optional): which labels to display for each plotted
@@ -104,7 +104,7 @@ class BarGraphPresenter(DataFigurePresenter):
         Optionally include information for custom title, labels, etc.
 
         Args:
-            data_table (DataTable): backend data table containing data to plot
+            data_table (DataTableCore): backend data table containing data to plot
             col_to_plot (list, optional): which columns in the data table to plot.
             Defaults to [].
             col_labels (dict, optional): which labels to display for each plotted
@@ -123,7 +123,7 @@ class ScatterPlotPresenter(DataFigurePresenter):
         Optionally include information for custom title, labels, etc.
 
         Args:
-            data_table (DataTable): backend data table containing data to plot
+            data_table (DataTableCore): backend data table containing data to plot
             col_to_plot (list, optional): which columns in the data table to plot.
             Defaults to [].
             col_labels (dict, optional): which labels to display for each plotted
