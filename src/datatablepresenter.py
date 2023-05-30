@@ -1,9 +1,9 @@
 """Information to create data tables in a user interface"""
 
-import visualizedobjectpresenter
+import visualizedobjectpresenter as vobj
 
 
-class DataTablePresenter(visualizedobjectpresenter.VisualizedObjectPresenter):
+class DataTablePresenter(vobj.VisualizedObjectPresenter):
     """Store data to display in a table"""
 
     def __init__(self, data_table, new_column_names={}):
@@ -34,9 +34,9 @@ class DataTablePresenter(visualizedobjectpresenter.VisualizedObjectPresenter):
             column names.
         """
         # Remove rows that won't be shown in data table
-        self.df = visualizedobjectpresenter.remove_unselected_rows(data_table)
+        self.df = vobj.remove_unselected_rows(data_table)
         # Rename columns to human-readable names
-        self.df = visualizedobjectpresenter.rename_df_columns(self.df, new_column_names)
+        self.df = vobj.rename_df_columns(self.df, new_column_names)
 
     def update(self, data_table, new_column_names={}):
         """Update frontend table to reflect current selection state of backend data
@@ -49,6 +49,6 @@ class DataTablePresenter(visualizedobjectpresenter.VisualizedObjectPresenter):
             column names.
         """
         # Remove rows that won't be shown in data table
-        self.df = visualizedobjectpresenter.remove_unselected_rows(data_table)
+        self.df = vobj.remove_unselected_rows(data_table)
         # Rename columns to human-readable names
-        self.df = visualizedobjectpresenter.rename_df_columns(self.df, new_column_names)
+        self.df = vobj.rename_df_columns(self.df, new_column_names)

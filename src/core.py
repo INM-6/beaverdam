@@ -4,8 +4,8 @@
 :licence:
 """
 
-import metadatasource
-import datatablecore
+import metadatasource as datasource
+import datatablecore as datatable
 
 
 class Core:
@@ -22,13 +22,13 @@ class Core:
         """
 
         # Define database info
-        self.db = metadatasource.MongoDbDatabase(cfg["database"])
+        self.db = datasource.MongoDbDatabase(cfg["database"])
         # Store information about fields to query and their display names
         # keys = display names, vals = access information for database (e.g. location)
         self.db.set_fields(cfg["fields"])
 
         # Query database for data table
-        data_table = datatablecore.DataTableCore(self.db.query({}, list(self.db.fields.keys())))
+        data_table = datatable.DataTableCore(self.db.query({}, list(self.db.fields.keys())))
         # Initialize filter options
         data_table.set_filter({})
         # Store data table

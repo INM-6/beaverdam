@@ -1,9 +1,9 @@
 """Prepare data for visualization
 """
 
-import datatablepresenter
-import datafigurepresenter
-import filterchecklistpresenter
+import datatablepresenter as datatable
+import datafigurepresenter as datafigure
+import filterchecklistpresenter as checklist
 
 
 class Presenter:
@@ -41,14 +41,14 @@ class Presenter:
         """Assemble all information for user interface, e.g. plots, filters, data tables"""
 
         # Make data table
-        self.data_tables = [datatablepresenter.DataTablePresenter(self.core.data_table)]
+        self.data_tables = [datatable.DataTablePresenter(self.core.data_table)]
 
         # Make graphs
         self.graphs = []
         for plot_info in self.cfg["plots"].values():
             if plot_info["plot_type"] == "pie":
                 self.graphs.append(
-                    datafigurepresenter
+                    datafigure
                 .PieChartPresenter(
                         data_table=self.core.data_table,
                         col_to_plot=plot_info["data_field"],
@@ -57,7 +57,7 @@ class Presenter:
                 )
             elif plot_info["plot_type"] == "bar":
                 self.graphs.append(
-                    datafigurepresenter
+                    datafigure
                 .BarGraphPresenter(
                         data_table=self.core.data_table,
                         col_to_plot=plot_info["data_field"],
@@ -66,7 +66,7 @@ class Presenter:
                 )
             elif plot_info["plot_type"] == "scatter":
                 self.graphs.append(
-                    datafigurepresenter
+                    datafigure
                 .ScatterPlotPresenter(
                         data_table=self.core.data_table,
                         col_to_plot=plot_info["data_field"],
@@ -80,7 +80,7 @@ class Presenter:
         self.checklists = []
         for ichecklist in self.cfg["filters"]["headings"]:
             self.checklists.append(
-                filterchecklistpresenter.FilterChecklistPresenter(
+                checklist.FilterChecklistPresenter(
                     metadata_source=self.core.db, display_name=ichecklist
                 )
             )
