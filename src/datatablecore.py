@@ -3,13 +3,13 @@
 import pandas as pd
 
 
-class DataTable(pd.DataFrame):
+class DataTableCore(pd.DataFrame):
     """Store data and filter criteria, and indicates which data meets the current filter
     criteria"""
 
     def __init__(self, df):
         selection_state_column_name = "selectionState"
-        super(DataTable, self).__init__()
+        super(DataTableCore, self).__init__()
         # Store name of column indicating selection state of rows
         self.selection_state_column_name = selection_state_column_name
         # Check whether there is already a column for specifying whether the row is
