@@ -261,7 +261,7 @@ class DashView(View):
                 new_scatterplot_data,
             ]
 
-    def launch_app(self):
+    def launch_ui(self):
         """Build and run frontend"""
         if __name__ == "view_dash":
 

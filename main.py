@@ -17,7 +17,7 @@ cfg_file_name = "config.toml"
 ## CODE
 
 
-class BeaverApp:
+class BeaverUI:
     """Define and configure modules to be included in the user interface"""
 
     def __init__(self, fp_cfg):
@@ -43,13 +43,13 @@ class BeaverApp:
 
     def run(self):
         """Launch the user interface"""
-        self.view.launch_app()
+        self.view.launch_ui()
 
 
 def main():
     """Create and run the main application"""
-    app = BeaverApp(cfg_file_name)
-    app.run()
+    user_interface = BeaverUI(cfg_file_name)
+    user_interface.run()
 
 
 main()
