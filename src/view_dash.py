@@ -224,7 +224,9 @@ class DashView(view.View):
                 presenter_id = presenter_plot_ids[ui_id]
                 # Add the updated data for the plot to the list of scatterplot data
                 new_scatterplot_data.append(
-                    fig.DashScatterPlot(self.presenter.graphs[presenter_id]).build().figure
+                    fig.DashScatterPlot(self.presenter.graphs[presenter_id])
+                    .build()
+                    .figure
                 )
 
             # Return new UI stuff:

@@ -28,7 +28,9 @@ class Core:
         self.db.set_fields(cfg["fields"])
 
         # Query database for data table
-        data_table = datatable.DataTableCore(self.db.query({}, list(self.db.fields.keys())))
+        data_table = datatable.DataTableCore(
+            self.db.query({}, list(self.db.fields.keys()))
+        )
         # Initialize filter options
         data_table.set_filter({})
         # Store data table

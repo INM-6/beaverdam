@@ -3,6 +3,7 @@
 import resetbutton as resetbutton
 from dash import html
 
+
 class DashResetButton(resetbutton.ResetButton):
     """Button to clear all filter criteria"""
 

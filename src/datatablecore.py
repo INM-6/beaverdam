@@ -138,9 +138,7 @@ class DataTableCore(pd.DataFrame):
         # Drop any unselected rows.  Use the default of inplace=False so that df.drop
         # returns a new dataframe rather than modifying the original dataframe.
         filtered_df = self.df.drop(
-            self.df[
-                self.df[self.selection_state_column_name] == False
-            ].index
+            self.df[self.df[self.selection_state_column_name] == False].index
         )
         # Remove column denoting selection state.  Use inplace=True so that df.drop
         # modifies the dataframe it's called on, rather than returning a new dataframe.

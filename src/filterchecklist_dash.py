@@ -3,6 +3,7 @@
 import filterchecklist as filterchecklist
 from dash import dcc, html
 
+
 class DashFilterChecklist(filterchecklist.FilterChecklist):
     """Checklist containing filter criteria"""
 

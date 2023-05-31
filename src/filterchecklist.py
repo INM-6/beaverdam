@@ -2,6 +2,7 @@
 
 import uielement as uielement
 
+
 class FilterChecklist(uielement.UiElement):
     """Checklist containing filter criteria"""
 

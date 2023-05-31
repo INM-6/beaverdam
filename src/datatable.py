@@ -2,6 +2,7 @@
 
 import uielement as uielement
 
+
 class DataTable(uielement.UiElement):
     """Class for data tables"""
 

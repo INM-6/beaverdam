@@ -2,6 +2,7 @@
 
 import uielement as uielement
 
+
 class ResetButton(uielement.UiElement):
     """Button to clear all filter criteria"""
 

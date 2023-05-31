@@ -43,22 +43,6 @@ class PieChart(DataFigure):
         self.graph_type = graph_object.graph_type
         self.title = graph_object.title
 
-    # def build(self):
-    #     """Build plot for user interface
-
-    #     Returns:
-    #         dcc.Graph: Dash pie graph
-    #     """
-
-    #     return dcc.Graph(
-    #         id=self.id,
-    #         figure=px.pie(
-    #             data_frame=self.df,
-    #             names=list(self.df.columns.values)[0],
-    #             title=self.title,
-    #         ),
-    #     )
-
 
 class BarGraph(DataFigure):
     """Create bar graph"""
@@ -82,22 +66,6 @@ class BarGraph(DataFigure):
         self.graph_type = graph_object.graph_type
         self.title = graph_object.title
 
-    # def build(self):
-    #     """Build plot for user interface
-
-    #     Returns:
-    #         dcc.Graph: Dash histogram
-    #     """
-
-    #     return dcc.Graph(
-    #         id=self.id,
-    #         figure=px.histogram(
-    #             data_frame=self.df,
-    #             x=self.col_to_plot,
-    #             title=self.title,
-    #         ),
-    #     )
-
 
 class ScatterPlot(DataFigure):
     """Scatterplot figure"""
@@ -120,40 +88,3 @@ class ScatterPlot(DataFigure):
         self.df = graph_object.df
         self.graph_type = graph_object.graph_type
         self.title = graph_object.title
-
-    # def build(self):
-    #     """Build plot for user interface
-
-    #     Returns:
-    #         dcc.Graph: Dash scatter plot
-    #     """
-
-    #     scatter_plot = dcc.Graph(
-    #         id=self.id,
-    #         figure=px.scatter(
-    #             data_frame=self.df,
-    #             x=self.col_to_plot[1],
-    #             y=self.col_to_plot[0],
-    #             # names = list(self.df.columns.values)[0],
-    #             title=self.title,
-    #         ),
-    #     )
-
-    #     # Update selection mode to avoid the error:
-    #     #   unrecognized GUI edit: selections[0].xref
-    #     # Otherwise, after selecting points in a dataframe, there is an error
-    #     # (use the inspector in the browser to see the error) on plotly.js
-    #     # versions 2.13.2 and 2.13.3.
-    #     # https://github.com/plotly/react-plotly.js/issues/290
-    #     # Here is a list of plotly versions and which version of plotly.js
-    #     # they use:
-    #     # https://github.com/plotly/plotly.py/releases
-    #     # I got the error in plotly v5.11.0, 5.13.1, 5.9.0, and 5.8.2.
-    #     # The error only occurs if the scatterplot data is updated as an output
-    #     # after selecting points from the scatterplot, not if the points are updated
-    #     # after selecting via checkboxes or pie graphs.
-    #     scatter_plot.figure.update_layout(
-    #         newselection_mode="gradual",
-    #     )
-
-    #     return scatter_plot

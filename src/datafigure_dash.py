@@ -4,6 +4,7 @@ import datafigure as fig
 from dash import dcc
 import plotly.express as px
 
+
 class DashPieChart(fig.PieChart):
     """Create pie chart"""
 

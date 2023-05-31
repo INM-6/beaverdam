@@ -48,8 +48,7 @@ class Presenter:
         for plot_info in self.cfg["plots"].values():
             if plot_info["plot_type"] == "pie":
                 self.graphs.append(
-                    datafigure
-                .PieChartPresenter(
+                    datafigure.PieChartPresenter(
                         data_table=self.core.data_table,
                         col_to_plot=plot_info["data_field"],
                         title=plot_info["data_field"],
@@ -57,8 +56,7 @@ class Presenter:
                 )
             elif plot_info["plot_type"] == "bar":
                 self.graphs.append(
-                    datafigure
-                .BarGraphPresenter(
+                    datafigure.BarGraphPresenter(
                         data_table=self.core.data_table,
                         col_to_plot=plot_info["data_field"],
                         title=plot_info["data_field"],
@@ -66,8 +64,7 @@ class Presenter:
                 )
             elif plot_info["plot_type"] == "scatter":
                 self.graphs.append(
-                    datafigure
-                .ScatterPlotPresenter(
+                    datafigure.ScatterPlotPresenter(
                         data_table=self.core.data_table,
                         col_to_plot=plot_info["data_field"],
                         title=plot_info["data_field"],

@@ -1,5 +1,6 @@
 import uuid
 
+
 class UiElement:
     """General class for all UI elements"""
 
