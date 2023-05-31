@@ -54,15 +54,45 @@ class DashView(view.View):
         for iplot in self.plots:
             self.component_display_names[iplot.id["index"]] = iplot.display_name
 
+        # Styles
+        SIDEBAR_STYLE = {
+            "position": "fixed",
+            "top": 0,
+            "left": 0,
+            "bottom": 0,
+            "width": "16rem",
+            "padding": "2rem 1rem",
+            "background-color": "#f8f9fa",
+        }
+        CONTENT_STYLE = {
+            "margin-left": "18rem",
+            "margin-right": "2rem",
+            "padding": "2rem 1rem",
+        }
+
         # Assemble UI elements into user interface
         UIelements = []
-        UIelements.append(self.resetbutton.build())
+        sidebar_elements = []
+        mainpanel_elements = []
+        sidebar_elements.append(self.resetbutton.build())
         for ichecklist in self.checklists:
-            UIelements.append(ichecklist.build())
+            sidebar_elements.append(ichecklist.build())
         for iplot in self.plots:
-            UIelements.append(iplot.build())
+            mainpanel_elements.append(iplot.build())
         for itable in self.tables:
-            UIelements.append(itable.build())
+            mainpanel_elements.append(itable.build())
+        UIelements = html.Div(
+            [
+            html.Div(
+                sidebar_elements,
+                style = SIDEBAR_STYLE,
+            ),
+            html.Div(
+                mainpanel_elements,
+                style = CONTENT_STYLE,
+            ),
+            ]
+        )
         self.app.layout = html.Div(UIelements)
 
         # Assign callbacks to UI
