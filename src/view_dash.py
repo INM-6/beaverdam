@@ -84,8 +84,9 @@ class DashView(view.View):
                                 sidebar_elements,
                             ),
                             md=1,
-                            style={#"background-color": "#ffff00",
-                                   "overflow-wrap": "break-word"},
+                            style={  # "background-color": "#ffff00",
+                                "overflow-wrap": "break-word"
+                            },
                         ),
                         dbc.Col(
                             html.Div(
