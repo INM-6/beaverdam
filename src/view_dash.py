@@ -6,6 +6,7 @@ import filterchecklist_dash as checklist
 import datatable_dash as dtable
 import resetbutton_dash as resetbutton
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
+import dash_bootstrap_components as dbc
 
 
 class DashView(view.View):
@@ -19,7 +20,7 @@ class DashView(view.View):
         """Define Dash as a frontend"""
         super().__init__()
 
-        self.app = Dash(__name__)
+        self.app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
     def build(self):
         """Create and assemble all elements for user interface; load callback functions"""
@@ -54,26 +55,11 @@ class DashView(view.View):
         for iplot in self.plots:
             self.component_display_names[iplot.id["index"]] = iplot.display_name
 
-        # Styles
-        SIDEBAR_STYLE = {
-            "position": "fixed",
-            "top": 0,
-            "left": 0,
-            "bottom": 0,
-            "width": "16rem",
-            "padding": "2rem 1rem",
-            "background-color": "#f8f9fa",
-        }
-        CONTENT_STYLE = {
-            "margin-left": "18rem",
-            "margin-right": "2rem",
-            "padding": "2rem 1rem",
-        }
-
         # Assemble UI elements into user interface
-        UIelements = []
+        topbar_elements = []
         sidebar_elements = []
         mainpanel_elements = []
+        topbar_elements.append(html.Div(html.H1("Beaverdam")))
         sidebar_elements.append(self.resetbutton.build())
         for ichecklist in self.checklists:
             sidebar_elements.append(ichecklist.build())
@@ -81,19 +67,38 @@ class DashView(view.View):
             mainpanel_elements.append(iplot.build())
         for itable in self.tables:
             mainpanel_elements.append(itable.build())
-        UIelements = html.Div(
+        self.app.layout = dbc.Container(
             [
-            html.Div(
-                sidebar_elements,
-                style = SIDEBAR_STYLE,
-            ),
-            html.Div(
-                mainpanel_elements,
-                style = CONTENT_STYLE,
-            ),
-            ]
+                dbc.Row(
+                    dbc.Col(
+                        html.Div(
+                            topbar_elements,
+                        ),
+                        # style={"background-color": "#ff0000",},
+                    ),
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            html.Div(
+                                sidebar_elements,
+                            ),
+                            md=1,
+                            style={#"background-color": "#ffff00",
+                                   "overflow-wrap": "break-word"},
+                        ),
+                        dbc.Col(
+                            html.Div(
+                                mainpanel_elements,
+                            ),
+                            md=11,
+                            # style={"background-color": "#0ff000",},
+                        ),
+                    ],
+                ),
+            ],
+            fluid=True,
         )
-        self.app.layout = html.Div(UIelements)
 
         # Assign callbacks to UI
         self.register_callbacks()

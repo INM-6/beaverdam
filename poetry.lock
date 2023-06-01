@@ -95,6 +95,20 @@ diskcache = ["diskcache (>=5.2.1)", "multiprocess (>=0.70.12)", "psutil (>=5.8.0
 testing = ["beautifulsoup4 (>=4.8.2)", "lxml (>=4.6.2)", "percy (>=2.0.2)", "pytest (>=6.0.2)", "requests[security] (>=2.21.0)", "selenium (>=3.141.0,<=4.2.0)", "waitress (>=1.4.4)", "multiprocess (>=0.70.12)", "psutil (>=5.8.0)", "dash-testing-stub (>=0.0.2)", "cryptography (<3.4)"]
 
 [[package]]
+name = "dash-bootstrap-components"
+version = "1.4.1"
+description = "Bootstrap themed components for use in Plotly Dash"
+category = "main"
+optional = false
+python-versions = ">=3.7, <4"
+
+[package.dependencies]
+dash = ">=2.0.0"
+
+[package.extras]
+pandas = ["numpy", "pandas"]
+
+[[package]]
 name = "dash-core-components"
 version = "2.0.0"
 description = "Core component suite for Dash"
@@ -483,7 +497,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "ff07fdac67e272470a593f74cada96d2fa6d316cd4cbb2bc50f2c844000820c8"
+content-hash = "8e0dfa8f4fa1f7608702481aedfa7a9e4631f64914dd41900b31b01a524adbd0"
 
 [metadata.files]
 atomicwrites = [
@@ -522,6 +536,10 @@ colorama = [
 dash = [
     {file = "dash-2.9.1-py3-none-any.whl", hash = "sha256:714c9ee2a972b0157b4d3f7dc111b3d77d49916d7e851c0c8318d0030706b2e9"},
     {file = "dash-2.9.1.tar.gz", hash = "sha256:92838be734ffb4b42a09bbc1b721a5a47b019606a02a76f8e1f0f578dead9786"},
+]
+dash-bootstrap-components = [
+    {file = "dash-bootstrap-components-1.4.1.tar.gz", hash = "sha256:05c2e2767a8ab104fc950d15482d09dde59d21f1e9bd5809d30672e61b7f420c"},
+    {file = "dash_bootstrap_components-1.4.1-py3-none-any.whl", hash = "sha256:17c9e6b90ff27abd3fbd6fe54ea85987b155414a247010467ec904406dcd3657"},
 ]
 dash-core-components = [
     {file = "dash_core_components-2.0.0-py3-none-any.whl", hash = "sha256:52b8e8cce13b18d0802ee3acbc5e888cb1248a04968f962d63d070400af2e346"},
