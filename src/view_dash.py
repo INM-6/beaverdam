@@ -56,6 +56,7 @@ class DashView(view.View):
             self.component_display_names[iplot.id["index"]] = iplot.display_name
 
         # Assemble UI elements into user interface
+        is_fluid = True # whether or not the page should be fluid (True) or have dash-bootstrap width (False)
         topbar_elements = []
         sidebar_elements = []
         mainpanel_elements = []
@@ -69,13 +70,15 @@ class DashView(view.View):
             mainpanel_elements.append(itable.build())
         self.app.layout = dbc.Container(
             [
-                dbc.Row(
-                    dbc.Col(
-                        html.Div(
+                dbc.Navbar(
+                    dbc.Container(
+                        dbc.Row(
                             topbar_elements,
                         ),
-                        # style={"background-color": "#ff0000",},
+                        # style={"background-color": "#ff0000"},
+                        fluid=is_fluid,
                     ),
+                    sticky="top",
                 ),
                 dbc.Row(
                     [
@@ -85,7 +88,7 @@ class DashView(view.View):
                             ),
                             md=1,
                             style={  # "background-color": "#ffff00",
-                                "overflow-wrap": "break-word"
+                                "overflow-wrap": "break-word",
                             },
                         ),
                         dbc.Col(
@@ -98,7 +101,7 @@ class DashView(view.View):
                     ],
                 ),
             ],
-            fluid=True,
+            fluid=is_fluid,
         )
 
         # Assign callbacks to UI
