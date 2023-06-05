@@ -56,7 +56,8 @@ class DashView(view.View):
             self.component_display_names[iplot.id["index"]] = iplot.display_name
 
         # Assemble UI elements into user interface
-        is_fluid = True # whether or not the page should be fluid (True) or have dash-bootstrap width (False)
+        is_page_fluid = True
+        header_height = "56px"
         topbar_elements = []
         sidebar_elements = []
         mainpanel_elements = []
@@ -71,37 +72,40 @@ class DashView(view.View):
         self.app.layout = dbc.Container(
             [
                 dbc.Navbar(
-                    dbc.Container(
-                        dbc.Row(
-                            topbar_elements,
-                        ),
-                        # style={"background-color": "#ff0000"},
-                        fluid=is_fluid,
-                    ),
+                        topbar_elements,
+                        style={#"background-color": "#ff0000"
+                            "height": header_height,
+                            },
                     sticky="top",
                 ),
                 dbc.Row(
                     [
                         dbc.Col(
-                            html.Div(
+                            dbc.Nav(
                                 sidebar_elements,
+                                vertical="md",
                             ),
-                            md=1,
-                            style={  # "background-color": "#ffff00",
-                                "overflow-wrap": "break-word",
+                            md=2,
+                            style={#"background-color": "#ffff00",
+                                "position": "sticky",
+                                "top": header_height,
+                                "height": "calc(100vh - " + header_height + ")",
+                                "overflow-y": "scroll",
+                                "overflow-wrap": "break-all",
                             },
                         ),
                         dbc.Col(
                             html.Div(
                                 mainpanel_elements,
                             ),
-                            md=11,
-                            # style={"background-color": "#0ff000",},
+                            md=10,
+                            style={#"background-color": "#0ff000",
+                                   },
                         ),
                     ],
                 ),
             ],
-            fluid=is_fluid,
+            fluid=is_page_fluid,
         )
 
         # Assign callbacks to UI
