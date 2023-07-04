@@ -1,10 +1,6 @@
 """Builds a user interface using Dash"""
 
 import view as view
-import datafigure_dash as fig
-import filterchecklist_dash as checklist
-import datatable_dash as dtable
-import resetbutton_dash as resetbutton
 import builduielements_dash as buildui
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc
@@ -62,22 +58,16 @@ class DashView(view.View):
                 igraph = []
                 if element_style == "pie":
                     igraph = buildui.build_pie_chart(
-                        # id=element_id,
-                        # element_type=element_type,
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
                 elif element_style == "bar":
                     igraph = buildui.build_bar_graph(
-                        # id=element_id,
-                        # element_type=element_type,
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
                 elif element_style == "scatter":
                     igraph = buildui.build_scatter_plot(
-                        # id=element_id,
-                        # element_type=element_type,
                         data=element_contents["df"],
                         title=" vs. ".join(element_contents["title"]),
                     )
@@ -85,15 +75,7 @@ class DashView(view.View):
                 ielement = buildui.build_data_figure(
                     graph_object=igraph, id=element_id, element_type=element_type
                 )
-                figure_elements.append(
-                    ielement
-                    # buildui.build_graph(
-                    #     id=element_id,
-                    #     data=element_contents["df"],
-                    #     style=graph_style,
-                    #     title=element_contents["title"],
-                    # )
-                )
+                figure_elements.append(ielement)
 
         # Assemble elements into the different UI panels
         # list1.extend(list2) and list1 += list2 are equivalent:
@@ -106,17 +88,13 @@ class DashView(view.View):
         sidebar_elements.extend(checklist_elements)
         mainpanel_elements.extend(figure_elements)
         mainpanel_elements.extend(datatable_elements)
-        # for ichecklist in self.presenter.checklists:
-        #     sidebar_elements.append(buildui.build_filter_checklist(ichecklist))
-        # for iplot in self.presenter.graphs:
-        #     mainpanel_elements.append(buildui.build_graph(iplot))
-        # for itable in self.presenter.data_tables:
-        #     mainpanel_elements.append(buildui.build_data_table(itable))
+
+        # Build user interface
         self.app.layout = dbc.Container(
             [
                 dbc.Navbar(
                     topbar_elements,
-                    style={  # "background-color": "#ff0000"
+                    style={
                         "height": header_height,
                     },
                     sticky="top",
@@ -129,7 +107,7 @@ class DashView(view.View):
                                 vertical="md",
                             ),
                             md=2,
-                            style={  # "background-color": "#ffff00",
+                            style={
                                 "position": "sticky",
                                 "top": header_height,
                                 "height": "calc(100vh - " + header_height + ")",
@@ -142,7 +120,7 @@ class DashView(view.View):
                                 mainpanel_elements,
                             ),
                             md=10,
-                            style={},  # "background-color": "#0ff000",
+                            style={},
                         ),
                     ],
                 ),
@@ -165,22 +143,13 @@ class DashView(view.View):
             Output({"type": "DataTable", "index": ALL}, "data"),
             Output({"type": "FilterChecklist", "index": ALL}, "value"),
             Output({"type": "DataFigure", "index": ALL}, "figure"),
-            # Output({"type": "BarGraph", "index": ALL}, "figure"),
-            # Output({"type": "ScatterPlot", "index": ALL}, "figure"),
             Input({"type": "ResetButton", "index": ALL}, "n_clicks"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
-            # Input({"type": "PieChart", "index": ALL}, "clickData"),
-            # Input({"type": "BarGraph", "index": ALL}, "clickData"),
-            # Input({"type": "ScatterPlot", "index": ALL}, "selectedData"),
             Input({"type": "DataFigure", "index": ALL}, "clickData"),
             Input({"type": "DataFigure", "index": ALL}, "selectedData"),
         )
         def filter_data(
-            resetButtonClicks,
-            checklistValue,
-            figureClickData,
-            figureSelectedData
-            # values, resetButtonClicks, pieClickData, barClickData, selectionData
+            resetButtonClicks, checklistValue, figureClickData, figureSelectedData
         ):
             # Get id and type of element that was clicked
             triggered_element = ctx.triggered_id
@@ -188,8 +157,7 @@ class DashView(view.View):
             # Get information about each element
             ui_element_info = self.presenter.get_elements()
             # Get information to relate each element ID to its corresponding location in
-            # the list of UI elements in Presenter.  TODO:  change the list of UI
-            # elements in Presenter to a dict, for easier reference.
+            # the list of UI elements in Presenter
             ui_element_ids = [key for key in ui_element_info.keys()]
 
             # On load, ctx.triggered_id is None, and we don't have to filter anyway
@@ -208,22 +176,9 @@ class DashView(view.View):
                     # Some UI elements, e.g. the reset button, don't have a field
                     database_field = ""
 
-                # Get display name, if it exists.
-                # try:
-                #     display_name = self.component_display_names[triggered_element_id]
-                #     # To be consistent, make sure display_name is a list, even if it's only
-                #     # one element
-                #     if isinstance(display_name, str):
-                #         display_name = [display_name]
-                # except:
-                #     pass
-
                 # Get new filter criteria.  How this happens depends on the type of
                 # element that was triggered.
-
                 if triggered_element_type == "ResetButton":
-                    # If the element triggered was the reset button, reset filter
-                    # criteria
                     self.controller.trigger_clear_filter_criteria()
 
                 if triggered_element_type == "FilterChecklist":
@@ -239,8 +194,6 @@ class DashView(view.View):
                         "properties"
                     ]["style"]
                     if triggered_element_style == "pie":
-                        # If the object clicked was a graph, the new filter criteria
-                        # will be a dict of information. Extract the specific criteria.
                         new_filter_criteria = [
                             ctx.triggered[0]["value"]["points"][0]["label"]
                         ]
@@ -248,8 +201,6 @@ class DashView(view.View):
                             {database_field: new_filter_criteria}
                         )
                     elif triggered_element_style == "bar":
-                        # If the object clicked was a graph, the new filter criteria
-                        # will be a dict of information. Extract the specific criteria.
                         new_filter_criteria = [
                             ctx.triggered[0]["value"]["points"][0]["x"]
                         ]
@@ -290,7 +241,8 @@ class DashView(view.View):
                         output_element_id
                     )
                     output_element_type = output_element_properties["type"]
-                    # Get updated data for the element and add it to the appropriate list
+                    # Get updated data for the element and add it to the appropriate
+                    # list
                     presenter_ui_element = self.presenter.ui_elements[
                         ui_element_ids.index(output_element_id)
                     ]
@@ -316,83 +268,6 @@ class DashView(view.View):
                                 buildui.build_scatter_plot(data, title)
                             )
 
-            # Update tables
-            # new_table_data = []
-            # presenter_table_ids = {
-            #     itable.id: idx for idx, itable in enumerate(self.presenter.data_tables)
-            # }
-            # for itable in outputs_list[0]:
-            #     # Get ID of UI table
-            #     ui_id = itable["id"]["index"]
-            #     # Find table in the presenter with the same ID as the UI table
-            #     presenter_id = presenter_table_ids[ui_id]
-            #     # Add the updated data for the table to the list of data_table data
-            #     new_table_data.append(
-            #         buildui.get_data_table_contents(
-            #             self.presenter.data_tables[presenter_id]
-            #         )
-            #         # dtable.df_to_dict(self.presenter.data_tables[presenter_id].df)
-            #     )
-
-            # # Update FilterChecklists
-            # new_checklist_data = []
-            # presenter_checklist_ids = {
-            #     ichecklist.id: idx
-            #     for idx, ichecklist in enumerate(self.presenter.checklists)
-            # }
-            # for ichecklist in outputs_list[1]:
-            #     # Get ID of UI checklist
-            #     ui_id = ichecklist["id"]["index"]
-            #     # Find checklist in the presenter with the same ID as the UI checklist
-            #     presenter_id = presenter_checklist_ids[ui_id]
-            #     # Add the updated data for the checklist to the list of checklist data
-            #     new_checklist_data.append(
-            #         buildui.get_checklist_selection(
-            #             self.presenter.checklists[presenter_id]
-            #         )
-            #         # self.presenter.checklists[presenter_id].selected_options
-            #     )
-
-            # # Update plots
-            # presenter_plot_ids = {
-            #     iplot.id: idx for idx, iplot in enumerate(self.presenter.graphs)
-            # }
-            # new_piechart_data = []
-            # for iplot in outputs_list[2]:
-            #     # Get ID of UI plot
-            #     ui_id = iplot["id"]["index"]
-            #     # Find plot in the presenter with the same ID as the UI plot
-            #     presenter_id = presenter_plot_ids[ui_id]
-            #     # Add the updated data for the plot to the list of piechart data
-            #     new_piechart_data.append(
-            #         buildui.build_figure(self.presenter.graphs[presenter_id])
-            #         # fig.DashPieChart(self.presenter.graphs[presenter_id]).build().figure
-            #     )
-            # new_bargraph_data = []
-            # for iplot in outputs_list[3]:
-            #     # Get ID of UI plot
-            #     ui_id = iplot["id"]["index"]
-            #     # Find plot in the presenter with the same ID as the UI plot
-            #     presenter_id = presenter_plot_ids[ui_id]
-            #     # Add the updated data for the plot to the list of piechart data
-            #     new_bargraph_data.append(
-            #         buildui.build_figure(self.presenter.graphs[presenter_id])
-            #         # fig.DashBarGraph(self.presenter.graphs[presenter_id]).build().figure
-            #     )
-            # new_scatterplot_data = []
-            # for iplot in outputs_list[4]:
-            #     # Get ID of UI plot
-            #     ui_id = iplot["id"]["index"]
-            #     # Find plot in the presenter with the same ID as the UI plot
-            #     presenter_id = presenter_plot_ids[ui_id]
-            #     # Add the updated data for the plot to the list of scatterplot data
-            #     new_scatterplot_data.append(
-            #         buildui.build_figure(self.presenter.graphs[presenter_id])
-            #         # fig.DashScatterPlot(self.presenter.graphs[presenter_id])
-            #         # .build()
-            #         # .figure
-            #     )
-
             # Return new UI stuff:
             # - If ONE Output() is pattern-matching, Dash expects the returned value
             # to be a list containing one list for each of the detected output.
@@ -404,9 +279,6 @@ class DashView(view.View):
                 new_table_data,
                 new_checklist_data,
                 new_figure_data,
-                # new_piechart_data,
-                # new_bargraph_data,
-                # new_scatterplot_data,
             ]
 
     def launch_ui(self):

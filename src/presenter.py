@@ -1,10 +1,6 @@
 """Prepare data for visualization
 """
 
-# import datatablepresenter as datatable
-# import datafigurepresenter as datafigure
-# import filterchecklistpresenter as checklist
-
 import uielement as uielement
 
 
@@ -49,7 +45,6 @@ class Presenter:
         self.ui_elements.append(uielement.DataTable(self.core.data_table))
 
         # Make checklists
-        # self.checklists = []
         for ichecklist in self.cfg["filters"]["headings"]:
             self.ui_elements.append(
                 uielement.FilterChecklist(
@@ -61,7 +56,6 @@ class Presenter:
             )
 
         # Make graphs
-        # self.graphs = []
         for iplot in self.cfg["plots"].values():
             if iplot["plot_type"] == "pie":
                 self.ui_elements.append(
@@ -90,47 +84,6 @@ class Presenter:
             else:
                 pass
 
-        # Make data table
-        # self.data_tables = [datatable.DataTablePresenter(self.core.data_table)]
-
-        # # Make graphs
-        # self.graphs = []
-        # for plot_info in self.cfg["plots"].values():
-        #     if plot_info["plot_type"] == "pie":
-        #         self.graphs.append(
-        #             datafigure.PieChartPresenter(
-        #                 data_table=self.core.data_table,
-        #                 field=plot_info["data_field"],
-        #                 title=plot_info["data_field"],
-        #             )
-        #         )
-        #     elif plot_info["plot_type"] == "bar":
-        #         self.graphs.append(
-        #             datafigure.BarGraphPresenter(
-        #                 data_table=self.core.data_table,
-        #                 field=plot_info["data_field"],
-        #                 title=plot_info["data_field"],
-        #             )
-        #         )
-        #     elif plot_info["plot_type"] == "scatter":
-        #         self.graphs.append(
-        #             datafigure.ScatterPlotPresenter(
-        #                 data_table=self.core.data_table,
-        #                 field=plot_info["data_field"],
-        #                 title=plot_info["data_field"],
-        #             )
-        #         )
-        #     else:
-        #         pass
-
-        # # Make checklists
-        # self.checklists = []
-        # for ichecklist in self.cfg["filters"]["headings"]:
-        #     self.checklists.append(
-        #         checklist.FilterChecklistPresenter(
-        #             metadata_source=self.core.db, field=ichecklist
-        #         )
-        #     )
 
     def update(self):
         """Apply the current filter to all UI elements"""
@@ -150,13 +103,7 @@ class Presenter:
             else:
                 # Element type not defined
                 pass
-        # for itable in self.data_tables:
-        #     itable.update(self.core.data_table)
-        # for igraph in self.graphs:
-        #     igraph.update(self.core.data_table)
-        # for ichecklist in self.checklists:
-        #     ichecklist.update(self.core.data_table.filter_criteria)
-
+            
     def get_elements(self):
         """Get information about all elements in the Presenter
 

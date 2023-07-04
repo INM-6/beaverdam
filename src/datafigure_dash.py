@@ -88,7 +88,6 @@ class DashScatterPlot(fig.ScatterPlot):
                 data_frame=self.df,
                 x=self.field[1],
                 y=self.field[0],
-                # names = list(self.df.columns.values)[0],
                 title=self.title,
             ),
         )

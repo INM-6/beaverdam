@@ -34,7 +34,7 @@ def rename_df_columns(df, col_name_dict={}):
     Returns:
         renamed_df (dataframe): dataframe with renamed columns
     """
-    # Reverse the dict so keys=old names, vals=new names\
+    # Reverse the dict so keys=old names, vals=new names
     col_name_dict_reversed = {y: x for x, y in col_name_dict.items()}
     renamed_df = df.rename(columns=col_name_dict_reversed)
     return renamed_df
@@ -215,14 +215,6 @@ class PieChart(DataFigure):
             the graph
         """
         super().__init__(data_table, field, "pie")
-
-        # Properties
-        # self.properties["field"] = graph_object.col_to_plot
-        # self.properties["style"] = "pie"        
-
-        # Contents
-        # self.contents["df"] = df
-        # self.contents["graph_type = graph_object.graph_type
         self.contents["title"] = title
 
 
@@ -237,14 +229,6 @@ class BarGraph(DataFigure):
             the graph
         """
         super().__init__(data_table, field, "bar")
-
-        # Properties
-        # self.properties["field"] = graph_object.field
-        # self.properties["style"] = "bar"        
-
-        # Contents
-        # self.contents["df"] = df
-        # self.contents["graph_type = graph_object.graph_type
         self.contents["title"] = title
 
 
@@ -259,13 +243,4 @@ class ScatterPlot(DataFigure):
             the graph
         """
         super().__init__(data_table, field, "scatter")
-
-        # Properties
-        # self.properties["field"] = graph_object.field
-        # self.properties["style"] = "scatter"  
-        # self.graph_type = graph_object.graph_type      
-
-        # Contents
-        # self.contents["df"] = df
-        # self.contents["graph_type = graph_object.graph_type
         self.contents["title"] = title
