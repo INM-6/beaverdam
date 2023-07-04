@@ -37,8 +37,7 @@ class PieChart(DataFigure):
         self.id["type"] = "PieChart"
 
         # Duplicate fields from graph_object [there's got to be a nicer way to do this]
-        self.col_to_plot = graph_object.col_to_plot
-        self.display_name = self.col_to_plot
+        self.field = graph_object.col_to_plot
         self.df = graph_object.df
         self.graph_type = graph_object.graph_type
         self.title = graph_object.title
@@ -60,8 +59,8 @@ class BarGraph(DataFigure):
         self.id["type"] = "BarGraph"
 
         # Duplicate fields from graph_object [there's got to be a nicer way to do this]
-        self.col_to_plot = graph_object.col_to_plot
-        self.display_name = self.col_to_plot
+        # self.col_to_plot = graph_object.col_to_plot
+        self.field = graph_object.field
         self.df = graph_object.df
         self.graph_type = graph_object.graph_type
         self.title = graph_object.title
@@ -83,8 +82,8 @@ class ScatterPlot(DataFigure):
         self.id["type"] = "ScatterPlot"
 
         # Duplicate fields from graph_object [there's got to be a nicer way to do this]
-        self.col_to_plot = graph_object.col_to_plot
-        self.display_name = self.col_to_plot
+        # self.col_to_plot = graph_object.col_to_plot
+        self.field = graph_object.field
         self.df = graph_object.df
         self.graph_type = graph_object.graph_type
         self.title = graph_object.title

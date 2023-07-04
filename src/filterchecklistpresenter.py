@@ -7,13 +7,13 @@ class FilterChecklistPresenter(uiobj.UIElementPresenter):
     """Information for lists of checkboxes to filter data"""
 
     def __init__(
-        self, metadata_source, display_name, checklist_title=[], selected_options=[]
+        self, metadata_source, field, checklist_title=[], selected_options=[]
     ):
         """Set checklist properties and find options
 
         Args:
             metadata_source (MetadataSource):  information about where to find metadata
-            display_name (str):  which metadata attribute the checklist represents
+            field (str):  which metadata attribute the checklist represents
             checklist_title (str):  title for the checklist (optional; if not given,
             field_location will be used)
             selected_values (list):  which checklist options are selected (optional; if
@@ -22,15 +22,15 @@ class FilterChecklistPresenter(uiobj.UIElementPresenter):
         super().__init__()
 
         # Store display name for access later
-        self.display_name = display_name
+        self.field = field
 
         # Find options for the checklist
-        checklist_query_results = metadata_source.query(query_output=display_name)
+        checklist_query_results = metadata_source.query(query_output=field)
         self.checklist_options = (
-            checklist_query_results[display_name].drop_duplicates().to_list()
+            checklist_query_results[field].drop_duplicates().to_list()
         )
         try:
-            self.selected_options = selected_options[self.display_name]
+            self.selected_options = selected_options[self.field]
         except:
             self.selected_options = []
 
@@ -39,7 +39,7 @@ class FilterChecklistPresenter(uiobj.UIElementPresenter):
         if len(checklist_title) > 0:
             self.title = checklist_title
         else:
-            self.title = display_name
+            self.title = field
 
     def update(self, selected_options):
         """Update checklist with currently selected options
@@ -49,6 +49,6 @@ class FilterChecklistPresenter(uiobj.UIElementPresenter):
         """
         # Find which selected options are in the current checklist and store them
         try:
-            self.selected_options = selected_options[self.display_name]
+            self.selected_options = selected_options[self.field]
         except:
             self.selected_options = []

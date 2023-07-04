@@ -57,7 +57,7 @@ class DashBarGraph(fig.BarGraph):
             id=self.id,
             figure=px.histogram(
                 data_frame=self.df,
-                x=self.col_to_plot,
+                x=self.field,
                 title=self.title,
             ),
         )
@@ -86,8 +86,8 @@ class DashScatterPlot(fig.ScatterPlot):
             id=self.id,
             figure=px.scatter(
                 data_frame=self.df,
-                x=self.col_to_plot[1],
-                y=self.col_to_plot[0],
+                x=self.field[1],
+                y=self.field[0],
                 # names = list(self.df.columns.values)[0],
                 title=self.title,
             ),

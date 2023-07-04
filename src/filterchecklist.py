@@ -21,7 +21,7 @@ class FilterChecklist(uielement.UiElement):
         # Duplicate fields from filter_checklist_object [there's got to be a nicer way
         # to do this]
         self.checklist_options = filter_checklist_object.checklist_options
-        self.display_name = filter_checklist_object.display_name
+        self.field = filter_checklist_object.field
         self.title = filter_checklist_object.title
 
     def build(self):

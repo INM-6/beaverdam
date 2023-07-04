@@ -16,6 +16,9 @@ class View:
         """
         self.presenter = presenter
 
+        # Get information about the elements that can be included in the UI
+        self.ui_elements = presenter.get_elements()
+
     def set_controller(self, controller):
         """Set the source of functions to execute on interaction with the frontend
 

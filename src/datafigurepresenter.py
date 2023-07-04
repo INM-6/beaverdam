@@ -6,14 +6,14 @@ import uielementpresenter as uiobj
 class DataFigurePresenter(uiobj.UIElementPresenter):
     """Store information to generate figures"""
 
-    def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+    def __init__(self, data_table, field=[], col_labels={}, title=[]):
         """Store information to plot a figure from data
 
         Args:
             data_table (DataTableCore): object with data_table.df containing the
             dataframe with data to plot, and data_table.selection_state_column_names
             giving the name of the column indicating the selection state of each row
-            col_to_plot (string or list of strings matching dataframe column labels):
+            field (string or list of strings matching dataframe column labels):
             which columns of the dataframe contain data to plot
             col_labels (dict, optional): labels to use for each column of data, if you
             don't want to use the existing dataframe column labels. keys = new names to
@@ -33,20 +33,20 @@ class DataFigurePresenter(uiobj.UIElementPresenter):
         # string is given.  If you subset a column from a dataframe with a string, it
         # returns a series rather than a dataframe, and this screws up future
         # operations.
-        if isinstance(col_to_plot, str):
-            col_to_plot = [col_to_plot]
-        self.col_to_plot = col_to_plot
+        if isinstance(field, str):
+            field = [field]
+        self.field = field
 
         # Filter dataframe
         self.df = data_table.get_selected_rows()
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
-        if len(col_to_plot) > 0:
+        if len(field) > 0:
             # Make sure the column(s) are given as a list
-            if isinstance(col_to_plot, list) is not True:
-                col_to_plot = [col_to_plot]
+            if isinstance(field, list) is not True:
+                field = [field]
             # Extract the columns
-            self.df = self.df[col_to_plot].copy()
+            self.df = self.df[field].copy()
         else:
             pass
 
@@ -68,8 +68,8 @@ class DataFigurePresenter(uiobj.UIElementPresenter):
         self.df = data_table.get_selected_rows()
 
         # Extract the specified columns; if none are specified, keep the whole dataframe
-        if len(self.col_to_plot) > 0:
-            self.df = self.df[self.col_to_plot].copy()
+        if len(self.field) > 0:
+            self.df = self.df[self.field].copy()
         else:
             pass
 
@@ -80,57 +80,57 @@ class DataFigurePresenter(uiobj.UIElementPresenter):
 class PieChartPresenter(DataFigurePresenter):
     """Store information to generate pie charts"""
 
-    def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+    def __init__(self, data_table, field=[], col_labels={}, title=[]):
         """Get information for pie chart
         Optionally include information for custom title, labels, etc.
 
         Args:
             data_table (DataTableCore): backend data table containing data to plot
-            col_to_plot (list, optional): which columns in the data table to plot.
+            field (list, optional): which columns in the data table to plot.
             Defaults to [].
             col_labels (dict, optional): which labels to display for each plotted
             column. Defaults to {}.
             title (list, optional): title for the figure. Defaults to [].
         """
-        super().__init__(data_table, col_to_plot, col_labels, title)
+        super().__init__(data_table, field, col_labels, title)
         self.graph_type = "pie"
 
 
 class BarGraphPresenter(DataFigurePresenter):
     """Store information to generate bar graphs"""
 
-    def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+    def __init__(self, data_table, field=[], col_labels={}, title=[]):
         """Get information for bar graph
         Optionally include information for custom title, labels, etc.
 
         Args:
             data_table (DataTableCore): backend data table containing data to plot
-            col_to_plot (list, optional): which columns in the data table to plot.
+            field (list, optional): which columns in the data table to plot.
             Defaults to [].
             col_labels (dict, optional): which labels to display for each plotted
             column. Defaults to {}.
             title (list, optional): title for the figure. Defaults to [].
         """
-        super().__init__(data_table, col_to_plot, col_labels, title)
+        super().__init__(data_table, field, col_labels, title)
         self.graph_type = "bar"
 
 
 class ScatterPlotPresenter(DataFigurePresenter):
     """Store information to generate scatter plots"""
 
-    def __init__(self, data_table, col_to_plot=[], col_labels={}, title=[]):
+    def __init__(self, data_table, field=[], col_labels={}, title=[]):
         """Get information for scatter plot
         Optionally include information for custom title, labels, etc.
 
         Args:
             data_table (DataTableCore): backend data table containing data to plot
-            col_to_plot (list, optional): which columns in the data table to plot.
+            field (list, optional): which columns in the data table to plot.
             Defaults to [].
             col_labels (dict, optional): which labels to display for each plotted
             column. Defaults to {}.
             title (list, optional): title for the figure. Defaults to [].
         """
-        super().__init__(data_table, col_to_plot, col_labels, title)
+        super().__init__(data_table, field, col_labels, title)
         self.graph_type = "scatter"
         # Reset title
         self.title = " vs. ".join(self.title)
