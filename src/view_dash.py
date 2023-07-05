@@ -6,6 +6,22 @@ from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc
 
 
+def get_image(app, image_file_name, image_height):
+    """Get an image from the assets folder
+
+    Args:
+        app (Dash app):  the instance of the Dash app, with an appropriately-set
+        assets_folder
+        image_file_name (str): name of the image file.  The file should be located
+        in the assets folder.
+        image_height (str):  height of the displayed image (pixels)
+
+    Returns:
+        the image as an html component
+    """
+    return html.Img(src=Dash.get_asset_url(app, image_file_name), height=image_height)
+
+
 class DashView(view.View):
     """Use a Dash dashboard for the user interface
 
@@ -17,12 +33,17 @@ class DashView(view.View):
         """Define Dash as a frontend"""
         super().__init__()
 
-        self.app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+        self.app = Dash(
+            __name__,
+            external_stylesheets=[dbc.themes.BOOTSTRAP],
+            assets_folder="../assets",
+        )
 
     def build(self):
         # Define some parameters for UI
         is_page_fluid = True
         header_height = "56px"
+        logo_file_name = "beaverdam-logo_long.png"
 
         ui_elements = self.ui_elements
 
@@ -83,7 +104,7 @@ class DashView(view.View):
         topbar_elements = []
         sidebar_elements = []
         mainpanel_elements = []
-        topbar_elements.append(html.Div(html.H1("Beaverdam")))
+        topbar_elements.append(get_image(self.app, logo_file_name, header_height))
         sidebar_elements.append(buildui.build_button("Reset", "ResetButton"))
         sidebar_elements.extend(checklist_elements)
         mainpanel_elements.extend(figure_elements)
