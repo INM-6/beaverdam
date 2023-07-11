@@ -37,12 +37,14 @@ class DataTableCore(pd.DataFrame):
         self.apply_filter()
 
     def update_filter(self, new_filter_criteria):
-        """Add additional filter criteria, without removing existing criteria, and
-        filter dataframe.
+        """Update filter criteria and filter dataframe.
 
         Args:
             new_filter_criteria (dict): dict of criteria, with key=column name,
-            val=allowable values.
+            val=allowable values.  If a provided key already exists in the list of
+            filter criteria, its value will be overwritten with the provided value.  If
+            an existing key is not provided in new_filter_criteria, it will retain its
+            original value.
         """
 
         # Find keys of new criteria
