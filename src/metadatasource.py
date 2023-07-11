@@ -12,7 +12,7 @@ class MetadataSource:
         pass
 
     def set_fields():
-        """Store display name and access information for each metadata field"""
+        """Store name and access information for each metadata field"""
         pass
 
     def query():
@@ -42,16 +42,16 @@ class MongoDbDatabase(MetadataSource):
         self.__collection_name = cfg["collection_name"]
 
     def set_fields(self, field_dict):
-        """Store display name and access information for each metadata field
+        """Store name and access information for each metadata field
 
         Args:
-            field_dict (dict): keys = display names, vals = path to metadata field in
+            field_dict (dict): keys = field names, vals = path to metadata field in
             database
         """
         self.fields = field_dict
 
     def get_field_name(self, requested_paths="all"):
-        """Get list of display names from list of paths
+        """Get list of field names from list of paths
 
         Args:
             requested_paths (str or list): string or list of strings, with each string
@@ -74,20 +74,20 @@ class MongoDbDatabase(MetadataSource):
             ]
         return field_names
 
-    def get_path(self, requested_display_names="all"):
-        """Get list of paths from list of display names
+    def get_path(self, requested_field_names="all"):
+        """Get list of paths from list of field names
 
         Args:
-            requested_display_names (str or list): string or list of strings, with each
-            string corresponding to a display name as defined in the config file.
-            Defaults to "all" to return all display names.
+            requested_field_names (str or list): string or list of strings, with each
+            string corresponding to a field name as defined in the config file.
+            Defaults to "all" to return all field names.
         """
-        if requested_display_names == "all":
+        if requested_field_names == "all":
             field_paths = list(self.fields.values())
-        elif isinstance(requested_display_names, str):
-            field_paths = self.fields[requested_display_names]
+        elif isinstance(requested_field_names, str):
+            field_paths = self.fields[requested_field_names]
         else:
-            field_paths = [self.fields[i_name] for i_name in requested_display_names]
+            field_paths = [self.fields[i_name] for i_name in requested_field_names]
         return field_paths
 
     def query(self, query_input={}, query_output={}):
@@ -96,7 +96,7 @@ class MongoDbDatabase(MetadataSource):
         Args:
             query_input (dict or list of str):  requested queries.  If dict, should be a
             query formatted in MongoDB style.  If list, should be strings corresponding
-            to the display names in self.fields.  Default is all fields.
+            to the field names in self.fields.  Default is all fields.
                 Ref:  https://www.analyticsvidhya.com/blog/2020/08/query-a-mongodb-database-using-pymongo/
                 query_input = {
                     'Document.sections.TaskParameters.properties.dtp_filename.value': {"$in": ['Hex_VR2_LR100.dtp', 'Hex_2-4-6_and_3-5-7.dtp']},
@@ -104,14 +104,14 @@ class MongoDbDatabase(MetadataSource):
                 }
             query_output (dict or str or list of str):  requested projections.  If dict,
             should be projections formatted in MongoDB style.  If string or list of
-            strings, strings should correspond to the display names in self.fields.
+            strings, strings should correspond to the field names in self.fields.
             Default is all fields.
                 query_output = {"path.to.output.value": 1}
 
         Returns:
             query_results (dataframe): rows=documents and cols=projections
         """
-        # If either of the inputs are lists of display names, get the corresponding
+        # If either of the inputs are lists of field names, get the corresponding
         # locations of the fields
         if isinstance(query_input, list):
             try:
@@ -140,7 +140,7 @@ class MongoDbDatabase(MetadataSource):
         cursor = collection.find(query_input, projection=query_output)
 
         # Put projection values into a dataframe.  For each session, make a dict where
-        # the keys are the display names and the vals are their values for that session.
+        # the keys are the field names and the vals are their values for that session.
         # Then add the whole dict to the dataframe at once.
         query_results = pd.DataFrame(
             columns=self.get_field_name(list(query_output.keys()))
