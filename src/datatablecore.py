@@ -69,18 +69,8 @@ class DataTableCore(pd.DataFrame):
         self.apply_filter()
 
     def apply_filter(self):
-        """Determine which rows of a DataTable meet filter criteria placed on columns.
+        """Determine which rows of a DataTable meet filter criteria placed on columns."""
 
-        Args:
-            data_table (DataTable): object containing:
-                data_table.df = dataframe with one column indicating selection status of
-                each row
-                data_table.selection_state_column_name = name of column indicating selection
-                state of rows
-                data_table.filter_criteria = dict of criteria, with key=column name,
-                val=allowable values.  To be selected, sessions must meet at least one
-                allowable val for all keys in the dict
-        """
         # If there are no filter criteria, assume all rows are selected
         if all(ele == [] for ele in list(self.filter_criteria.values())):
             self.df[self.selection_state_column_name] = True
