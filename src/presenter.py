@@ -8,7 +8,7 @@ class Presenter:
     """Collects and prepares data so it's ready to be presented"""
 
     def __init__(self, cfg):
-        """Store confituration information
+        """Store configuration information
 
         Args:
             cfg (namedtuple):  contains dicts for each heading of config file.  Example:
@@ -20,7 +20,7 @@ class Presenter:
                 cfg.headingName["key2"]
                     val2
 
-            Should contain headings:  plots, projections, queries
+            Required headings:  filters, table, plots
         """
         self.cfg = cfg
 
@@ -84,7 +84,6 @@ class Presenter:
             else:
                 pass
 
-
     def update(self):
         """Apply the current filter to all UI elements"""
         for ielement in self.ui_elements:
@@ -103,7 +102,7 @@ class Presenter:
             else:
                 # Element type not defined
                 pass
-            
+
     def get_elements(self):
         """Get information about all elements in the Presenter
 
