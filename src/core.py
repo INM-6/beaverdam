@@ -1,7 +1,4 @@
 """Query databases of metadata and filter the results.
-
-:copyright:
-:licence:
 """
 
 import metadatasource as datasource
@@ -18,6 +15,8 @@ class Core:
             cfg (dict):  contains dicts with information to configure each object that
             will be generated.  Keys should include:
                 'database' -- information required to access the database
+                'fields' -- location in the database of each metadata field, and the
+                    name to use to refer to each metadata field
                 'filters' -- which database fields to turn into checkboxes
         """
 

@@ -8,7 +8,8 @@ db_name = "testodml"
 collection_name = "odmlmetadata"
 
 [fields]
-# The name you want to display for each metadata field, and its location in the database
+# The name you want to use to refer to each metadata field, and the location of the
+# field in the database
 Name = "Document.sections.session.sections.Session.properties.Name.value"
 GivenName = "Document.sections.subject.sections.Subject.properties.GivenName.value"
 ShortName = "Document.sections.session.sections.Session.sections.Task.properties.ShortName.value"
