@@ -48,7 +48,7 @@ class Presenter:
         for ichecklist in self.cfg["filters"]["headings"]:
             self.ui_elements.append(
                 uielement.FilterChecklist(
-                    metadata_source=self.core.db,
+                    source=self.core.data_table.df,
                     field=ichecklist,
                     checklist_title=ichecklist,
                     selected_options=[],

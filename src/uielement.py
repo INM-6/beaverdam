@@ -83,12 +83,12 @@ class UiElement:
 class FilterChecklist(UiElement):
     """Checklist containing filter criteria"""
 
-    def __init__(self, metadata_source, field, checklist_title=[], selected_options=[]):
+    def __init__(self, source, field, checklist_title=[], selected_options=[]):
         """Store checklist options and other properties
 
         Args:
-            metadata_source (MetadataSource):  information about where to find metadata
-            field (str):  which metadata attribute the checklist represents
+            source (dataframe):  the data that the checklist will filter
+            field (str):  which column of source the checklist represents
             checklist_title (str):  title for the checklist (optional; if not given,
             field_location will be used)
             selected_options (list):  which checklist options are selected (optional; if
@@ -107,13 +107,10 @@ class FilterChecklist(UiElement):
         else:
             self.contents["title"] = field
         # Find all options for the checklist
-        checklist_query_results = metadata_source.query(query_output=field)
-        self.contents["checklist_options"] = (
-            checklist_query_results[field].drop_duplicates().to_list()
-        )
+        self.contents["checklist_options"] = source[field].drop_duplicates().to_list()
         # Find which options are selected
         try:
-            self.contents["selected_options"] = selected_options#[self.field]
+            self.contents["selected_options"] = selected_options
         except:
             self.contents["selected_options"] = []
 
