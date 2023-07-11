@@ -111,22 +111,19 @@ class MongoDbDatabase(MetadataSource):
         Returns:
             query_results (dataframe): rows=documents and cols=projections
         """
-        # If either of the inputs are lists of field names, get the corresponding
-        # locations of the fields
-        if isinstance(query_input, list):
-            try:
-                raise Exception("This function isn't defined yet.")
-            except:
-                raise Exception("Requested query inputs not defined.")
-        if isinstance(query_output, list):
-            try:
-                output_paths = self.get_path(query_output)
-                query_output = {ipath: 1 for ipath in output_paths}
-            except:
-                raise Exception("Requested query outputs not defined.")
-        elif isinstance(query_output, str):
+        # TODO:  if the query inputs isn't a dict, convert it
+        if not isinstance(query_input, dict):
+            raise Exception("This function isn't defined yet.")
+
+        # If the query output isn't already in the format pymongo likes, convert it
+        if not isinstance(query_output, dict):
+            # If the query output is given as a string, convert to a list
+            query_output = (
+                [query_output] if isinstance(query_output, str) else query_output
+            )
+            # Get the corresponding locations of the fields
             output_paths = self.get_path(query_output)
-            query_output = {output_paths: 1}
+            query_output = {ipath: 1 for ipath in output_paths}
 
         # Use the projection ID as the index in the output dataframe
         index_id = "_id"
