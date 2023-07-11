@@ -50,7 +50,7 @@ class MongoDbDatabase(MetadataSource):
         """
         self.fields = field_dict
 
-    def get_display_name(self, requested_paths="all"):
+    def get_field_name(self, requested_paths="all"):
         """Get list of display names from list of paths
 
         Args:
@@ -59,20 +59,20 @@ class MongoDbDatabase(MetadataSource):
             paths.
         """
         if requested_paths == "all":
-            display_names = list(self.fields.keys())
+            field_names = list(self.fields.keys())
         elif isinstance(requested_paths, str):
-            display_names = [
+            field_names = [
                 i_name
                 for i_name in list(self.fields.keys())
                 if self.fields[i_name] == requested_paths
             ][0]
         else:
-            display_names = [
+            field_names = [
                 i_name
                 for i_name in list(self.fields.keys())
                 if self.fields[i_name] in requested_paths
             ]
-        return display_names
+        return field_names
 
     def get_path(self, requested_display_names="all"):
         """Get list of paths from list of display names
@@ -143,7 +143,7 @@ class MongoDbDatabase(MetadataSource):
         # the keys are the display names and the vals are their values for that session.
         # Then add the whole dict to the dataframe at once.
         query_results = pd.DataFrame(
-            columns=self.get_display_name(list(query_output.keys()))
+            columns=self.get_field_name(list(query_output.keys()))
         )
         try:
             for doc in cursor:
@@ -160,9 +160,9 @@ class MongoDbDatabase(MetadataSource):
                     # Store the value to add to the dataframe; store a default
                     # placeholder if the value doesn't exist
                     if len(proj_val) > 0:
-                        row_to_add[self.get_display_name(proj_path)] = proj_val[0]
+                        row_to_add[self.get_field_name(proj_path)] = proj_val[0]
                     else:
-                        row_to_add[self.get_display_name(proj_path)] = "-"
+                        row_to_add[self.get_field_name(proj_path)] = "-"
                     # Append the row for this session to the dataframe and assign the
                     # index of the new row
                     query_results.loc[doc[index_id]] = row_to_add
