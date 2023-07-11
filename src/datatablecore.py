@@ -131,8 +131,8 @@ class DataTableCore(pd.DataFrame):
         """Remove dataframe rows not contained in the selection-state column
 
         Returns:
-            filtered_df (dataframe):  dataframe WITHOUT (1) the selection-state column
-            and (2) any unselected rows
+            filtered_df (dataframe):  dataframe (1) without the selection-state column
+            and (2) with only selected rows
         """
 
         # Drop any unselected rows.  Use the default of inplace=False so that df.drop
