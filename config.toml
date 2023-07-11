@@ -27,7 +27,7 @@ Modality2 = "Document.sections.session.sections.Session.properties.Modality2.val
 Modality3 = "Document.sections.session.sections.Session.properties.Modality3.value"
 
 [filters]
-# Which fields you will be able to place conditions on to filter trials
+# Which fields you will be able to place conditions on to filter items
 headings = [
     "GivenName",
     "ShortName",
