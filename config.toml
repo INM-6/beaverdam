@@ -27,7 +27,9 @@ Modality2 = "Document.sections.session.sections.Session.properties.Modality2.val
 Modality3 = "Document.sections.session.sections.Session.properties.Modality3.value"
 
 [filters]
-# Which fields you will be able to place conditions on to filter items
+# Which fields you will be able to place conditions on to filter items.  These fields
+# will each be turned into a set of checkboxes showing all available options for that
+# field.
 headings = [
     "GivenName",
     "ShortName",
