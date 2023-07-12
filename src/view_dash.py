@@ -232,7 +232,12 @@ class DashView(view.View):
                         )
                     elif triggered_element_style == "scatter":
                         # When I wrote this code, "pointNumber" and "pointIndex" were
-                        # equal.
+                        # equal.  Note that if px.scatter() uses a color parameter,
+                        # pointNumber and pointIndex are no longer unique over all
+                        # points in the plot -- in this case, you need to uniquely
+                        # identify each point by combining curveNumber and one of
+                        # pointNumber or pointIndex.  See info here:
+                        # https://stackoverflow.com/a/70110314
                         selected_rows = [
                             point["pointIndex"]
                             for point in ctx.triggered[0]["value"]["points"]

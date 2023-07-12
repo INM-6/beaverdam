@@ -110,11 +110,11 @@ class DataTableCore(pd.DataFrame):
         # of the dataframe) is here: https://stackoverflow.com/a/55884102
         # self.df = self.df.iloc[row_inds]
 
-        # Get selection status of each row in dataframe
+        # Initialize selection status for all rows of dataframe to False
         is_row_selected = [False for _ in range(len(self.df))]
+        # Set selection status to True for rows corresponding to selected points
         for idx in row_inds:
             is_row_selected[idx] = True
-
         # Replace the column in the dataframe that denotes whether a row is selected or
         # not
         self.df[self.selection_state_column_name] = is_row_selected
