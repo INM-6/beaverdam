@@ -57,32 +57,14 @@ class Presenter:
 
         # Make graphs
         for iplot in self.cfg["plots"].values():
-            if iplot["plot_type"] == "pie":
-                self.ui_elements.append(
-                    uielement.PieChart(
-                        data_table=self.core.data_table,
-                        field=iplot["data_field"],
-                        title=iplot["data_field"],
-                    )
+            self.ui_elements.append(
+                uielement.DataFigure(
+                    data_table=self.core.data_table,
+                    field=iplot["data_field"],
+                    title=iplot["data_field"],
+                    style=iplot["plot_type"],
                 )
-            elif iplot["plot_type"] == "bar":
-                self.ui_elements.append(
-                    uielement.BarGraph(
-                        data_table=self.core.data_table,
-                        field=iplot["data_field"],
-                        title=iplot["data_field"],
-                    )
-                )
-            elif iplot["plot_type"] == "scatter":
-                self.ui_elements.append(
-                    uielement.ScatterPlot(
-                        data_table=self.core.data_table,
-                        field=iplot["data_field"],
-                        title=iplot["data_field"],
-                    )
-                )
-            else:
-                pass
+            )
 
     def update(self):
         """Apply the current filter to all UI elements"""

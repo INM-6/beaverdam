@@ -177,7 +177,7 @@ class DataTable(UiElement):
 class DataFigure(UiElement):
     """General class for figures"""
 
-    def __init__(self, data_table, field, style="undefined"):
+    def __init__(self, data_table, field, style, title=[]):
         """Set common DataFigure properties
 
         Args:
@@ -187,6 +187,7 @@ class DataFigure(UiElement):
             field (string or list of strings matching dataframe column labels): which
             columns of the dataframe contain data to plot
             style (string):  type of plot, e.g. "pie", "bar", "scatter"
+            title (string):  title of the plot.  Optional; default is to use the field
         """
         super().__init__()
         
@@ -194,6 +195,7 @@ class DataFigure(UiElement):
         self.properties["type"] = "DataFigure"
         self.properties["field"] = [field] if isinstance(field, str) else field
         self.properties["style"] = style
+        self.contents["title"] = title if isinstance(title, str) else " vs. ".join(self.properties["field"])
 
         # Contents
         self.update(data_table)
@@ -209,45 +211,3 @@ class DataFigure(UiElement):
         self.contents["df"] = new_data_table.get_selected_rows().filter(
             items=self.properties["field"]
             )
-
-
-class PieChart(DataFigure):
-    """Create pie chart"""
-
-    def __init__(self, data_table, field, title):
-        """Store pie chart options and other properties
-
-        Args:
-            graph_object (PieChart class from Presenter module): title and options for
-            the graph
-        """
-        super().__init__(data_table, field, "pie")
-        self.contents["title"] = title
-
-
-class BarGraph(DataFigure):
-    """Create bar graph"""
-
-    def __init__(self, data_table, field, title):
-        """Store bar graph options and other properties
-
-        Args:
-            graph_object (BarGraph class from Presenter module): title and options for
-            the graph
-        """
-        super().__init__(data_table, field, "bar")
-        self.contents["title"] = title
-
-
-class ScatterPlot(DataFigure):
-    """Scatterplot figure"""
-
-    def __init__(self, data_table, field, title):
-        """Get and store figure options and other properties
-
-        Args:
-            graph_object (ScatterPlot class from Presenter module): title and options for
-            the graph
-        """
-        super().__init__(data_table, field, "scatter")
-        self.contents["title"] = title

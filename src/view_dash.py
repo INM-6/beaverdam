@@ -90,7 +90,7 @@ class DashView(view.View):
                 elif element_style == "scatter":
                     igraph = builduielements_dash.build_scatter_plot(
                         data=element_contents["df"],
-                        title=" vs. ".join(element_contents["title"]),
+                        title=element_contents["title"],
                     )
                 # Create the plot
                 ielement = builduielements_dash.build_data_figure(
@@ -299,7 +299,6 @@ class DashView(view.View):
                                 builduielements_dash.build_bar_graph(data, title)
                             )
                         elif output_element_style == "scatter":
-                            title = " vs. ".join(title)
                             new_figure_data.append(
                                 builduielements_dash.build_scatter_plot(data, title)
                             )
