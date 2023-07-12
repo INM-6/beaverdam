@@ -75,8 +75,14 @@ class UiElement:
         """
         return self.contents
     
-    def update(self):
-        """Update the element with new data"""
+    def update(self, new_data_table):
+        """Update the element with new data
+
+        Args:
+            new_data_table (DataTableCore): data_table.df is a dataframe containing data
+            to be shown in the table; data_table.selection_state_column_name gives the
+            name of the column indicating the selections state of each row
+        """
         pass
 
 
@@ -114,12 +120,21 @@ class FilterChecklist(UiElement):
         except:
             self.contents["selected_options"] = []
 
-    def update(self, new_selected_options):
+    def update(self, new_data_table):
         """Update which options are selected in the checklist
 
         Args:
-            new_selected_options (list):  which options are selected
+            new_data_table (DataTableCore): new_data_table.filter_criteria is a dict of
+            criteria, with key=column name, val=allowable values.
         """
+        try:
+            # If options have been selected for this checklist, get them
+            new_selected_options = new_data_table.filter_criteria[
+                self.properties["field"][0]
+            ]
+        except:
+            # No current selections for the field this checklist represents
+            new_selected_options = []
         self.contents["selected_options"] = new_selected_options
 
 class DataTable(UiElement):
@@ -146,21 +161,20 @@ class DataTable(UiElement):
             data_table.get_selected_rows(), 
             new_column_names
             )
+        self.contents["new_column_names"] = new_column_names
+            
 
-    def update(self, new_data_table, new_column_names={}):
+    def update(self, new_data_table):
         """Update data table contents
 
         Args:
-            data_table (DataTableCore): data_table.df is a dataframe containing data to
-            be shown in the table; data_table.selection_state_column_name gives the name
-            of the column indicating the selections state of each row
-            new_column_names (opt; dict):  keys = new column names to display, vals =
-            column names in df.  If a column name is not specified in the dict, the
-            original column name will be retained.
+            new_data_table (DataTableCore): new_data_table.df is a dataframe containing
+            data to be shown in the table; data_table.selection_state_column_name gives
+            the name of the column indicating the selections state of each row
         """
         self.contents["df"] = rename_df_columns(
-            new_data_table.get_selected_rows(), 
-            new_column_names
+            new_data_table.get_selected_rows(),
+            self.contents["new_column_names"]
             )
 
 class DataFigure(UiElement):
@@ -173,8 +187,9 @@ class DataFigure(UiElement):
             data_table (DataTableCore): object with data_table.df containing the
             dataframe with data to plot, and data_table.selection_state_column_names
             giving the name of the column indicating the selection state of each row
-            field (string or list of strings matching dataframe column labels):
-            which columns of the dataframe contain data to plot
+            field (string or list of strings matching dataframe column labels): which
+            columns of the dataframe contain data to plot
+            style (string):  type of plot, e.g. "pie", "bar", "scatter"
         """
         super().__init__()
         
@@ -192,9 +207,9 @@ class DataFigure(UiElement):
         """Update the data shown in the figure
 
         Args:
-            data_table (DataTableCore): object with data_table.df containing the
-            dataframe with data to plot, and data_table.selection_state_column_names
-            giving the name of the column indicating the selection state of each row
+            new_data_table (DataTableCore): new_data_table.df contains the dataframe
+            with data to plot, and new_data_table.selection_state_column_names gives the
+            name of the column indicating the selection state of each row
         """
         self.contents["df"] = new_data_table.get_selected_rows().filter(
             items=self.properties["field"]

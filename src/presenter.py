@@ -87,21 +87,22 @@ class Presenter:
     def update(self):
         """Apply the current filter to all UI elements"""
         for ielement in self.ui_elements:
-            ielement_type = ielement.properties["type"]
-            if any(ielement_type == x for x in ["DataTable", "DataFigure"]):
-                ielement.update(new_data_table=self.core.data_table)
-            elif ielement_type == "FilterChecklist":
-                try:
-                    new_selected_options = self.core.data_table.filter_criteria[
-                        ielement.properties["field"][0]
-                    ]
-                except:
-                    # No current selections for the field this checklist represents
-                    new_selected_options = []
-                ielement.update(new_selected_options=new_selected_options)
-            else:
-                # Element type not defined
-                pass
+            ielement.update(new_data_table=self.core.data_table)
+            # ielement_type = ielement.properties["type"]
+            # if any(ielement_type == x for x in ["DataTable", "DataFigure"]):
+            #     ielement.update(new_data_table=self.core.data_table)
+            # elif ielement_type == "FilterChecklist":
+            #     try:
+            #         new_selected_options = self.core.data_table.filter_criteria[
+            #             ielement.properties["field"][0]
+            #         ]
+            #     except:
+            #         # No current selections for the field this checklist represents
+            #         new_selected_options = []
+            #     ielement.update(new_selected_options=new_selected_options)
+            # else:
+            #     # Element type not defined
+            #     pass
 
     def get_elements(self):
         """Get information about all elements in the Presenter
