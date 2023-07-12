@@ -1,7 +1,7 @@
 """Prepare data for visualization
 """
 
-import uielement as uielement
+import uielement
 
 
 class Presenter:

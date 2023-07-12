@@ -2,10 +2,10 @@ import sys
 
 sys.path.insert(0, "./src")
 import parser
-import core as bd
-import presenter as bdp
-import view_dash as bdv
-import controller as bdc
+import core
+import presenter
+import view_dash
+import controller
 
 
 ## INPUTS
@@ -30,10 +30,10 @@ class BeaverUI:
         self.cfg = parser.parse_config(fp_cfg)
 
         # Set modules
-        self.core = bd.Core(self.cfg)
-        self.presenter = bdp.Presenter(self.cfg)
-        self.view = bdv.DashView()
-        self.controller = bdc.Controller()
+        self.core = core.Core(self.cfg)
+        self.presenter = presenter.Presenter(self.cfg)
+        self.view = view_dash.DashView()
+        self.controller = controller.Controller()
 
         # Tell modules about each other
         self.presenter.set_core(self.core)

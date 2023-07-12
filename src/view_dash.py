@@ -1,7 +1,7 @@
 """Builds a user interface using Dash"""
 
-import view as view
-import builduielements_dash as buildui
+import view
+import builduielements_dash
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc
 
@@ -59,7 +59,7 @@ class DashView(view.View):
             element_contents = val["contents"]
             if element_type == "DataTable":
                 datatable_elements.append(
-                    buildui.build_data_table(
+                    builduielements_dash.build_data_table(
                         id=element_id,
                         element_type=element_type,
                         data=element_contents["df"],
@@ -67,7 +67,7 @@ class DashView(view.View):
                 )
             elif element_type == "FilterChecklist":
                 checklist_elements.append(
-                    buildui.build_filter_checklist(
+                    builduielements_dash.build_filter_checklist(
                         id=element_id,
                         element_type=element_type,
                         items=element_contents["checklist_options"],
@@ -78,22 +78,22 @@ class DashView(view.View):
                 ielement = []
                 igraph = []
                 if element_style == "pie":
-                    igraph = buildui.build_pie_chart(
+                    igraph = builduielements_dash.build_pie_chart(
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
                 elif element_style == "bar":
-                    igraph = buildui.build_bar_graph(
+                    igraph = builduielements_dash.build_bar_graph(
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
                 elif element_style == "scatter":
-                    igraph = buildui.build_scatter_plot(
+                    igraph = builduielements_dash.build_scatter_plot(
                         data=element_contents["df"],
                         title=" vs. ".join(element_contents["title"]),
                     )
                 # Create the plot
-                ielement = buildui.build_data_figure(
+                ielement = builduielements_dash.build_data_figure(
                     graph_object=igraph, id=element_id, element_type=element_type
                 )
                 figure_elements.append(ielement)
@@ -105,7 +105,9 @@ class DashView(view.View):
         sidebar_elements = []
         mainpanel_elements = []
         topbar_elements.append(get_image(self.app, logo_file_name, header_height))
-        sidebar_elements.append(buildui.build_button("Reset", "ResetButton"))
+        sidebar_elements.append(
+            builduielements_dash.build_button("Reset", "ResetButton")
+        )
         sidebar_elements.extend(checklist_elements)
         mainpanel_elements.extend(figure_elements)
         mainpanel_elements.extend(datatable_elements)
@@ -269,24 +271,32 @@ class DashView(view.View):
                     ]
                     if output_element_type == "DataTable":
                         new_table_data.append(
-                            buildui.get_data_table_contents(presenter_ui_element)
+                            builduielements_dash.get_data_table_contents(
+                                presenter_ui_element
+                            )
                         )
                     elif output_element_type == "FilterChecklist":
                         new_checklist_data.append(
-                            buildui.get_checklist_selection(presenter_ui_element)
+                            builduielements_dash.get_checklist_selection(
+                                presenter_ui_element
+                            )
                         )
                     elif output_element_type == "DataFigure":
                         output_element_style = output_element_properties["style"]
                         data = presenter_ui_element.contents["df"]
                         title = presenter_ui_element.contents["title"]
                         if output_element_style == "pie":
-                            new_figure_data.append(buildui.build_pie_chart(data, title))
+                            new_figure_data.append(
+                                builduielements_dash.build_pie_chart(data, title)
+                            )
                         elif output_element_style == "bar":
-                            new_figure_data.append(buildui.build_bar_graph(data, title))
+                            new_figure_data.append(
+                                builduielements_dash.build_bar_graph(data, title)
+                            )
                         elif output_element_style == "scatter":
                             title = " vs. ".join(title)
                             new_figure_data.append(
-                                buildui.build_scatter_plot(data, title)
+                                builduielements_dash.build_scatter_plot(data, title)
                             )
 
             # Return new UI stuff:
