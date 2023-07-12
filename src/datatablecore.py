@@ -105,10 +105,6 @@ class DataTableCore(pd.DataFrame):
         Args:
             row_inds (list): list of row indices as integers
         """
-        # I also tried .loc but got an error.  A good description of the differences
-        # between .loc and .iloc (which might be relevant in future if we label the rows
-        # of the dataframe) is here: https://stackoverflow.com/a/55884102
-        # self.df = self.df.iloc[row_inds]
 
         # Initialize selection status for all rows of dataframe to False
         is_row_selected = [False for _ in range(len(self.df))]
