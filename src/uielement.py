@@ -157,11 +157,8 @@ class DataTable(UiElement):
         self.properties["type"] = "DataTable"
 
         # Contents
-        self.contents["df"] = rename_df_columns(
-            data_table.get_selected_rows(), 
-            new_column_names
-            )
         self.contents["new_column_names"] = new_column_names
+        self.update(data_table)
             
 
     def update(self, new_data_table):
@@ -199,9 +196,7 @@ class DataFigure(UiElement):
         self.properties["style"] = style
 
         # Contents
-        self.contents["df"] = data_table.get_selected_rows().filter(
-            items=self.properties["field"]
-            )
+        self.update(data_table)
         
     def update(self, new_data_table):
         """Update the data shown in the figure
