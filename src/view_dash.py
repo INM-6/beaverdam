@@ -205,9 +205,10 @@ class DashView(view.View):
                     self.controller.trigger_clear_filter_criteria()
 
                 if triggered_element_type == "FilterChecklist":
-                    # Note that filter criteria will be listed whether the box was
-                    # already selected or not -- need to include a check somewhere
-                    # (core?) to add or delete from list of selected values
+                    # Checking a checkbox should remove any direct selection of rows,
+                    # e.g. from a scatter plot
+                    self.controller.trigger_undo_row_selection()
+                    # Apply the new criteria
                     new_filter_criteria = ctx.triggered[0]["value"]
                     self.controller.trigger_update_filter_criteria(
                         {database_field: new_filter_criteria}
@@ -242,7 +243,6 @@ class DashView(view.View):
                             point["pointIndex"]
                             for point in ctx.triggered[0]["value"]["points"]
                         ]
-                        self.controller.trigger_clear_filter_criteria()
                         self.controller.trigger_select_dataframe_rows(selected_rows)
 
                 # Update presenter

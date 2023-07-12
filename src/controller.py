@@ -24,3 +24,7 @@ class Controller:
     def trigger_select_dataframe_rows(self, row_inds):
         """Select rows of dataframe containing selected sessions"""
         self.core.data_table.select_rows(row_inds)
+
+    def trigger_undo_row_selection(self):
+        """Remove direct selection of rows"""
+        self.core.data_table.undo_row_selection()

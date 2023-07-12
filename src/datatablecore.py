@@ -71,9 +71,11 @@ class DataTableCore(pd.DataFrame):
     def apply_filter(self):
         """Determine which rows of a DataTable meet filter criteria placed on columns."""
 
-        # If there are no filter criteria, assume all rows are selected
+        # If there are no filter criteria, accept all rows
         if all(ele == [] for ele in list(self.filter_criteria.values())):
-            self.df[self.selection_state_column_name] = True
+            is_row_selected = [True for _ in range(len(self.df))]
+
+        # If there are filter criteria, accept only rows which meet all criteria
         else:
             # Initialize list containing one list for each filter criterion
             is_row_selected = [[] for _ in range(len(self.df))]
@@ -84,10 +86,21 @@ class DataTableCore(pd.DataFrame):
             # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
             for iCriteria, iVal in self.filter_criteria.items():
                 if len(iVal) > 0:
+
+                    if iCriteria == "row_index":
+                        # Initialize selection status for all rows of dataframe to False
+                        is_criterion_met = [False for _ in range(len(self.df))]
+                        # Set selection status to True for rows corresponding to
+                        # selected points
+                        for idx in self.filter_criteria["row_index"]:
+                            is_criterion_met[idx] = True
+                    else:
+                        is_criterion_met = self.df[iCriteria].isin(iVal)
+
                     is_row_selected = [
-                        x + [y]
-                        for x, y in zip(is_row_selected, self.df[iCriteria].isin(iVal))
+                        x + [y] for x, y in zip(is_row_selected, is_criterion_met)
                     ]
+
                 else:
                     # Sometimes there might be an criteria with no values listed; in
                     # that case, don't do anything
@@ -95,25 +108,30 @@ class DataTableCore(pd.DataFrame):
 
             # Only accept rows where all criteria are met
             is_row_selected = [all(x) for x in is_row_selected]
-            # Replace the column in the dataframe that denotes whether a row is selected
-            # or not
-            self.df[self.selection_state_column_name] = is_row_selected
+
+        # Replace the column in the dataframe that denotes whether a row is selected
+        # or not
+        self.df[self.selection_state_column_name] = is_row_selected
 
     def select_rows(self, row_inds):
-        """Select rows of dataframe based on row indices
+        """Select rows of dataframe based on row indices.
 
         Args:
             row_inds (list): list of row indices as integers
         """
 
-        # Initialize selection status for all rows of dataframe to False
-        is_row_selected = [False for _ in range(len(self.df))]
-        # Set selection status to True for rows corresponding to selected points
-        for idx in row_inds:
-            is_row_selected[idx] = True
-        # Replace the column in the dataframe that denotes whether a row is selected or
-        # not
-        self.df[self.selection_state_column_name] = is_row_selected
+        self.update_filter({"row_index": row_inds})
+        # Update selection status of rows
+        self.apply_filter()
+
+    def undo_row_selection(self):
+        """Remove the filter criteria which selects rows based on row indices"""
+
+        if "row_index" in list(self.filter_criteria.keys()):
+            del self.filter_criteria["row_index"]
+
+        # Update selection status of rows
+        self.apply_filter()
 
     def get_selected_rows(self):
         """Remove dataframe rows not contained in the selection-state column
