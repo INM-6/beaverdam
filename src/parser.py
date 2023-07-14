@@ -42,15 +42,14 @@ def parse_config(fp, sections_to_extract="all"):
     # into a list
     if isinstance(sections_to_extract, str):
         sections_to_extract = [sections_to_extract]
+
     # Check if the requested section(s) are present
     is_section_missing = [
         item not in list(config_contents.keys()) for item in sections_to_extract
     ]
     if any(is_section_missing):
         missing_sections = [
-            sections_to_extract[i]
-            for i, val in enumerate(is_section_missing)
-            if is_section_missing[i]
+            x for (x, y) in zip(sections_to_extract, is_section_missing) if y
         ]
         raise Exception(
             "Config file is missing requested section(s): "
