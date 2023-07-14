@@ -1,11 +1,11 @@
 import sys
 
 sys.path.insert(0, "./src")
-import parser
-import core
-import presenter
-import view_dash
-import controller
+from parser import parse_config
+from core import Core
+from presenter import Presenter
+from view_dash import DashView
+from controller import Controller
 
 
 ## INPUTS
@@ -27,13 +27,13 @@ class BeaverUI:
             fp_cfg (str): name of configuration file
         """
         # Read config file
-        self.cfg = parser.parse_config(fp_cfg)
+        self.cfg = parse_config(fp_cfg)
 
         # Set modules
-        self.core = core.Core(self.cfg)
-        self.presenter = presenter.Presenter(self.cfg)
-        self.view = view_dash.DashView()
-        self.controller = controller.Controller()
+        self.core = Core(self.cfg)
+        self.presenter = Presenter(self.cfg)
+        self.view = DashView()
+        self.controller = Controller()
 
         # Tell modules about each other
         self.presenter.set_core(self.core)

@@ -1,7 +1,7 @@
 """Prepare data for visualization
 """
 
-import uielement
+from uielement import DataTable, FilterChecklist, DataFigure
 
 
 class Presenter:
@@ -42,12 +42,12 @@ class Presenter:
         self.ui_elements = []
 
         # Make data table
-        self.ui_elements.append(uielement.DataTable(self.core.data_table))
+        self.ui_elements.append(DataTable(self.core.data_table))
 
         # Make checklists
         for ichecklist in self.cfg["filters"]["headings"]:
             self.ui_elements.append(
-                uielement.FilterChecklist(
+                FilterChecklist(
                     source=self.core.data_table.df,
                     field=ichecklist,
                     checklist_title=ichecklist,
@@ -58,7 +58,7 @@ class Presenter:
         # Make graphs
         for iplot in self.cfg["plots"].values():
             self.ui_elements.append(
-                uielement.DataFigure(
+                DataFigure(
                     data_table=self.core.data_table,
                     field=iplot["data_field"],
                     title=iplot["data_field"],

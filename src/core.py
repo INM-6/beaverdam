@@ -1,8 +1,8 @@
 """Query databases of metadata and filter the results.
 """
 
-import metadatasource
-import datatablecore
+from metadatasource import MongoDbDatabase
+from datatablecore import DataTableCore
 
 
 class Core:
@@ -21,13 +21,13 @@ class Core:
         """
 
         # Define database info
-        self.db = metadatasource.MongoDbDatabase(cfg["database"])
+        self.db = MongoDbDatabase(cfg["database"])
         # Store information about fields to query and their field names
         # keys = field names, vals = access information for database (e.g. location)
         self.db.set_fields(cfg["fields"])
 
         # Query database for data table
-        self.data_table = datatablecore.DataTableCore(
+        self.data_table = DataTableCore(
             self.db.query({}, list(self.db.fields.keys()))
         )
         # Initialize filter options

@@ -1,6 +1,6 @@
 """Builds a user interface using Dash"""
 
-import view
+from view import View
 import builduielements_dash
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc
@@ -22,11 +22,11 @@ def get_image(app, image_file_name, image_height):
     return html.Img(src=Dash.get_asset_url(app, image_file_name), height=image_height)
 
 
-class DashView(view.View):
+class DashView(View):
     """Use a Dash dashboard for the user interface
 
     Args:
-        view.View (View): this class is based on the generic View class
+        View (View): this class is based on the generic View class
     """
 
     def __init__(self):
