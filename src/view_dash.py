@@ -39,7 +39,9 @@ class DashView(view.View):
             assets_folder="../assets",
         )
 
-    def build(self):
+    def build_layout(self):
+        """Assemble elements of the user interface"""
+
         # Define some parameters for UI
         is_page_fluid = True
         header_height = "56px"
@@ -150,9 +152,6 @@ class DashView(view.View):
             ],
             fluid=is_page_fluid,
         )
-
-        # Assign callbacks to UI
-        self.register_callbacks()
 
     def register_callbacks(self):
         """Define actions that occur on user interaction; update frontend appropriately
@@ -320,5 +319,6 @@ class DashView(view.View):
         """Build and run frontend"""
         if __name__ == "view_dash":
 
-            self.build()
+            self.build_layout()
+            self.register_callbacks()
             self.app.run_server(debug=False)
