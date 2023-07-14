@@ -1,9 +1,10 @@
 """Builds a user interface using Dash"""
 
-from view import View
-import builduielements_dash
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc
+
+from view import View
+import builduielements_dash
 
 
 def get_image(app, image_file_name, image_height):
