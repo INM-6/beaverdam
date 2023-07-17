@@ -35,7 +35,9 @@ class DashView(View):
         Returns:
             the image as an html component
         """
-        return html.Img(src=Dash.get_asset_url(self.app, image_file_name), height=image_height)
+        return html.Img(
+            src=Dash.get_asset_url(self.app, image_file_name), height=image_height
+        )
 
     def build_layout(self):
         """Assemble elements of the user interface"""
