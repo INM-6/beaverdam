@@ -7,22 +7,6 @@ from view import View
 import builduielements_dash
 
 
-def get_image(app, image_file_name, image_height):
-    """Get an image from the assets folder
-
-    Args:
-        app (Dash app):  the instance of the Dash app, with an appropriately-set
-        assets_folder
-        image_file_name (str): name of the image file.  The file should be located
-        in the assets folder.
-        image_height (str):  height of the displayed image (pixels)
-
-    Returns:
-        the image as an html component
-    """
-    return html.Img(src=Dash.get_asset_url(app, image_file_name), height=image_height)
-
-
 class DashView(View):
     """Use a Dash dashboard for the user interface
 
@@ -39,6 +23,19 @@ class DashView(View):
             external_stylesheets=[dbc.themes.BOOTSTRAP],
             assets_folder="../assets",
         )
+
+    def __get_image(self, image_file_name, image_height):
+        """Get an image from the assets folder
+
+        Args:
+            image_file_name (str): name of the image file.  The file should be located
+            in the assets folder.
+            image_height (str):  height of the displayed image (pixels)
+
+        Returns:
+            the image as an html component
+        """
+        return html.Img(src=Dash.get_asset_url(self.app, image_file_name), height=image_height)
 
     def build_layout(self):
         """Assemble elements of the user interface"""
@@ -107,7 +104,7 @@ class DashView(View):
         topbar_elements = []
         sidebar_elements = []
         mainpanel_elements = []
-        topbar_elements.append(get_image(self.app, logo_file_name, header_height))
+        topbar_elements.append(self.__get_image(logo_file_name, header_height))
         sidebar_elements.append(
             builduielements_dash.build_button("Reset", "ResetButton")
         )
