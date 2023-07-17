@@ -92,8 +92,10 @@ class DataTableCore(pd.DataFrame):
                         is_criterion_met = [False for _ in range(len(self.df))]
                         # Set selection status to True for rows corresponding to
                         # selected points
-                        for idx in self.filter_criteria["row_index"]:
-                            is_criterion_met[idx] = True
+                        df_row_indices = list(self.df.index)
+                        for row_num, idx in enumerate(df_row_indices):
+                            if idx in self.filter_criteria["row_index"]:
+                                is_criterion_met[row_num] = True
                     else:
                         is_criterion_met = self.df[iCriteria].isin(iVal)
 
@@ -117,7 +119,7 @@ class DataTableCore(pd.DataFrame):
         """Select rows of dataframe based on row indices.
 
         Args:
-            row_inds (list): list of row indices as integers
+            row_inds (list): list of row indices, as set in the target dataframe
         """
 
         self.update_filter({"row_index": row_inds})

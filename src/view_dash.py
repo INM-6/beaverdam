@@ -238,10 +238,20 @@ class DashView(View):
                         # identify each point by combining curveNumber and one of
                         # pointNumber or pointIndex.  See info here:
                         # https://stackoverflow.com/a/70110314
+
+                        # Get indices of selected points in the plotted dataframe
                         selected_rows = [
                             point["pointIndex"]
                             for point in ctx.triggered[0]["value"]["points"]
                         ]
+                        # Convert to the index in the main dataframe, which is the
+                        # subject ID
+                        selected_rows = list(
+                            ui_element_info[triggered_element_id]["contents"]["df"]
+                            .iloc[selected_rows]
+                            .index
+                        )
+                        # Select the appropriate rows
                         self.controller.trigger_select_dataframe_rows(selected_rows)
 
                 # Update presenter
