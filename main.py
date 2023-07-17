@@ -1,7 +1,7 @@
 import sys
 
 sys.path.insert(0, "./src")
-from parser import parse_config
+from configparser import ConfigParser
 from core import Core
 from presenter import Presenter
 from view_dash import DashView
@@ -27,7 +27,7 @@ class BeaverUI:
             fp_cfg (str): name of configuration file
         """
         # Read config file
-        self.cfg = parse_config(fp_cfg)
+        self.cfg = ConfigParser(fp_cfg)
 
         # Set modules
         self.core = Core(self.cfg)

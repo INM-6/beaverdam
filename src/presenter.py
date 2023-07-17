@@ -11,16 +11,8 @@ class Presenter:
         """Store configuration information
 
         Args:
-            cfg (namedtuple):  contains dicts for each heading of config file.  Example:
-
-                cfg.headingName
-                    {'key1': val1, 'key2': val2}
-                cfg.headingName["key1"]
-                    val1
-                cfg.headingName["key2"]
-                    val2
-
-            Required headings:  filters, table, plots
+            cfg (ConfigParser):  contains a dict with information from config file.
+            Required sections:  filters, plots
         """
         self.cfg = cfg
 
@@ -45,7 +37,7 @@ class Presenter:
         self.ui_elements.append(DataTable(self.core.data_table))
 
         # Make checklists
-        for ichecklist in self.cfg["filters"]["headings"]:
+        for ichecklist in self.cfg.get_section("filters")["headings"]:
             self.ui_elements.append(
                 FilterChecklist(
                     source=self.core.data_table.df,
@@ -56,7 +48,7 @@ class Presenter:
             )
 
         # Make graphs
-        for iplot in self.cfg["plots"].values():
+        for iplot in self.cfg.get_section("plots").values():
             self.ui_elements.append(
                 DataFigure(
                     data_table=self.core.data_table,
