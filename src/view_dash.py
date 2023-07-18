@@ -158,6 +158,7 @@ class DashView(View):
 
         Returns:
             Updated versions of checklists, plots, and tables
+            Resets clickData to None for all plots
         """
         app = self.app
 
@@ -165,6 +166,7 @@ class DashView(View):
             Output({"type": "DataTable", "index": ALL}, "data"),
             Output({"type": "FilterChecklist", "index": ALL}, "value"),
             Output({"type": "DataFigure", "index": ALL}, "figure"),
+            Output({"type": "DataFigure", "index": ALL}, "clickData"),
             Input({"type": "ResetButton", "index": ALL}, "n_clicks"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "DataFigure", "index": ALL}, "clickData"),
@@ -173,6 +175,17 @@ class DashView(View):
         def filter_data(
             resetButtonClicks, checklistValue, figureClickData, figureSelectedData
         ):
+            """Detect clicks on user interface then filter and display appropriately
+
+            Args:
+                resetButtonClicks (_type_): trigger when reset button clicked
+                checklistValue (_type_): trigger when checklist selection changes
+                figureClickData (_type_): trigger when figures clicked
+                figureSelectedData (_type_): trigger when data in a figure (e.g. scatterplot) is selected
+
+            Returns:
+                list: contains one list for each detected output
+            """
             # Get id and type of element that was clicked
             triggered_element = ctx.triggered_id
 
@@ -268,6 +281,7 @@ class DashView(View):
             new_table_data = []
             new_checklist_data = []
             new_figure_data = []
+            new_figure_clickdata = []
             # Go through each UI element that's an output of the callback
             for output_type in outputs_list:
                 for ielement in output_type:
@@ -295,21 +309,28 @@ class DashView(View):
                             )
                         )
                     elif output_element_type == "DataFigure":
-                        output_element_style = output_element_properties["style"]
-                        data = presenter_ui_element.contents["df"]
-                        title = presenter_ui_element.contents["title"]
-                        if output_element_style == "pie":
-                            new_figure_data.append(
-                                builduielements_dash.build_pie_chart(data, title)
-                            )
-                        elif output_element_style == "bar":
-                            new_figure_data.append(
-                                builduielements_dash.build_bar_graph(data, title)
-                            )
-                        elif output_element_style == "scatter":
-                            new_figure_data.append(
-                                builduielements_dash.build_scatter_plot(data, title)
-                            )
+                        if ielement["property"] == "figure":
+                            output_element_style = output_element_properties["style"]
+                            data = presenter_ui_element.contents["df"]
+                            title = presenter_ui_element.contents["title"]
+                            if output_element_style == "pie":
+                                new_figure_data.append(
+                                    builduielements_dash.build_pie_chart(data, title)
+                                )
+                            elif output_element_style == "bar":
+                                new_figure_data.append(
+                                    builduielements_dash.build_bar_graph(data, title)
+                                )
+                            elif output_element_style == "scatter":
+                                new_figure_data.append(
+                                    builduielements_dash.build_scatter_plot(data, title)
+                                )
+                        elif ielement["property"] == "clickData":
+                            # This fixes a bug in Dash where clicking the same figure
+                            # section (e.g. bar in a bar graph) multiple times in a row
+                            # doesn't fire the callback.  See bug report here:
+                            # https://github.com/plotly/dash/issues/1300
+                            new_figure_clickdata.append(None)
 
             # Return new UI stuff:
             # - If ONE Output() is pattern-matching, Dash expects the returned value
@@ -322,6 +343,7 @@ class DashView(View):
                 new_table_data,
                 new_checklist_data,
                 new_figure_data,
+                new_figure_clickdata
             ]
 
     def launch_ui(self):
