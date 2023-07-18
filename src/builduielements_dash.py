@@ -1,6 +1,7 @@
 """Functions to build elements of a Dash user interface"""
 
 from dash import dcc, dash_table, html
+import dash_bootstrap_components as dbc
 import plotly.express as px
 import uuid
 
@@ -69,6 +70,45 @@ def get_data_table_contents(datatable_object):
         (dict):  data to be shown in DataTable
     """
     return df_to_dict(datatable_object.contents["df"])
+
+
+def build_data_table_label(
+    current_num_records, initial_num_records, id=[], element_type=""
+):
+    """Generate text specifying number of selected and total records
+
+    Args:
+        current_num_records (int): number of records currently selected
+        initial_num_records (int): number of total records possible to select
+        id (str):  unique ID for the Dash element (optional; will be auto-generated if
+        omitted)
+        element_type (str):  type of object, for use with pattern-matching callbacks
+        (opt)
+
+    Returns:
+        dbc.Stack: text in a Dash Bootstrap Components stack, with the current number of
+        selected records having the provided ID
+    """
+    return dbc.Stack(
+        [
+            html.Div(
+                style={"white-space": "pre-wrap"},
+                children=str(current_num_records),
+                id=set_ui_object_id(id=id, element_type=element_type),
+            ),
+            html.Div(
+                style={"white-space": "pre-wrap"},
+                children=[
+                    " of " + str(initial_num_records),
+                ],
+            ),
+            html.Div(
+                style={"white-space": "pre-wrap"},
+                children=[" sessions meet your criteria"],
+            ),
+        ],
+        direction="horizontal",
+    )
 
 
 def build_filter_checklist(items, title=[], id=[], element_type=""):

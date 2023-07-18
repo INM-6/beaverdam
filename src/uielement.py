@@ -159,6 +159,9 @@ class DataTable(UiElement):
         # Contents
         self.contents["new_column_names"] = new_column_names
         self.update(data_table)
+
+        # Content-dependent properties
+        self.properties["initial_num_records"] = len(self.contents["df"])
             
 
     def update(self, new_data_table):
@@ -173,6 +176,7 @@ class DataTable(UiElement):
             new_data_table.get_selected_rows(),
             self.contents["new_column_names"]
             )
+        self.properties["current_num_records"] = len(self.contents["df"])
 
 class DataFigure(UiElement):
     """General class for figures"""
