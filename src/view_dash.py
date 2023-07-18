@@ -202,8 +202,7 @@ class DashView(View):
                 # element that was triggered.
                 if triggered_element_type == "ResetButton":
                     self.controller.trigger_clear_filter_criteria()
-
-                if triggered_element_type == "FilterChecklist":
+                elif triggered_element_type == "FilterChecklist":
                     # Checking a checkbox should remove any direct selection of rows,
                     # e.g. from a scatter plot
                     self.controller.trigger_undo_row_selection()
