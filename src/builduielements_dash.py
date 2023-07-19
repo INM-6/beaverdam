@@ -122,21 +122,26 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
         (opt)
 
     Returns:
-        html.Div: contains checklist title and options
+        filter_checklist (dbc.Card): Dash Bootstrap Components card containing the checklist title and options
     """
-    return html.Div(
-        children=[
-            html.Div(children=title),
-            html.Div(
-                children=dcc.Checklist(
-                    options=items,
-                    value=[],
-                    id=set_ui_object_id(id=id, element_type=element_type),
-                    labelStyle={"display": "block"},
-                )
-            ),
+    filter_checklist = dbc.Card(
+        [
+            dbc.CardBody(
+                children=[
+                    html.Div(children=title),
+                    html.Div(
+                        children=dcc.Checklist(
+                            options=items,
+                            value=[],
+                            id=set_ui_object_id(id=id, element_type=element_type),
+                            labelStyle={"display": "block"},
+                        )
+                    ),
+                ]
+            )
         ]
     )
+    return filter_checklist
 
 
 def get_checklist_selection(filterchecklist_object):
