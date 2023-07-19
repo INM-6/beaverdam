@@ -39,6 +39,20 @@ def df_to_dict(df):
     return df.to_dict("records")
 
 
+def display_as_card(card_body):
+    """Wrap a UI element in a card
+
+    Args:
+        card_body (Dash or html element | list of Dash or html elements): the contents
+        of the card
+
+    Returns:
+        dbc.Card (dbc.Card):  Dash Bootstrap Components card
+    """
+    card_body = [card_body] if not isinstance(card_body, list) else card_body
+    return dbc.Card([dbc.CardBody(children=card_body)], style={"margin": "1vmin"})
+
+
 def build_data_table(data, id=[], element_type=""):
     """Build Dash data table
 
@@ -124,23 +138,18 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
     Returns:
         filter_checklist (dbc.Card): Dash Bootstrap Components card containing the checklist title and options
     """
-    filter_checklist = dbc.Card(
+    filter_checklist = display_as_card(
         [
-            dbc.CardBody(
-                children=[
-                    html.Div(children=title),
-                    html.Div(
-                        children=dcc.Checklist(
-                            options=items,
-                            value=[],
-                            id=set_ui_object_id(id=id, element_type=element_type),
-                            labelStyle={"display": "block"},
-                        )
-                    ),
-                ]
-            )
-        ],
-        style={'margin': '1vmin'}
+            html.Div(children=title),
+            html.Div(
+                children=dcc.Checklist(
+                    options=items,
+                    value=[],
+                    id=set_ui_object_id(id=id, element_type=element_type),
+                    labelStyle={"display": "block"},
+                )
+            ),
+        ]
     )
     return filter_checklist
 
@@ -190,16 +199,11 @@ def build_data_figure(graph_object, id=[], element_type=""):
     Returns:
         dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
     """
-    dash_graph = dbc.Card(
-        [
-            dbc.CardBody(
-                dcc.Graph(
-                    id=set_ui_object_id(id=id, element_type=element_type),
-                    figure=graph_object,
-                )
-            )
-        ],
-        style={'margin': '1vmin'}
+    dash_graph = display_as_card(
+        dcc.Graph(
+            id=set_ui_object_id(id=id, element_type=element_type),
+            figure=graph_object,
+        )
     )
     return dash_graph
 
