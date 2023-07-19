@@ -139,7 +139,8 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
                     ),
                 ]
             )
-        ]
+        ],
+        style={'margin': '1vmin'}
     )
     return filter_checklist
 
@@ -197,7 +198,8 @@ def build_data_figure(graph_object, id=[], element_type=""):
                     figure=graph_object,
                 )
             )
-        ]
+        ],
+        style={'margin': '1vmin'}
     )
     return dash_graph
 
