@@ -122,7 +122,7 @@ class DashView(View):
             builduielements_dash.build_button("Reset", "ResetButton")
         )
         sidebar_elements.extend(checklist_elements)
-        mainpanel_elements.extend(figure_elements)
+        mainpanel_elements.append(dbc.CardGroup(figure_elements))
         mainpanel_elements.extend(datatable_elements)
 
         # Build user interface
