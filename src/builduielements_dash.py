@@ -182,11 +182,17 @@ def build_data_figure(graph_object, id=[], element_type=""):
         (opt)
 
     Returns:
-        dash_graph (dcc.Graph): Dash object containing the graph
+        dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
     """
-    dash_graph = dcc.Graph(
-        id=set_ui_object_id(id=id, element_type=element_type),
-        figure=graph_object,
+    dash_graph = dbc.Card(
+        [
+            dbc.CardBody(
+                dcc.Graph(
+                    id=set_ui_object_id(id=id, element_type=element_type),
+                    figure=graph_object,
+                )
+            )
+        ]
     )
     return dash_graph
 
