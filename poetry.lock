@@ -142,6 +142,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "dash-slick"
+version = "0.0.4"
+description = "React Slick Dash Components"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "dash-table"
 version = "5.0.0"
 description = "Dash table"
@@ -497,7 +505,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "8e0dfa8f4fa1f7608702481aedfa7a9e4631f64914dd41900b31b01a524adbd0"
+content-hash = "4f210e9f7e0e6174cd550692f46956b911a05e18c0edc9594343c8d0770afa30"
 
 [metadata.files]
 atomicwrites = [
@@ -552,6 +560,9 @@ dash-extensions = [
 dash-html-components = [
     {file = "dash_html_components-2.0.0-py3-none-any.whl", hash = "sha256:b42cc903713c9706af03b3f2548bda4be7307a7cf89b7d6eae3da872717d1b63"},
     {file = "dash_html_components-2.0.0.tar.gz", hash = "sha256:8703a601080f02619a6390998e0b3da4a5daabe97a1fd7a9cebc09d015f26e50"},
+]
+dash-slick = [
+    {file = "dash_slick-0.0.4.tar.gz", hash = "sha256:d7e25b3a72fdbc9458cbf1247f701cd0b5a0824486c689573e2625f8a92150d9"},
 ]
 dash-table = [
     {file = "dash_table-5.0.0-py3-none-any.whl", hash = "sha256:19036fa352bb1c11baf38068ec62d172f0515f73ca3276c79dee49b95ddc16c9"},

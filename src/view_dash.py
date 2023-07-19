@@ -2,6 +2,7 @@
 
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc
+import dash_slick
 
 from view import View
 import builduielements_dash
@@ -46,6 +47,9 @@ class DashView(View):
         is_page_fluid = True
         header_height = "56px"
         logo_file_name = "beaverdam-logo_long.png"
+        n_figures_to_show = 3
+        n_figures_to_scroll = 1
+        carousel_margin_bottom = "5%"
 
         ui_elements = self.ui_elements
 
@@ -122,7 +126,17 @@ class DashView(View):
             builduielements_dash.build_button("Reset", "ResetButton")
         )
         sidebar_elements.extend(checklist_elements)
-        mainpanel_elements.append(dbc.CardGroup(figure_elements))
+        mainpanel_elements.append(
+            dash_slick.SlickSlider(
+                children=figure_elements,
+                labels=["" for i in range(len(figure_elements))],
+                slides_to_show=n_figures_to_show,
+                slides_to_scroll=n_figures_to_scroll,
+                dots=True,
+                infinite=True,
+                style={"margin-bottom": carousel_margin_bottom},
+            )
+        )
         mainpanel_elements.extend(datatable_elements)
 
         # Build user interface
