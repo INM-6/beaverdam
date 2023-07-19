@@ -39,18 +39,20 @@ def df_to_dict(df):
     return df.to_dict("records")
 
 
-def display_as_card(card_body):
+def display_as_card(card_body, card_margin="0vmin"):
     """Wrap a UI element in a card
 
     Args:
         card_body (Dash or html element | list of Dash or html elements): the contents
         of the card
+        card_margin (str):  value of the html margin property to use fo the card
+        (default: "0vmin")
 
     Returns:
         dbc.Card (dbc.Card):  Dash Bootstrap Components card
     """
     card_body = [card_body] if not isinstance(card_body, list) else card_body
-    return dbc.Card([dbc.CardBody(children=card_body)], style={"margin": "1vmin"})
+    return dbc.Card([dbc.CardBody(children=card_body)], style={"margin": card_margin})
 
 
 def build_data_table(data, id=[], element_type=""):
@@ -149,7 +151,8 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
                     labelStyle={"display": "block"},
                 )
             ),
-        ]
+        ],
+        card_margin="1vmin"
     )
     return filter_checklist
 
