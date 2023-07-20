@@ -79,7 +79,8 @@ class DashView(View):
                                 element_type=element_type,
                                 data=element_contents["df"],
                             ),
-                        ]
+                        ],
+                        style={"max-width": "max-content"},
                     )
                 )
             elif element_type == "FilterChecklist":
