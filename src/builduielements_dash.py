@@ -72,6 +72,7 @@ def build_data_table(data, id=[], element_type=""):
     return dash_table.DataTable(
         id=set_ui_object_id(id=id, element_type=element_type),
         data=df_to_dict(data),
+        style_table={"overflowX": "scroll"},
     )
 
 
@@ -152,7 +153,7 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
                 )
             ),
         ],
-        card_margin="1vmin"
+        card_margin="1vmin",
     )
     return filter_checklist
 
