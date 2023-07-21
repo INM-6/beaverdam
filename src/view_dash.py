@@ -147,7 +147,6 @@ class DashView(View):
                         **plotly_configuration_options_base_scatter,
                     }
                 # Create the plot
-                print(element_style + ": " + str(fig_config_options))
                 ielement = builduielements_dash.build_data_figure(
                     graph_object=igraph,
                     id=element_id,
