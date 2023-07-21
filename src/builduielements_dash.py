@@ -210,7 +210,7 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
             figure=graph_object,
             config=config,
         ),
-        card_margin="6px"
+        card_margin="6px",
     )
 
     return dash_graph
@@ -247,6 +247,7 @@ def build_bar_graph(data, title=[]):
         x=data.columns,
         title=title,
     )
+    bar_graph.update_layout(showlegend=False)
     return bar_graph
 
 
