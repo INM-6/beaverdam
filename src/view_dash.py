@@ -50,6 +50,30 @@ class DashView(View):
         n_figures_to_show = 3
         n_figures_to_scroll = 1
         carousel_margin_bottom = "5%"
+        # A list of Plotly modebar buttons is here:
+        # https://plotly.com/python/configuration-options/#removing-modebar-buttons
+        # Note that if you redefine a key in a plot-specific dict of config options, it
+        # will override the values in the corresponding key of the base options, so if
+        # you want to add on to base options you have to include the base value in the
+        # plot-specific value alongside the additional options.
+        plotly_configuration_options_base = {
+            "displayModeBar": True,
+            "displaylogo": False,
+            "modeBarButtonsToRemove": ["zoomIn", "zoomOut", "autoScale", "resetScale"],
+        }
+        plotly_configuration_options_base_pie = {}
+        plotly_configuration_options_base_bar = {
+            "modeBarButtonsToRemove": plotly_configuration_options_base[
+                "modeBarButtonsToRemove"
+            ]
+            + [
+                "zoom",
+                "pan",
+                "select",
+                "lasso",
+            ]
+        }
+        plotly_configuration_options_base_scatter = {}
 
         ui_elements = self.ui_elements
 
@@ -100,19 +124,35 @@ class DashView(View):
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
+                    fig_config_options = {
+                        **plotly_configuration_options_base,
+                        **plotly_configuration_options_base_pie,
+                    }
                 elif element_style == "bar":
                     igraph = builduielements_dash.build_bar_graph(
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
+                    fig_config_options = {
+                        **plotly_configuration_options_base,
+                        **plotly_configuration_options_base_bar,
+                    }
                 elif element_style == "scatter":
                     igraph = builduielements_dash.build_scatter_plot(
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
+                    fig_config_options = {
+                        **plotly_configuration_options_base,
+                        **plotly_configuration_options_base_scatter,
+                    }
                 # Create the plot
+                print(element_style + ": " + str(fig_config_options))
                 ielement = builduielements_dash.build_data_figure(
-                    graph_object=igraph, id=element_id, element_type=element_type
+                    graph_object=igraph,
+                    id=element_id,
+                    element_type=element_type,
+                    config=fig_config_options,
                 )
                 figure_elements.append(ielement)
 
