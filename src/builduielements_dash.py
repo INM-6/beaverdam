@@ -263,6 +263,7 @@ def build_scatter_plot(data, title=[]):
         data_frame=data,
         x=data.columns[0],
         y=data.columns[1],
+        hover_name=data.index,
         title=title,
     )
 
