@@ -190,7 +190,7 @@ def build_button(button_text, button_type="button"):
     )
 
 
-def build_data_figure(graph_object, id=[], element_type=""):
+def build_data_figure(graph_object, id=[], element_type="", config={}):
     """Build a Dash data figure containing a graph and with appropriate Dash identifiers
 
     Args:
@@ -199,6 +199,7 @@ def build_data_figure(graph_object, id=[], element_type=""):
         not provided)
         element_type (str):  type of object, for use with pattern-matching callbacks
         (opt)
+        config (dict):  configuration options for Plotly figures (optional)
 
     Returns:
         dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
@@ -207,8 +208,11 @@ def build_data_figure(graph_object, id=[], element_type=""):
         dcc.Graph(
             id=set_ui_object_id(id=id, element_type=element_type),
             figure=graph_object,
-        )
+            config=config,
+        ),
+        card_margin="6px"
     )
+
     return dash_graph
 
 
@@ -277,6 +281,7 @@ def build_scatter_plot(data, title=[]):
     # after selecting via checkboxes or pie graphs.
     scatter_plot.update_layout(
         newselection_mode="gradual",
+        dragmode="select",
     )
 
     return scatter_plot
