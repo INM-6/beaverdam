@@ -212,7 +212,6 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
         ),
         card_margin="6px",
     )
-
     return dash_graph
 
 
@@ -229,6 +228,10 @@ def build_pie_chart(data, title=[]):
         data_frame=data,
         names=data.iloc[:, 0].tolist(),
         title=title,
+    )
+    pie_chart.update_layout(
+        margin=dict(l=0, r=0, t=56, b=0),
+        modebar=dict(orientation="v"),
     )
     return pie_chart
 
@@ -247,7 +250,11 @@ def build_bar_graph(data, title=[]):
         x=data.columns,
         title=title,
     )
-    bar_graph.update_layout(showlegend=False)
+    bar_graph.update_layout(
+        showlegend=False,
+        margin=dict(l=0, r=0, t=56, b=0),
+        modebar=dict(orientation="v"),
+    )
     return bar_graph
 
 
@@ -284,6 +291,8 @@ def build_scatter_plot(data, title=[]):
     scatter_plot.update_layout(
         newselection_mode="gradual",
         dragmode="select",
+        margin=dict(l=0, r=0, t=56, b=0),
+        modebar=dict(orientation="v"),
     )
 
     return scatter_plot
