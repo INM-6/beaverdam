@@ -1,8 +1,8 @@
 """Builds a user interface using Dash"""
 
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
-import dash_bootstrap_components as dbc
-import dash_slick
+import dash_bootstrap_components as dbc  # also see dash-mantine-components
+import dash_trich_components as dtc  # alternative for carousel: dash_slick
 
 from view import View
 import builduielements_dash
@@ -21,7 +21,10 @@ class DashView(View):
 
         self.app = Dash(
             __name__,
-            external_stylesheets=[dbc.themes.BOOTSTRAP],
+            external_stylesheets=[
+                dbc.themes.BOOTSTRAP,
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css",
+            ],
             assets_folder="../assets",
         )
 
@@ -47,9 +50,11 @@ class DashView(View):
         is_page_fluid = True
         header_height = "56px"
         logo_file_name = "beaverdam-logo_long.png"
+        # Options for the carousel displaying figures
         n_figures_to_show = 3
         n_figures_to_scroll = 1
         carousel_margin_bottom = "5%"
+        carousel_margin_side = "2.5%"
         # Here are options for the graph layout -- use graph_object.update_layout() to
         # set them after creating a Plotly graph object "graph_object"
         # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Layout.html
@@ -173,14 +178,20 @@ class DashView(View):
         )
         sidebar_elements.extend(checklist_elements)
         mainpanel_elements.append(
-            dash_slick.SlickSlider(
-                children=figure_elements,
-                labels=["" for i in range(len(figure_elements))],
+            dtc.Carousel(
+                figure_elements,
+                id="FigureGallery",
+                dots=True,
+                arrows=True,
+                infinite=True,
+                speed=500,
                 slides_to_show=n_figures_to_show,
                 slides_to_scroll=n_figures_to_scroll,
-                dots=True,
-                infinite=True,
-                style={"margin-bottom": carousel_margin_bottom},
+                style={
+                    "margin-bottom": carousel_margin_bottom,
+                    "margin-left": carousel_margin_side,
+                    "margin-right": carousel_margin_side,
+                },
             )
         )
         mainpanel_elements.extend(datatable_elements)

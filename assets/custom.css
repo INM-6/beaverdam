@@ -1,0 +1,14 @@
+/* Carousel buttons
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#FigureGallery .slick-prev:before {
+    font-family: "Font Awesome 6 Free";
+    content: '\f0d9';
+    font-size: 40px;
+    height: 40px;
+}
+#FigureGallery .slick-next:before {
+    font-family: "Font Awesome 6 Free";
+    content: '\f0da';
+    font-size: 40px;
+    height: 40px;
+}
