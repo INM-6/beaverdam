@@ -232,7 +232,7 @@ def build_pie_chart(data, title=[]):
     pie_chart.update_layout(
         margin=dict(l=0, r=0, t=56, b=0),
         modebar=dict(orientation="v"),
-        plot_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor="rgba(0,0,0,0)",
     )
     return pie_chart
 
@@ -255,7 +255,17 @@ def build_bar_graph(data, title=[]):
         showlegend=False,
         margin=dict(l=0, r=0, t=56, b=0),
         modebar=dict(orientation="v"),
-        plot_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(
+            linecolor="rgb(1,1,1)",
+            linewidth=1,
+        ),
+        yaxis=dict(
+            linecolor="rgb(1,1,1)",
+            linewidth=1,
+            gridcolor="rgba(1,1,1,0.1)",
+            gridwidth=1,
+        ),
     )
     return bar_graph
 
@@ -295,9 +305,21 @@ def build_scatter_plot(data, title=[]):
         dragmode="select",
         margin=dict(l=0, r=0, t=56, b=0),
         modebar=dict(orientation="v"),
-        xaxis=dict(rangemode="tozero"),
-        yaxis=dict(rangemode="tozero"),
-        plot_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(
+            rangemode="tozero",
+            linecolor="rgb(1,1,1)",
+            linewidth=1,
+            gridcolor="rgba(1,1,1,0.1)",
+            gridwidth=1,
+        ),
+        yaxis=dict(
+            rangemode="tozero",
+            linecolor="rgb(1,1,1)",
+            linewidth=1,
+            gridcolor="rgba(1,1,1,0.1)",
+            gridwidth=1,
+        ),
     )
 
     return scatter_plot
