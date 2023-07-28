@@ -232,6 +232,7 @@ def build_pie_chart(data, title=[]):
     pie_chart.update_layout(
         margin=dict(l=0, r=0, t=56, b=0),
         modebar=dict(orientation="v"),
+        plot_bgcolor='rgba(0,0,0,0)',
     )
     return pie_chart
 
@@ -254,6 +255,7 @@ def build_bar_graph(data, title=[]):
         showlegend=False,
         margin=dict(l=0, r=0, t=56, b=0),
         modebar=dict(orientation="v"),
+        plot_bgcolor='rgba(0,0,0,0)',
     )
     return bar_graph
 
@@ -295,6 +297,7 @@ def build_scatter_plot(data, title=[]):
         modebar=dict(orientation="v"),
         xaxis=dict(rangemode="tozero"),
         yaxis=dict(rangemode="tozero"),
+        plot_bgcolor='rgba(0,0,0,0)',
     )
 
     return scatter_plot
