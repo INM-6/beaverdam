@@ -293,6 +293,8 @@ def build_scatter_plot(data, title=[]):
         dragmode="select",
         margin=dict(l=0, r=0, t=56, b=0),
         modebar=dict(orientation="v"),
+        xaxis=dict(rangemode="tozero"),
+        yaxis=dict(rangemode="tozero"),
     )
 
     return scatter_plot
