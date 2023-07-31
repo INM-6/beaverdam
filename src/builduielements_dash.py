@@ -149,7 +149,7 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
                     options=items,
                     value=[],
                     id=set_ui_object_id(id=id, element_type=element_type),
-                    labelStyle={"display": "block"},
+                    labelStyle={"display": "block", "margin-bottom": "0px"},
                 )
             ),
         ],
