@@ -28,6 +28,8 @@ class DashView(View):
             assets_folder="../assets",
         )
 
+        self.app.title = "Beaverdam"
+
     def __get_image(self, image_file_name, image_height):
         """Get an image from the assets folder
 
