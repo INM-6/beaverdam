@@ -73,6 +73,7 @@ def build_data_table(data, id=[], element_type=""):
         id=set_ui_object_id(id=id, element_type=element_type),
         data=df_to_dict(data),
         style_table={"overflowX": "scroll"},
+        style_cell={'textAlign': 'left'},
     )
 
 
