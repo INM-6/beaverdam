@@ -53,7 +53,7 @@ class DashView(View):
         header_height = "56px"
         logo_file_name = "beaverdam-logo_long.png"
         # Options for the carousel displaying figures
-        n_figures_to_show = 3
+        n_figures_to_show = 2
         n_figures_to_scroll = 1
         carousel_margin_bottom = "5%"
         carousel_margin_side = "2.5%"
