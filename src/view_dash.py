@@ -182,13 +182,20 @@ class DashView(View):
             for item in sublist
         ]
         sidebar_elements.append(
-            dmc.ChipGroup(
-                [dmc.Chip(x, value=x) for x in applied_criteria],
-                id="applied-filter-chips",
-            )
+            builduielements_dash.build_button("Reset", "ResetButton")
         )
         sidebar_elements.append(
-            builduielements_dash.build_button("Reset", "ResetButton")
+            builduielements_dash.display_as_card(
+                [
+                    html.Div(
+                        style={"white-space": "pre-wrap"}, children="Applied filters"
+                    ),
+                    dmc.ChipGroup(
+                        [dmc.Chip(x, value=x) for x in applied_criteria],
+                        id="applied-filter-chips",
+                    ),
+                ]
+            )
         )
         sidebar_elements.extend(checklist_elements)
         mainpanel_elements.append(
@@ -407,7 +414,9 @@ class DashView(View):
                                     )
                                 )
                                 new_text_output.append(
-                                    str(output_element_properties["current_num_records"])
+                                    str(
+                                        output_element_properties["current_num_records"]
+                                    )
                                 )
                             elif output_element_type == "FilterChecklist":
                                 new_checklist_data.append(
