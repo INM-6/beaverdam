@@ -3,6 +3,7 @@
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc  # also see dash-mantine-components
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
+import dash_mantine_components as dmc
 
 from view import View
 import builduielements_dash
@@ -175,6 +176,17 @@ class DashView(View):
         sidebar_elements = []
         mainpanel_elements = []
         topbar_elements.append(self.__get_image(logo_file_name, header_height))
+        applied_criteria = [
+            item
+            for sublist in self.presenter.core.data_table.filter_criteria.values()
+            for item in sublist
+        ]
+        sidebar_elements.append(
+            dmc.ChipGroup(
+                [dmc.Chip(x, value=x) for x in applied_criteria],
+                id="applied-filter-chips",
+            )
+        )
         sidebar_elements.append(
             builduielements_dash.build_button("Reset", "ResetButton")
         )
@@ -252,6 +264,7 @@ class DashView(View):
             Output({"type": "DataFigure", "index": ALL}, "figure"),
             Output({"type": "DataFigure", "index": ALL}, "clickData"),
             Output({"type": "TextOutput", "index": ALL}, "children"),
+            Output("applied-filter-chips", "children"),
             Input({"type": "ResetButton", "index": ALL}, "n_clicks"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "DataFigure", "index": ALL}, "clickData"),
@@ -373,66 +386,77 @@ class DashView(View):
             for output_type in outputs_list:
                 for ielement in output_type:
                     # Get the element ID
-                    output_element_id = ielement["id"]["index"]
-                    # We already make labels update automatically with their associated
-                    # element
-                    if "_label" not in output_element_id:
-                        output_element_properties = (
-                            self.presenter.get_element_properties(output_element_id)
-                        )
-                        output_element_type = output_element_properties["type"]
-                        # Get updated data for the element and add it to the appropriate
-                        # list
-                        presenter_ui_element = self.presenter.ui_elements[
-                            ui_element_ids.index(output_element_id)
-                        ]
-                        if output_element_type == "DataTable":
-                            new_table_data.append(
-                                builduielements_dash.get_data_table_contents(
-                                    presenter_ui_element
+                    try:
+                        output_element_id = ielement["id"]["index"]
+                        # We already make labels update automatically with their associated
+                        # element
+                        if "_label" not in output_element_id:
+                            output_element_properties = (
+                                self.presenter.get_element_properties(output_element_id)
+                            )
+                            output_element_type = output_element_properties["type"]
+                            # Get updated data for the element and add it to the appropriate
+                            # list
+                            presenter_ui_element = self.presenter.ui_elements[
+                                ui_element_ids.index(output_element_id)
+                            ]
+                            if output_element_type == "DataTable":
+                                new_table_data.append(
+                                    builduielements_dash.get_data_table_contents(
+                                        presenter_ui_element
+                                    )
                                 )
-                            )
-                            new_text_output.append(
-                                str(output_element_properties["current_num_records"])
-                            )
-                        elif output_element_type == "FilterChecklist":
-                            new_checklist_data.append(
-                                builduielements_dash.get_checklist_selection(
-                                    presenter_ui_element
+                                new_text_output.append(
+                                    str(output_element_properties["current_num_records"])
                                 )
-                            )
-                        elif output_element_type == "DataFigure":
-                            if ielement["property"] == "figure":
-                                output_element_style = output_element_properties[
-                                    "style"
-                                ]
-                                data = presenter_ui_element.contents["df"]
-                                title = presenter_ui_element.contents["title"]
-                                if output_element_style == "pie":
-                                    new_figure_data.append(
-                                        builduielements_dash.build_pie_chart(
-                                            data, title
-                                        )
+                            elif output_element_type == "FilterChecklist":
+                                new_checklist_data.append(
+                                    builduielements_dash.get_checklist_selection(
+                                        presenter_ui_element
                                     )
-                                elif output_element_style == "bar":
-                                    new_figure_data.append(
-                                        builduielements_dash.build_bar_graph(
-                                            data, title
+                                )
+                            elif output_element_type == "DataFigure":
+                                if ielement["property"] == "figure":
+                                    output_element_style = output_element_properties[
+                                        "style"
+                                    ]
+                                    data = presenter_ui_element.contents["df"]
+                                    title = presenter_ui_element.contents["title"]
+                                    if output_element_style == "pie":
+                                        new_figure_data.append(
+                                            builduielements_dash.build_pie_chart(
+                                                data, title
+                                            )
                                         )
-                                    )
-                                elif output_element_style == "scatter":
-                                    new_figure_data.append(
-                                        builduielements_dash.build_scatter_plot(
-                                            data, title
+                                    elif output_element_style == "bar":
+                                        new_figure_data.append(
+                                            builduielements_dash.build_bar_graph(
+                                                data, title
+                                            )
                                         )
-                                    )
-                            elif ielement["property"] == "clickData":
-                                # This fixes a bug in Dash where clicking the same
-                                # figure section (e.g. bar in a bar graph) multiple
-                                # times in a row doesn't fire the callback.  See bug
-                                # report here:
-                                # https://github.com/plotly/dash/issues/1300
-                                new_figure_clickdata.append(None)
+                                    elif output_element_style == "scatter":
+                                        new_figure_data.append(
+                                            builduielements_dash.build_scatter_plot(
+                                                data, title
+                                            )
+                                        )
+                                elif ielement["property"] == "clickData":
+                                    # This fixes a bug in Dash where clicking the same
+                                    # figure section (e.g. bar in a bar graph) multiple
+                                    # times in a row doesn't fire the callback.  See bug
+                                    # report here:
+                                    # https://github.com/plotly/dash/issues/1300
+                                    new_figure_clickdata.append(None)
+                    except:
+                        pass
+
+            # Update chips
+            applied_criteria = [
+                item
+                for sublist in self.presenter.core.data_table.filter_criteria.values()
+                for item in sublist
+            ]
+            new_chips = [dmc.Chip(x, value=x) for x in applied_criteria]
 
             # Return new UI stuff:
             # - If ONE Output() is pattern-matching, Dash expects the returned value
@@ -447,6 +471,7 @@ class DashView(View):
                 new_figure_data,
                 new_figure_clickdata,
                 new_text_output,
+                new_chips,
             ]
 
     def launch_ui(self):
