@@ -191,10 +191,12 @@ class DashView(View):
                         style={"white-space": "pre-wrap"}, children="Applied filters"
                     ),
                     dmc.ChipGroup(
-                        [dmc.Chip(x, value=x) for x in applied_criteria],
+                        builduielements_dash.build_chips(applied_criteria),
                         id="applied-filter-chips",
+                        position="left",
                     ),
-                ]
+                ],
+                card_margin="1vmin",
             )
         )
         sidebar_elements.extend(checklist_elements)
@@ -465,7 +467,7 @@ class DashView(View):
                 for sublist in self.presenter.core.data_table.filter_criteria.values()
                 for item in sublist
             ]
-            new_chips = [dmc.Chip(x, value=x) for x in applied_criteria]
+            new_chips = builduielements_dash.build_chips(applied_criteria)
 
             # Return new UI stuff:
             # - If ONE Output() is pattern-matching, Dash expects the returned value

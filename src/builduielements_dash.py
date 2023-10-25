@@ -2,6 +2,7 @@
 
 from dash import dcc, dash_table, html
 import dash_bootstrap_components as dbc
+import dash_mantine_components as dmc
 import plotly.express as px
 import uuid
 
@@ -73,7 +74,7 @@ def build_data_table(data, id=[], element_type=""):
         id=set_ui_object_id(id=id, element_type=element_type),
         data=df_to_dict(data),
         style_table={"overflowX": "scroll"},
-        style_cell={'textAlign': 'left'},
+        style_cell={"textAlign": "left"},
     )
 
 
@@ -324,3 +325,16 @@ def build_scatter_plot(data, title=[]):
     )
 
     return scatter_plot
+
+
+def build_chips(chip_items):
+    """Build chips from a list of items
+
+    Args:
+        chip_items (list): each item in the list will be one chip
+
+    Returns:
+        chips (list):  all chips, in a list
+    """
+    chips = [dmc.Chip(x, value=x, size="xs", radius="md") for x in chip_items]
+    return chips
