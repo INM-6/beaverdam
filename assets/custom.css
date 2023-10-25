@@ -6,9 +6,16 @@
     font-size: 40px;
     height: 40px;
 }
+
 #FigureGallery .slick-next:before {
     font-family: "Font Awesome 6 Free";
     content: '\f0da';
     font-size: 40px;
     height: 40px;
+}
+
+/* Chips
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.mantine-Chip-root .mantine-Chip-label {
+    margin: 0px
 }

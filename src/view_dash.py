@@ -194,6 +194,7 @@ class DashView(View):
                         builduielements_dash.build_chips(applied_criteria),
                         id="applied-filter-chips",
                         position="left",
+                        spacing=8,
                     ),
                 ],
                 card_margin="1vmin",
