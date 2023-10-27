@@ -25,3 +25,7 @@
 .mantine-Chip-root .mantine-Chip-label .fa {
     opacity: 0.4;
 }
+
+.mantine-Group-root {
+    margin-top: 8px;
+}
