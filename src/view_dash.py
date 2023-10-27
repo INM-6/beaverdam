@@ -24,7 +24,7 @@ class DashView(View):
             __name__,
             external_stylesheets=[
                 dbc.themes.BOOTSTRAP,
-                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css",
+                dbc.icons.FONT_AWESOME,
             ],
             assets_folder="../assets",
         )
