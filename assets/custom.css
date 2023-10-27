@@ -17,5 +17,44 @@
 /* Chips
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .mantine-Chip-root .mantine-Chip-label {
-    margin: 0px
+    margin: 0px;
+}
+
+/* https://iconify.design/docs/usage/css/ */
+/* .mantine-Chip-checkIcon { */
+/* width: 10px;
+    height: 10px; */
+/* Add background color */
+/* background-color: currentColor; */
+/* Add mask image, use variable to reduce duplication */
+/* --svg: url('https://api.iconify.design/bi/bell-fill.svg'); */
+/* --svg: url('https://fontawesome.com/icons/xmark?f=classic&s=solid');
+    -webkit-mask-image: var(--svg);
+    mask-image: var(--svg);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%; */
+/* } */
+
+/* .mantine-Chip-iconWrapper {
+    font-family: "Font Awesome 6 Free";
+    content: '\f0da';
+    font-size: 10px;
+    height: 10px;
+} */
+
+/* .mantine-Chip-checkIcon path  */
+/* .mantine-Chip-checkIcon {
+    fill: red !important; */
+/* d: path("M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"); */
+/* width: 0px;
+    height: 0px; */
+/* } */
+
+.mantine-Chip-checkIcon path {
+    /*d: path("M 4 4.586 L 1.707 2.293 A 1 1 0 1 0 0.293 3.707 l 3 3 a 0.997 0.997 0 0 0 1.414 0 l 5 -5 A 1 1 0 1 0 8.293 0.293 L 4 4.586 Z");*/
+    d: path("M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z");
+    fill: red;
+    /*currentcolor;*/
+    fill-rule: evenodd;
+    clip-rule: evenodd;
 }

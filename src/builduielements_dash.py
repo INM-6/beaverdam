@@ -336,5 +336,10 @@ def build_chips(chip_items):
     Returns:
         chips (list):  all chips, in a list
     """
-    chips = [dmc.Chip(x, value=x, size="xs", radius="md") for x in chip_items]
+    chips = [
+        dmc.Chip(
+            x, value=x, size="xs", radius="md", checked=True, className="FilterChip"
+        )
+        for x in chip_items
+    ]
     return chips
