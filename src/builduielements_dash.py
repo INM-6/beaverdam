@@ -338,7 +338,11 @@ def build_chips(chip_items):
     """
     chips = [
         dmc.Chip(
-            x, value=x, size="xs", radius="md", checked=True, className="FilterChip"
+            [html.I(className="fa fa-solid fa-circle-xmark"), " ", x],
+            value=x,
+            size="s",
+            radius="lg",
+            checked=False,
         )
         for x in chip_items
     ]
