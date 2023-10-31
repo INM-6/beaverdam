@@ -194,29 +194,7 @@ class DashView(View):
         sidebar_elements.append(
             builduielements_dash.build_button("Reset", "ResetButton")
         )
-        sidebar_elements.extend(
-            applied_filter_elements
-            # builduielements_dash.build_chip_group(
-            #     applied_criteria,
-            #     title="Applied filters",
-            #     id="test",
-            #     element_type="ChipGroup",
-            # )
-            # builduielements_dash.display_as_card(
-            #     [
-            #         html.Div(
-            #             style={"white-space": "pre-wrap"}, children="Applied filters"
-            #         ),
-            #         dmc.ChipGroup(
-            #             builduielements_dash.build_chips(applied_criteria),
-            #             id={"index": 1, "type": "applied-filter-chips"},
-            #             position="left",
-            #             spacing=8,
-            #         ),
-            #     ],
-            #     card_margin="1vmin",
-            # )
-        )
+        sidebar_elements.extend(applied_filter_elements)
         sidebar_elements.extend(checklist_elements)
         mainpanel_elements.append(
             dtc.Carousel(
