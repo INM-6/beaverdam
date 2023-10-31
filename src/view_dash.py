@@ -92,6 +92,7 @@ class DashView(View):
 
         # Populate UI elements for each UI component, from Presenter information
         checklist_elements = []
+        applied_filter_elements = []
         datatable_elements = []
         figure_elements = []
         for key, val in ui_elements.items():
@@ -126,6 +127,15 @@ class DashView(View):
                         id=element_id,
                         element_type=element_type,
                         items=element_contents["checklist_options"],
+                        title=element_contents["title"],
+                    )
+                )
+            elif element_type == "SelectedCriteria":
+                applied_filter_elements.append(
+                    builduielements_dash.build_chip_group(
+                        id=element_id,
+                        element_type=element_type,
+                        items=element_contents["items"],
                         title=element_contents["title"],
                     )
                 )
@@ -184,21 +194,28 @@ class DashView(View):
         sidebar_elements.append(
             builduielements_dash.build_button("Reset", "ResetButton")
         )
-        sidebar_elements.append(
-            builduielements_dash.display_as_card(
-                [
-                    html.Div(
-                        style={"white-space": "pre-wrap"}, children="Applied filters"
-                    ),
-                    dmc.ChipGroup(
-                        builduielements_dash.build_chips(applied_criteria),
-                        id="applied-filter-chips",
-                        position="left",
-                        spacing=8,
-                    ),
-                ],
-                card_margin="1vmin",
-            )
+        sidebar_elements.extend(
+            applied_filter_elements
+            # builduielements_dash.build_chip_group(
+            #     applied_criteria,
+            #     title="Applied filters",
+            #     id="test",
+            #     element_type="ChipGroup",
+            # )
+            # builduielements_dash.display_as_card(
+            #     [
+            #         html.Div(
+            #             style={"white-space": "pre-wrap"}, children="Applied filters"
+            #         ),
+            #         dmc.ChipGroup(
+            #             builduielements_dash.build_chips(applied_criteria),
+            #             id={"index": 1, "type": "applied-filter-chips"},
+            #             position="left",
+            #             spacing=8,
+            #         ),
+            #     ],
+            #     card_margin="1vmin",
+            # )
         )
         sidebar_elements.extend(checklist_elements)
         mainpanel_elements.append(
@@ -274,14 +291,19 @@ class DashView(View):
             Output({"type": "DataFigure", "index": ALL}, "figure"),
             Output({"type": "DataFigure", "index": ALL}, "clickData"),
             Output({"type": "TextOutput", "index": ALL}, "children"),
-            Output("applied-filter-chips", "children"),
+            Output({"type": "SelectedCriteria", "index": ALL}, "children"),
             Input({"type": "ResetButton", "index": ALL}, "n_clicks"),
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "DataFigure", "index": ALL}, "clickData"),
             Input({"type": "DataFigure", "index": ALL}, "selectedData"),
+            Input({"type": "SelectedCriteria", "index": ALL}, "children"),
         )
         def filter_data(
-            resetButtonClicks, checklistValue, figureClickData, figureSelectedData
+            resetButtonClicks,
+            checklistValue,
+            figureClickData,
+            figureSelectedData,
+            chipData,
         ):
             """Detect clicks on user interface then filter and display appropriately
 
@@ -324,6 +346,8 @@ class DashView(View):
                 # element that was triggered.
                 if triggered_element_type == "ResetButton":
                     self.controller.trigger_clear_filter_criteria()
+                elif triggered_element_type == "SelectedCriteria":
+                    "veronica"
                 elif triggered_element_type == "FilterChecklist":
                     # Checking a checkbox should remove any direct selection of rows,
                     # e.g. from a scatter plot
@@ -468,7 +492,7 @@ class DashView(View):
                 for sublist in self.presenter.core.data_table.filter_criteria.values()
                 for item in sublist
             ]
-            new_chips = builduielements_dash.build_chips(applied_criteria)
+            new_chips = [builduielements_dash.build_chips(applied_criteria)]
 
             # Return new UI stuff:
             # - If ONE Output() is pattern-matching, Dash expects the returned value

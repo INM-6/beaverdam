@@ -137,6 +137,43 @@ class FilterChecklist(UiElement):
             new_selected_options = []
         self.contents["selected_options"] = new_selected_options
 
+class SelectedCriteria(UiElement):
+    """Display items from a list"""
+
+    def __init__(self, title=[], items=[]):
+        """Create the list with initial content
+
+        Args:
+            title (str):  title for the list (optional)
+            items (list):  items to show (optional; if not given, no options will 
+            be shown)
+        """
+        super().__init__()
+
+        # Properties
+        self.properties["type"] = "SelectedCriteria"
+
+        # Set title
+        self.contents["title"] = title
+        # Initialize list of items
+        self.contents["items"] = items
+
+    def update(self, new_data_table):
+        """Update which criteria to show
+
+        Args:
+            new_data_table (DataTableCore): new_data_table.filter_criteria is a dict of
+            criteria, with key=column name, val=allowable values.
+        """
+        # Get all allowable values
+        # veronica -- get all values out of the dict and expand all lists of allowable values
+        all_values = list(new_data_table.filter_criteria.values())
+        all_values_unnested = []
+        for y in all_values:
+            for i in range(len(y)):
+                all_values_unnested.append(y[i])
+        self.contents["items"] = all_values_unnested
+
 class DataTable(UiElement):
     """Data tables"""
 

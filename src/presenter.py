@@ -1,7 +1,7 @@
 """Prepare data for visualization
 """
 
-from uielement import DataTable, FilterChecklist, DataFigure
+from uielement import DataTable, FilterChecklist, DataFigure, SelectedCriteria
 
 
 class Presenter:
@@ -57,6 +57,12 @@ class Presenter:
                     style=iplot["plot_type"],
                 )
             )
+
+        # Make list of applied filters
+        if (len(self.cfg.get_section("filters")["headings"]) > 0) | (
+            len(self.cfg.get_section("plots").values()) > 0
+        ):
+            self.ui_elements.append(SelectedCriteria(title="Applied filters", items=[]))
 
     def update(self):
         """Apply the current filter to all UI elements"""

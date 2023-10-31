@@ -347,3 +347,33 @@ def build_chips(chip_items):
         for x in chip_items
     ]
     return chips
+
+
+def build_chip_group(items, title=[], id=[], element_type=""):
+    """Build chipgroup from chips and display in card
+
+    Args:
+        items (list): each item in the list will be one chip
+        title (str):  title for the chipgroup
+        id (str):  unique identifier
+        element_type (str):  type of object, for use with pattern-matching callbacks
+        (opt)
+
+    Returns:
+        chip_group (dbc.Card): Dash Bootstrap Components card containing the chips and title
+    """
+    chip_group = display_as_card(
+        [
+            html.Div(children=title),
+            html.Div(
+                children=dmc.ChipGroup(
+                    build_chips(items),
+                    id={"index": id, "type": element_type},
+                    position="left",
+                    spacing=8,
+                )
+            ),
+        ],
+        card_margin="1vmin",
+    )
+    return chip_group
