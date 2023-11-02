@@ -152,3 +152,23 @@ class DataTableCore(pd.DataFrame):
         # modifies the dataframe it's called on, rather than returning a new dataframe.
         filtered_df.drop([self.selection_state_column_name], axis=1, inplace=True)
         return filtered_df
+
+    def get_filter_criteria(self):
+        """Get filter criteria
+
+        Returns:
+            filter_criteria (dict): dict of criteria, with key=column name,
+            val=allowable values
+        """
+        return self.filter_criteria
+
+    def get_filter_criteria_values(self):
+        """Get all the values for applied filter criteria
+
+        Returns:
+            filter_criteria_values (list): specified values for all filter criteria
+        """
+        filter_criteria_values = [
+            item for sublist in self.filter_criteria.values() for item in sublist
+        ]
+        return filter_criteria_values

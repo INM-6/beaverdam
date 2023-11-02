@@ -274,7 +274,7 @@ class DashView(View):
             Input({"type": "FilterChecklist", "index": ALL}, "value"),
             Input({"type": "DataFigure", "index": ALL}, "clickData"),
             Input({"type": "DataFigure", "index": ALL}, "selectedData"),
-            Input({"type": "SelectedCriteria", "index": ALL}, "children"),
+            Input({"type": "SelectedCriteria", "index": ALL}, "value"),
         )
         def filter_data(
             resetButtonClicks,
@@ -325,7 +325,30 @@ class DashView(View):
                 if triggered_element_type == "ResetButton":
                     self.controller.trigger_clear_filter_criteria()
                 elif triggered_element_type == "SelectedCriteria":
-                    "veronica"
+                    existing_filter_criteria = (
+                        self.presenter.core.data_table.get_filter_criteria()
+                    )
+                    filter_criteria_to_remove = ctx.triggered[0]["value"]
+                    # Clicking a chip removes that criterion from the filter criteria.
+                    # Be careful to not modify existing_filter_criteria, because this
+                    # will also modify the actual filter criteria in the datatable.
+                    #
+                    # TODO:  be robust to criterion which have the same value but come
+                    # from different filters, e.g. keep track of which element changed
+                    # each filter criterion, and store alongside the criterion (e.g. in
+                    # the "value" property of a chip), or add the filter title to the
+                    # property in the text on the chip
+                    new_filter_criteria = {}
+                    for criterion, val in existing_filter_criteria.items():
+                        if filter_criteria_to_remove in val:
+                            new_filter_criteria[criterion] = [
+                                x for x in val if x not in filter_criteria_to_remove
+                            ]
+
+                        else:
+                            new_filter_criteria[criterion] = val
+                    self.controller.trigger_update_filter_criteria(new_filter_criteria)
+
                 elif triggered_element_type == "FilterChecklist":
                     # Checking a checkbox should remove any direct selection of rows,
                     # e.g. from a scatter plot
@@ -465,11 +488,9 @@ class DashView(View):
                         pass
 
             # Update chips
-            applied_criteria = [
-                item
-                for sublist in self.presenter.core.data_table.filter_criteria.values()
-                for item in sublist
-            ]
+            applied_criteria = (
+                self.presenter.core.data_table.get_filter_criteria_values()
+            )
             new_chips = [builduielements_dash.build_chips(applied_criteria)]
 
             # Return new UI stuff:
