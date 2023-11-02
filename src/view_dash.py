@@ -188,7 +188,7 @@ class DashView(View):
         topbar_elements.append(self.__get_image(logo_file_name, header_height))
         applied_criteria = [
             item
-            for sublist in self.presenter.core.data_table.filter_criteria.values()
+            for sublist in self.presenter.core.data_table.get_filter_criteria_values()
             for item in sublist
         ]
         sidebar_elements.append(
