@@ -306,43 +306,19 @@ class DashView(View):
                 triggered_element_id = triggered_element["index"]
                 triggered_element_type = ctx.triggered_id["type"]
 
-                # Find the database field(s) represented by the clicked element
-                try:
-                    database_field = ui_element_info[triggered_element_id][
-                        "properties"
-                    ]["field"][0]
-                except:
-                    # Some UI elements, e.g. the reset button, don't have a field
-                    database_field = ""
+                # Find the database field(s) represented by the clicked element.  Set
+                # this to "" if the UI element doesn't have a field (e.g. chips) or
+                # isn't in the Presenter's list of UI elements (e.g. reset button).
+                database_field = ui_element_info.get(triggered_element_id, "")
+                if database_field != "":
+                    database_field = database_field["properties"].get("field", "")
+                if isinstance(database_field, list):
+                    database_field = database_field[0]
 
                 # Get new filter criteria.  How this happens depends on the type of
                 # element that was triggered.
                 if triggered_element_type == "ResetButton":
                     self.controller.trigger_clear_filter_criteria()
-                elif triggered_element_type == "SelectedCriteria":
-                    existing_filter_criteria = (
-                        self.presenter.core.data_table.get_filter_criteria()
-                    )
-                    filter_criteria_to_remove = ctx.triggered[0]["value"]
-                    # Clicking a chip removes that criterion from the filter criteria.
-                    # Be careful to not modify existing_filter_criteria, because this
-                    # will also modify the actual filter criteria in the datatable.
-                    #
-                    # TODO:  be robust to criterion which have the same value but come
-                    # from different filters, e.g. keep track of which element changed
-                    # each filter criterion, and store alongside the criterion (e.g. in
-                    # the "value" property of a chip), or add the filter title to the
-                    # property in the text on the chip
-                    new_filter_criteria = {}
-                    for criterion, val in existing_filter_criteria.items():
-                        if filter_criteria_to_remove in val:
-                            new_filter_criteria[criterion] = [
-                                x for x in val if x not in filter_criteria_to_remove
-                            ]
-
-                        else:
-                            new_filter_criteria[criterion] = val
-                    self.controller.trigger_update_filter_criteria(new_filter_criteria)
 
                 elif triggered_element_type == "FilterChecklist":
                     # Checking a checkbox should remove any direct selection of rows,
@@ -353,6 +329,7 @@ class DashView(View):
                     self.controller.trigger_update_filter_criteria(
                         {database_field: new_filter_criteria}
                     )
+
                 elif triggered_element_type == "DataFigure":
                     triggered_element_style = ui_element_info[triggered_element_id][
                         "properties"
@@ -395,6 +372,45 @@ class DashView(View):
                         # Select the appropriate rows
                         self.controller.trigger_select_dataframe_rows(selected_rows)
 
+                elif triggered_element_type == "SelectedCriteria":
+                    existing_filter_criteria = (
+                        self.presenter.core.data_table.get_filter_criteria()
+                    )
+                    filter_criteria_to_remove = ctx.triggered[0]["value"]
+                    # Clicking a chip removes that criterion from the filter criteria.
+                    # Be careful to not modify existing_filter_criteria, because this
+                    # will also modify the actual filter criteria in the datatable.
+                    #
+                    # TODO:  be robust to criterion which have the same value but come
+                    # from different filters, e.g. keep track of which element changed
+                    # each filter criterion, and store alongside the criterion (e.g. in
+                    # the "value" property of a chip), or add the filter title to the
+                    # property in the text on the chip.
+                    if filter_criteria_to_remove == "manual selection":
+                        # We grouped scatterplot selection, with the "row_index" key,
+                        # into a "manual selection" chip.  Use the original key to
+                        # select criteria to remove.
+                        filter_criteria_to_remove = "row_index"
+                    new_filter_criteria = {}
+                    for criterion, val in existing_filter_criteria.items():
+                        # Go through each existing filter criterion and see which (if
+                        # any) elements from it to keep
+                        if filter_criteria_to_remove == criterion:
+                            # If the chip represents a criterion (e.g. row_index),
+                            # delete all values in the criterion
+                            new_filter_criteria[criterion] = []
+                        elif filter_criteria_to_remove in val:
+                            # If the chip represents a single element, keep only the
+                            # other elements in that criterion
+                            new_filter_criteria[criterion] = [
+                                x for x in val if x not in filter_criteria_to_remove
+                            ]
+                        else:
+                            # If a criterion isn't affected by the selected chip, keep
+                            # it the same
+                            new_filter_criteria[criterion] = val
+                    self.controller.trigger_update_filter_criteria(new_filter_criteria)
+
                 # Update presenter
                 self.presenter.update()
 
@@ -412,6 +428,7 @@ class DashView(View):
             new_figure_data = []
             new_figure_clickdata = []
             new_text_output = []
+            new_chips = []
             # Go through each UI element that's an output of the callback
             for output_type in outputs_list:
                 for ielement in output_type:
@@ -479,22 +496,33 @@ class DashView(View):
                                     # report here:
                                     # https://github.com/plotly/dash/issues/1300
                                     new_figure_clickdata.append(None)
+                            elif output_element_type == "SelectedCriteria":
+                                # Update chips.  Make sure to modify a COPY of the
+                                # applied criteria, or else you will modify the actual
+                                # filter criteria from the datatable.
+                                chip_criteria = dict(
+                                    self.presenter.core.data_table.get_filter_criteria()
+                                )
+                                if "row_index" in chip_criteria.keys():
+                                    # Put any filter criteria originating from selecting
+                                    # scatterplot points into single "custom criteria"
+                                    # chip.
+                                    if len(chip_criteria["row_index"]) > 0:
+                                        chip_criteria["row_index"] = "manual selection"
+                                chip_criteria_values = []
+                                for val in chip_criteria.values():
+                                    if isinstance(val, str):
+                                        chip_criteria_values.append(val)
+                                    else:
+                                        chip_criteria_values.extend(val)
+                                new_chips.append(
+                                    builduielements_dash.build_chips(
+                                        chip_criteria_values
+                                    )
+                                )
                     except:
                         pass
 
-            # Update chips
-            applied_criteria = (
-                self.presenter.core.data_table.get_filter_criteria_values()
-            )
-            new_chips = [builduielements_dash.build_chips(applied_criteria)]
-
-            # Return new UI stuff:
-            # - If ONE Output() is pattern-matching, Dash expects the returned value
-            # to be a list containing one list for each of the detected output.
-            # - If MORE THAN ONE Output() is pattern-matching, Dash expects the
-            # returned value to be a list containing one list for each of the
-            # Output() elements, in turn containing one list for each of the
-            # detected outputs.
             return [
                 new_table_data,
                 new_checklist_data,
