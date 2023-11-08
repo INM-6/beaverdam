@@ -2,8 +2,6 @@
 
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc  # also see dash-mantine-components
-import dash_trich_components as dtc  # alternative for carousel: dash_slick
-import dash_mantine_components as dmc
 
 from view import View
 import builduielements_dash
