@@ -3,6 +3,7 @@
 from dash import dcc, dash_table, html
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
+import dash_trich_components as dtc  # alternative for carousel: dash_slick
 import plotly.express as px
 import uuid
 
@@ -325,6 +326,39 @@ def build_scatter_plot(data, title=[]):
     )
 
     return scatter_plot
+
+
+def build_carousel(
+    figures, n_figs=1, n_scroll=1, margin_bottom="5%", margin_side="2.5%"
+):
+    """Arrange figures in a carousel
+
+    Args:
+        figures (list): figures to show, as some sort of Dash UI element
+        n_figs (int, optional): how many figures to show at once. Defaults to 1.
+        n_scroll (int, optional): how many figures to scroll when the scroll button is clicked. Defaults to 1.
+        margin_bottom (str, optional): bottom margin, with units. Defaults to 5%.
+        margin_side (str, optional): side margin, with units. Defaults to 2.5%.
+
+    Returns:
+        carousel (dtc.Carousel):  carousel containing the figures
+    """
+    carousel = dtc.Carousel(
+        figures,
+        id="FigureGallery",
+        dots=True,
+        arrows=True,
+        infinite=True,
+        speed=500,
+        slides_to_show=n_figs,
+        slides_to_scroll=n_scroll,
+        style={
+            "margin-bottom": margin_bottom,
+            "margin-left": margin_side,
+            "margin-right": margin_side,
+        },
+    )
+    return carousel
 
 
 def build_chips(chip_items):

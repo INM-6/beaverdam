@@ -192,20 +192,12 @@ class DashView(View):
         sidebar_elements.extend(applied_filter_elements)
         sidebar_elements.extend(checklist_elements)
         mainpanel_elements.append(
-            dtc.Carousel(
+            builduielements_dash.build_carousel(
                 figure_elements,
-                id="FigureGallery",
-                dots=True,
-                arrows=True,
-                infinite=True,
-                speed=500,
-                slides_to_show=n_figures_to_show,
-                slides_to_scroll=n_figures_to_scroll,
-                style={
-                    "margin-bottom": carousel_margin_bottom,
-                    "margin-left": carousel_margin_side,
-                    "margin-right": carousel_margin_side,
-                },
+                n_figs=n_figures_to_show,
+                n_scroll=n_figures_to_scroll,
+                margin_bottom=carousel_margin_bottom,
+                margin_side=carousel_margin_side,
             )
         )
         mainpanel_elements.extend(datatable_elements)
@@ -301,7 +293,6 @@ class DashView(View):
 
             # On load, ctx.triggered_id is None, and we don't have to filter anyway
             if triggered_element is not None:
-
                 # Get specific information about the element that was triggered
                 triggered_element_id = triggered_element["index"]
                 triggered_element_type = ctx.triggered_id["type"]
@@ -537,7 +528,6 @@ class DashView(View):
     def launch_ui(self):
         """Build and run frontend"""
         if __name__ == "view_dash":
-
             self.build_layout()
             self.register_callbacks()
             self.app.run_server(debug=False)
