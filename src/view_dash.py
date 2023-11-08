@@ -509,6 +509,8 @@ class DashView(View):
                                     # chip.
                                     if len(chip_criteria["row_index"]) > 0:
                                         chip_criteria["row_index"] = "manual selection"
+                                    else:
+                                        del chip_criteria["row_index"]
                                 chip_criteria_values = []
                                 for val in chip_criteria.values():
                                     if isinstance(val, str):
