@@ -186,8 +186,11 @@ def build_button(button_text, button_type="button"):
     """
     return html.Div(
         children=[
-            html.Button(
-                button_text, id=set_ui_object_id(element_type=button_type), n_clicks=0
+            dbc.Button(
+                button_text,
+                id=set_ui_object_id(element_type=button_type),
+                n_clicks=0,
+                size="sm",
             ),
         ]
     )
