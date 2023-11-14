@@ -1,3 +1,9 @@
+/* Reset button
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.btn-primary {
+    margin: 1vmin;
+}
+
 /* Carousel buttons
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 #FigureGallery .slick-prev:before {
