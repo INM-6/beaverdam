@@ -7,6 +7,7 @@ import dash_trich_components as dtc  # alternative for carousel: dash_slick
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
+import theme_plots
 import uuid
 
 
@@ -198,66 +199,6 @@ def build_button(button_text, button_type="button"):
     )
 
 
-def create_figure_templates():
-    # Set default colour sequence.  This will be repeated if there are more elements
-    # that need colours.
-    figure_colours = [
-        "#cc4f4c",  # red
-        "#73adaa",  # blue
-        "#dbc172",  # yellow
-        "#a6bc68",  # green
-        "#dd8b52",  # orange
-        "#7f5b47",  # brown
-    ]
-    # Template for general figure properties
-    pio.templates["main"] = go.layout.Template(
-        layout=dict(
-            plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=0, r=0, t=56, b=0),
-            colorway=figure_colours,
-            modebar=dict(orientation="v"),
-            # showlegend=False,
-        )
-    )
-    # Set figure properties specific to different plot types
-    # fig_template.data.histogram = [go.histogram(showlegend=False)]
-    # fig_template.layout.showlegend=
-
-    # return fig_template
-
-    # draft_template.layout.annotations = [
-    #     dict(
-    #         name="draft watermark",
-    #         text="DRAFT",
-    #         textangle=-30,
-    #         opacity=0.1,
-    #         font=dict(color="black", size=100),
-    #         xref="paper",
-    #         yref="paper",
-    #         x=0.5,
-    #         y=0.5,
-    #         showarrow=False,
-    #     )
-    # ]
-
-    # large_rockwell_template = dict(
-    #     layout=go.Layout(title_font=dict(family="Rockwell", size=24))
-    # )
-
-    # diamond_template.data.scatter = [go.Scatter(marker=dict(symbol="diamond", size=20))]
-
-    # symbol_template.data.scatter = [
-    #     go.Scatter(marker=dict(symbol="diamond", size=10)),
-    #     go.Scatter(marker=dict(symbol="square", size=10)),
-    #     go.Scatter(marker=dict(symbol="circle", size=10)),
-    # ]
-
-    # pio.templates['custom'] = go.layout.Template(
-    #     layout_paper_bgcolor='rgba(0,0,0,0)',
-    #     layout_plot_bgcolor='rgba(0,0,0,0)'
-    #     )
-
-
 def build_data_figure(graph_object, id=[], element_type="", config={}):
     """Build a Dash data figure containing a graph and with appropriate Dash identifiers
 
@@ -272,10 +213,9 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
     Returns:
         dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
     """
-    # Get custom Plotly themes
-    create_figure_templates()
+    # Plotly themes have been imported when importing theme_plots.py
     # Set default theme
-    pio.templates.default = "main"#create_figure_templates()
+    pio.templates.default = "main"
     # Create plot
     dash_graph = display_as_card(
         dcc.Graph(
@@ -302,12 +242,7 @@ def build_pie_chart(data, title=[]):
         names=data.iloc[:, 0].tolist(),
         title=title,
     )
-    # pie_chart.update_layout(
-    #     margin=dict(l=0, r=0, t=56, b=0),
-    #     modebar=dict(orientation="v"),
-    #     plot_bgcolor="rgba(0,0,0,0)",
-    #     template=get_figure_template(),
-    # )
+    pie_chart.update_layout(template="main+pie")
     return pie_chart
 
 
@@ -325,22 +260,7 @@ def build_bar_graph(data, title=[]):
         x=data.columns,
         title=title,
     )
-    bar_graph.update_layout(
-        showlegend=False,
-        # margin=dict(l=0, r=0, t=56, b=0),
-        # modebar=dict(orientation="v"),
-        # plot_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(
-            linecolor="rgb(1,1,1)",
-            linewidth=1,
-        ),
-        yaxis=dict(
-            linecolor="rgb(1,1,1)",
-            linewidth=1,
-            gridcolor="rgba(1,1,1,0.1)",
-            gridwidth=1,
-        ),
-    )
+    bar_graph.update_layout(template="main+bar")
     return bar_graph
 
 
@@ -360,42 +280,7 @@ def build_scatter_plot(data, title=[]):
         hover_name=data.index,
         title=title,
     )
-
-    # Update selection mode to avoid the error:
-    #   unrecognized GUI edit: selections[0].xref
-    # Otherwise, after selecting points in a dataframe, there is an error
-    # (use the inspector in the browser to see the error) on plotly.js
-    # versions 2.13.2 and 2.13.3.
-    # https://github.com/plotly/react-plotly.js/issues/290
-    # Here is a list of plotly versions and which version of plotly.js
-    # they use:
-    # https://github.com/plotly/plotly.py/releases
-    # I got the error in plotly v5.11.0, 5.13.1, 5.9.0, and 5.8.2.
-    # The error only occurs if the scatterplot data is updated as an output
-    # after selecting points from the scatterplot, not if the points are updated
-    # after selecting via checkboxes or pie graphs.
-    scatter_plot.update_layout(
-        newselection_mode="gradual",
-        dragmode="select",
-        # margin=dict(l=0, r=0, t=56, b=0),
-        # modebar=dict(orientation="v"),
-        # plot_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(
-            rangemode="tozero",
-            linecolor="rgb(1,1,1)",
-            linewidth=1,
-            gridcolor="rgba(1,1,1,0.1)",
-            gridwidth=1,
-        ),
-        yaxis=dict(
-            rangemode="tozero",
-            linecolor="rgb(1,1,1)",
-            linewidth=1,
-            gridcolor="rgba(1,1,1,0.1)",
-            gridwidth=1,
-        ),
-    )
-
+    scatter_plot.update_layout(template="main+scatter")
     return scatter_plot
 
 
