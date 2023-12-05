@@ -198,7 +198,7 @@ def build_button(button_text, button_type="button"):
     )
 
 
-def get_figure_template():
+def create_figure_templates():
     # Set default colour sequence.  This will be repeated if there are more elements
     # that need colours.
     figure_colours = [
@@ -209,26 +209,21 @@ def get_figure_template():
         "#dd8b52",  # orange
         "#7f5b47",  # brown
     ]
-    # Create template
-    fig_template = go.layout.Template()
-    # Set general figure properties
-    # fig_template.layout.plot_bgcolor='rgba(0,0,0,0)'
-    # fig_template.layout.margin=dict(l=0, r=0, t=56, b=0)
-    # fig_template.layout.colorway=figure_colours
-    # fig_template.layout.modebar=dict(orientation="v")
-
-    fig_template.layout = dict(
-        plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=0, r=0, t=56, b=0),
-        colorway=figure_colours,
-        modebar=dict(orientation="v"),
-        showlegend=False,
+    # Template for general figure properties
+    pio.templates["main"] = go.layout.Template(
+        layout=dict(
+            plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=0, r=0, t=56, b=0),
+            colorway=figure_colours,
+            modebar=dict(orientation="v"),
+            # showlegend=False,
+        )
     )
     # Set figure properties specific to different plot types
     # fig_template.data.histogram = [go.histogram(showlegend=False)]
     # fig_template.layout.showlegend=
 
-    return fig_template
+    # return fig_template
 
     # draft_template.layout.annotations = [
     #     dict(
@@ -277,8 +272,10 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
     Returns:
         dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
     """
+    # Get custom Plotly themes
+    create_figure_templates()
     # Set default theme
-    pio.templates.default = get_figure_template()
+    pio.templates.default = "main"#create_figure_templates()
     # Create plot
     dash_graph = display_as_card(
         dcc.Graph(
