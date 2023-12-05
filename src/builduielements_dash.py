@@ -5,6 +5,8 @@ import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
 import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
 import uuid
 
 
@@ -196,6 +198,71 @@ def build_button(button_text, button_type="button"):
     )
 
 
+def get_figure_template():
+    # Set default colour sequence.  This will be repeated if there are more elements
+    # that need colours.
+    figure_colours = [
+        "#cc4f4c",  # red
+        "#73adaa",  # blue
+        "#dbc172",  # yellow
+        "#a6bc68",  # green
+        "#dd8b52",  # orange
+        "#7f5b47",  # brown
+    ]
+    # Create template
+    fig_template = go.layout.Template()
+    # Set general figure properties
+    # fig_template.layout.plot_bgcolor='rgba(0,0,0,0)'
+    # fig_template.layout.margin=dict(l=0, r=0, t=56, b=0)
+    # fig_template.layout.colorway=figure_colours
+    # fig_template.layout.modebar=dict(orientation="v")
+
+    fig_template.layout = dict(
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=0, r=0, t=56, b=0),
+        colorway=figure_colours,
+        modebar=dict(orientation="v"),
+        showlegend=False,
+    )
+    # Set figure properties specific to different plot types
+    # fig_template.data.histogram = [go.histogram(showlegend=False)]
+    # fig_template.layout.showlegend=
+
+    return fig_template
+
+    # draft_template.layout.annotations = [
+    #     dict(
+    #         name="draft watermark",
+    #         text="DRAFT",
+    #         textangle=-30,
+    #         opacity=0.1,
+    #         font=dict(color="black", size=100),
+    #         xref="paper",
+    #         yref="paper",
+    #         x=0.5,
+    #         y=0.5,
+    #         showarrow=False,
+    #     )
+    # ]
+
+    # large_rockwell_template = dict(
+    #     layout=go.Layout(title_font=dict(family="Rockwell", size=24))
+    # )
+
+    # diamond_template.data.scatter = [go.Scatter(marker=dict(symbol="diamond", size=20))]
+
+    # symbol_template.data.scatter = [
+    #     go.Scatter(marker=dict(symbol="diamond", size=10)),
+    #     go.Scatter(marker=dict(symbol="square", size=10)),
+    #     go.Scatter(marker=dict(symbol="circle", size=10)),
+    # ]
+
+    # pio.templates['custom'] = go.layout.Template(
+    #     layout_paper_bgcolor='rgba(0,0,0,0)',
+    #     layout_plot_bgcolor='rgba(0,0,0,0)'
+    #     )
+
+
 def build_data_figure(graph_object, id=[], element_type="", config={}):
     """Build a Dash data figure containing a graph and with appropriate Dash identifiers
 
@@ -210,6 +277,9 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
     Returns:
         dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
     """
+    # Set default theme
+    pio.templates.default = get_figure_template()
+    # Create plot
     dash_graph = display_as_card(
         dcc.Graph(
             id=set_ui_object_id(id=id, element_type=element_type),
@@ -235,11 +305,12 @@ def build_pie_chart(data, title=[]):
         names=data.iloc[:, 0].tolist(),
         title=title,
     )
-    pie_chart.update_layout(
-        margin=dict(l=0, r=0, t=56, b=0),
-        modebar=dict(orientation="v"),
-        plot_bgcolor="rgba(0,0,0,0)",
-    )
+    # pie_chart.update_layout(
+    #     margin=dict(l=0, r=0, t=56, b=0),
+    #     modebar=dict(orientation="v"),
+    #     plot_bgcolor="rgba(0,0,0,0)",
+    #     template=get_figure_template(),
+    # )
     return pie_chart
 
 
@@ -259,9 +330,9 @@ def build_bar_graph(data, title=[]):
     )
     bar_graph.update_layout(
         showlegend=False,
-        margin=dict(l=0, r=0, t=56, b=0),
-        modebar=dict(orientation="v"),
-        plot_bgcolor="rgba(0,0,0,0)",
+        # margin=dict(l=0, r=0, t=56, b=0),
+        # modebar=dict(orientation="v"),
+        # plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(
             linecolor="rgb(1,1,1)",
             linewidth=1,
@@ -309,9 +380,9 @@ def build_scatter_plot(data, title=[]):
     scatter_plot.update_layout(
         newselection_mode="gradual",
         dragmode="select",
-        margin=dict(l=0, r=0, t=56, b=0),
-        modebar=dict(orientation="v"),
-        plot_bgcolor="rgba(0,0,0,0)",
+        # margin=dict(l=0, r=0, t=56, b=0),
+        # modebar=dict(orientation="v"),
+        # plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(
             rangemode="tozero",
             linecolor="rgb(1,1,1)",
