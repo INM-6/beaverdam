@@ -10,11 +10,11 @@ def generate_colours():
         them
     """
     figure_colours = [
-        "#cc4f4c",  # red
         "#73adaa",  # blue
-        "#dbc172",  # yellow
+        "#dbc172",  # yellow        
         "#a6bc68",  # green
         "#dd8b52",  # orange
+        "#cc4f4c",  # red
         "#7f5b47",  # brown
     ]
 
