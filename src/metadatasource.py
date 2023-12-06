@@ -153,7 +153,10 @@ class MongoDbDatabase(MetadataSource):
                         try:
                             proj_val = proj_val[ikey]
                         except:
-                            proj_val = ["-"]
+                            try:
+                                proj_val = proj_val[int(ikey)]
+                            except:
+                                proj_val = ["-"]
                     # Store the value to add to the dataframe; store a default
                     # placeholder if the value doesn't exist
                     if isinstance(proj_val, list):
@@ -162,11 +165,19 @@ class MongoDbDatabase(MetadataSource):
                         elif len(proj_val) < 2:
                             val_to_add = proj_val[0]
                         else:
+                            # Show a maximum number of values to avoid blowing up the
+                            # dataframe with large lists
                             proj_val = [str(x) for x in proj_val]
                             if len(proj_val) < 5:
                                 val_to_add = "[" + ", ".join(proj_val) + "]"
                             else:
-                                val_to_add = "[" + ", ".join(proj_val[:5]) + "]"
+                                val_to_add = (
+                                    "["
+                                    + ", ".join(proj_val[:5])
+                                    + "... "
+                                    + str(len(proj_val))
+                                    + "elements total]"
+                                )
                     else:
                         try:
                             val_to_add = proj_val
