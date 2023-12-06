@@ -156,10 +156,18 @@ class MongoDbDatabase(MetadataSource):
                             proj_val = ["-"]
                     # Store the value to add to the dataframe; store a default
                     # placeholder if the value doesn't exist
-                    if len(proj_val) > 0:
-                        row_to_add[self.get_field_name(proj_path)] = proj_val[0]
+                    if isinstance(proj_val, list):
+                        if len(proj_val) > 0:
+                            val_to_add = proj_val[0]
+                        else:
+                            val_to_add = "-"
                     else:
-                        row_to_add[self.get_field_name(proj_path)] = "-"
+                        try:
+                            val_to_add = proj_val
+                        except:
+                            val_to_add = "-"
+                    # Insert the value into the row you are adding to the dataframe
+                    row_to_add[self.get_field_name(proj_path)] = val_to_add
                     # Append the row for this session to the dataframe and assign the
                     # index of the new row
                     query_results.loc[doc[index_id]] = row_to_add
