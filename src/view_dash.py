@@ -74,6 +74,15 @@ class DashView(View):
         # plot-specific value alongside the additional options.
         plotly_config_options_pie = {}
         plotly_config_options_bar = {}
+        plotly_config_options_box = {
+            "modeBarButtons": [
+                plotly_config_options_base["modeBarButtons"][0]
+                + [
+                    "select2d",
+                    "lasso2d",
+                ]
+            ]
+        }
         plotly_config_options_scatter = {
             "modeBarButtons": [
                 plotly_config_options_base["modeBarButtons"][0]
@@ -175,7 +184,7 @@ class DashView(View):
                     )
                     fig_config_options = {
                         **plotly_config_options_base,
-                        **plotly_config_options_bar,
+                        **plotly_config_options_box,
                     }
                 # Create the plot
                 ielement = builduielements_dash.build_data_figure(

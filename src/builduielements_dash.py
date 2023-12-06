@@ -270,6 +270,7 @@ def build_box_plot(data, title=[]):
         y=data.columns[0],
         title=title,
     )
+    box_plot.update_layout(template="main+box")
     return box_plot
 
 
