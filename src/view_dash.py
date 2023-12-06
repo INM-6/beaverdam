@@ -168,6 +168,15 @@ class DashView(View):
                         **plotly_config_options_base,
                         **plotly_config_options_scatter,
                     }
+                elif element_style == "box":
+                    igraph = builduielements_dash.build_box_plot(
+                        data=element_contents["df"],
+                        title=element_contents["title"],
+                    )
+                    fig_config_options = {
+                        **plotly_config_options_base,
+                        **plotly_config_options_bar,
+                    }
                 # Create the plot
                 ielement = builduielements_dash.build_data_figure(
                     graph_object=igraph,
@@ -475,6 +484,12 @@ class DashView(View):
                                     elif output_element_style == "scatter":
                                         new_figure_data.append(
                                             builduielements_dash.build_scatter_plot(
+                                                data, title
+                                            )
+                                        )
+                                    elif output_element_style == "box":
+                                        new_figure_data.append(
+                                            builduielements_dash.build_box_plot(
                                                 data, title
                                             )
                                         )

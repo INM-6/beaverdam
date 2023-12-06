@@ -263,6 +263,15 @@ def build_bar_graph(data, title=[]):
     bar_graph.update_layout(template="main+bar")
     return bar_graph
 
+def build_box_plot(data, title=[]):
+    box_plot = px.box(
+        data_frame=data,
+        x=data.columns[1],
+        y=data.columns[0],
+        title=title,
+    )
+    return box_plot
+
 
 def build_scatter_plot(data, title=[]):
     """Build a scatter plot to include in a Dash figure
@@ -275,8 +284,8 @@ def build_scatter_plot(data, title=[]):
     """
     scatter_plot = px.scatter(
         data_frame=data,
-        x=data.columns[0],
-        y=data.columns[1],
+        x=data.columns[1],
+        y=data.columns[0],
         hover_name=data.index,
         title=title,
     )
