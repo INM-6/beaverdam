@@ -157,15 +157,21 @@ class MongoDbDatabase(MetadataSource):
                     # Store the value to add to the dataframe; store a default
                     # placeholder if the value doesn't exist
                     if isinstance(proj_val, list):
-                        if len(proj_val) > 0:
+                        if len(proj_val) < 1:
+                            val_to_add = "-"
+                        elif len(proj_val) < 2:
                             val_to_add = proj_val[0]
                         else:
-                            val_to_add = "-"
+                            proj_val = [str(x) for x in proj_val]
+                            if len(proj_val) < 5:
+                                val_to_add = "[" + ", ".join(proj_val) + "]"
+                            else:
+                                val_to_add = "[" + ", ".join(proj_val[:5]) + "]"
                     else:
                         try:
                             val_to_add = proj_val
                         except:
-                            val_to_add = "-"
+                            val_to_add = "unsupported data type"
                     # Insert the value into the row you are adding to the dataframe
                     row_to_add[self.get_field_name(proj_path)] = val_to_add
                     # Append the row for this session to the dataframe and assign the
