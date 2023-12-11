@@ -23,9 +23,10 @@ import uuid
 #   field:  name of the df column(s) represented by the UiElement.  Must match the name assigned in the config file.
 #   style:  pie, bar, scatter
 
+
 def rename_df_columns(df, col_name_dict={}):
     """Rename the columns of a dataframe
-    
+
     Columns not contained in col_name_dict will not be renamed.
 
     Args:
@@ -50,10 +51,10 @@ class UiElement:
             UIelement (structure, optional): use this to manually define the ID for an
             element by providing some kind of structure with an "id" field that can be
             accessed by UIelement.id. Defaults to [], to auto-generate an ID.
-        """        
+        """
         self.properties = {}
         self.contents = {}
-        
+
         # Unique identifier for the element
         self.properties["id"] = str(uuid.uuid4())
         # What type of object it is
@@ -66,7 +67,7 @@ class UiElement:
             properties (dict): everything in self.properties
         """
         return self.properties
-    
+
     def get_contents(self):
         """Return the data and labels etc. for the resulting figure
 
@@ -74,7 +75,7 @@ class UiElement:
             contents (dict): everything in self.contents
         """
         return self.contents
-    
+
     def update(self, new_data_table):
         """Update the element with new data
 
@@ -137,6 +138,7 @@ class FilterChecklist(UiElement):
             new_selected_options = []
         self.contents["selected_options"] = new_selected_options
 
+
 class SelectedCriteria(UiElement):
     """Display items from a list"""
 
@@ -145,7 +147,7 @@ class SelectedCriteria(UiElement):
 
         Args:
             title (str):  title for the list (optional)
-            items (list):  items to show (optional; if not given, no options will 
+            items (list):  items to show (optional; if not given, no options will
             be shown)
         """
         super().__init__()
@@ -174,6 +176,7 @@ class SelectedCriteria(UiElement):
                 all_values_unnested.append(y[i])
         self.contents["items"] = all_values_unnested
 
+
 class DataTable(UiElement):
     """Data tables"""
 
@@ -199,7 +202,6 @@ class DataTable(UiElement):
 
         # Content-dependent properties
         self.properties["initial_num_records"] = len(self.contents["df"])
-            
 
     def update(self, new_data_table):
         """Update data table contents
@@ -209,11 +211,41 @@ class DataTable(UiElement):
             data to be shown in the table; data_table.selection_state_column_name gives
             the name of the column indicating the selections state of each row
         """
+        # Get only the selected rows of the dataframe, and rename columns
         self.contents["df"] = rename_df_columns(
-            new_data_table.get_selected_rows(),
-            self.contents["new_column_names"]
-            )
+            new_data_table.get_selected_rows(), self.contents["new_column_names"]
+        )
+
+        # For elements of the dataframe that are lists, display single-item lists as a
+        # value.
+        # TODO:  display a limited number of items from multi-item lists to avoid
+        # blowing up the displayed dataframe with large lists
+        def parse_df_cell(dataframe_cell):
+            """Parse cells of a dataframe for display
+
+            Args:
+                dataframe_cell: contents of a dataframe cell (can be any type)
+
+            Returns:
+                new_cell_value: what to display for the cell's value (can be any type,
+                for now)
+            """
+            if isinstance(dataframe_cell, list):
+                if len(dataframe_cell) < 1:
+                    new_cell_value = None
+                elif len(dataframe_cell) == 1:
+                    new_cell_value = dataframe_cell[0]
+                else:
+                    new_cell_value = dataframe_cell
+            else:
+                new_cell_value = dataframe_cell
+            return new_cell_value
+
+        self.contents["df"].map(parse_df_cell)
+
+        # Store the total number of entries in the dataframe
         self.properties["current_num_records"] = len(self.contents["df"])
+
 
 class DataFigure(UiElement):
     """General class for figures"""
@@ -231,16 +263,18 @@ class DataFigure(UiElement):
             title (string):  title of the plot.  Optional; default is to use the field
         """
         super().__init__()
-        
+
         # Properties
         self.properties["type"] = "DataFigure"
         self.properties["field"] = [field] if isinstance(field, str) else field
         self.properties["style"] = style
-        self.contents["title"] = title if isinstance(title, str) else " vs. ".join(self.properties["field"])
+        self.contents["title"] = (
+            title if isinstance(title, str) else " vs. ".join(self.properties["field"])
+        )
 
         # Contents
         self.update(data_table)
-        
+
     def update(self, new_data_table):
         """Update the data shown in the figure
 
@@ -251,4 +285,4 @@ class DataFigure(UiElement):
         """
         self.contents["df"] = new_data_table.get_selected_rows().filter(
             items=self.properties["field"]
-            )
+        )
