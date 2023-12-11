@@ -138,9 +138,10 @@ class MongoDbDatabase(MetadataSource):
 
         # Put projection values into a dataframe.  For each session, make a dict where
         # the keys are the field names and the vals are their values for that session.
-        # Then add the whole dict to the dataframe at once.
+        # Then add the whole dict to the dataframe at once.  Each column needs to have
+        # dtype=object in order to be able to store iterables, e.g. lists.
         query_results = pd.DataFrame(
-            columns=self.get_field_name(list(query_output.keys()))
+            columns=self.get_field_name(list(query_output.keys())), dtype=object
         )
         try:
             for doc in cursor:
@@ -156,38 +157,19 @@ class MongoDbDatabase(MetadataSource):
                             try:
                                 proj_val = proj_val[int(ikey)]
                             except:
-                                proj_val = ["-"]
-                    # Store the value to add to the dataframe; store a default
-                    # placeholder if the value doesn't exist
-                    if isinstance(proj_val, list):
-                        if len(proj_val) < 1:
-                            val_to_add = "-"
-                        elif len(proj_val) < 2:
-                            val_to_add = proj_val[0]
-                        else:
-                            # Show a maximum number of values to avoid blowing up the
-                            # dataframe with large lists
-                            proj_val = [str(x) for x in proj_val]
-                            if len(proj_val) < 5:
-                                val_to_add = "[" + ", ".join(proj_val) + "]"
-                            else:
-                                val_to_add = (
-                                    "["
-                                    + ", ".join(proj_val[:5])
-                                    + "... "
-                                    + str(len(proj_val))
-                                    + "elements total]"
-                                )
-                    else:
-                        try:
-                            val_to_add = proj_val
-                        except:
-                            val_to_add = "unsupported data type"
-                    # Insert the value into the row you are adding to the dataframe
-                    row_to_add[self.get_field_name(proj_path)] = val_to_add
-                    # Append the row for this session to the dataframe and assign the
-                    # index of the new row
-                    query_results.loc[doc[index_id]] = row_to_add
+                                proj_val = None
+                    # Insert the value into the correct row and column of the dataframe.
+                    #
+                    # Note that because some values may be lists, we have to do this
+                    # individualy for each cell of the dataframe, rather than append an
+                    # entire row at once.  This is because of how .loc and .at work.
+                    # Here is an informative StackOverflow answer:
+                    # https://stackoverflow.com/a/54447608
+                    # and the documentation for .loc:
+                    # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.loc.html
+                    query_results.loc[
+                        doc[index_id], self.get_field_name(proj_path)
+                    ] = proj_val
 
         finally:
             client.close()
