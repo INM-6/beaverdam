@@ -44,6 +44,28 @@ def df_to_dict(df):
     return df.to_dict("records")
 
 
+def unlist_element(x):
+    """Check whether an element is a list, and if so convert it to not a list
+
+    Args:
+        x (undefined): element to unlist if it's a list
+
+    Returns:
+        new_value (undefined):  element that isn't a list
+    """
+    if isinstance(x, list):
+        if len(x) < 1:
+            # Empty lists become nothing
+            new_value = None
+        else:
+            # Take the first element from a list
+            new_value = x[0]
+    else:
+        # If the element isn't a list, leave it as is
+        new_value = x
+    return new_value
+
+
 def display_as_card(card_body, card_margin="0vmin"):
     """Wrap a UI element in a card
 
@@ -238,7 +260,7 @@ def build_pie_chart(data, title=[]):
         pie_chart (px.pie): Plotly Express object containing the graph
     """
     pie_chart = px.pie(
-        data_frame=data,
+        data_frame=data.map(unlist_element),
         names=data.iloc[:, 0].tolist(),
         title=title,
     )
@@ -256,7 +278,7 @@ def build_bar_graph(data, title=[]):
         bar_graph (px.histogram): Plotly Express object containing the graph
     """
     bar_graph = px.histogram(
-        data_frame=data,
+        data_frame=data.map(unlist_element),
         x=data.columns,
         title=title,
     )
