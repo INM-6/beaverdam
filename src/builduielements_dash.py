@@ -268,6 +268,7 @@ def build_box_plot(data, title=[]):
         data_frame=data,
         x=data.columns[1],
         y=data.columns[0],
+        hover_name=data.index,
         title=title,
     )
     box_plot.update_layout(template="main+box")
