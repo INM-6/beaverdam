@@ -74,6 +74,15 @@ class DashView(View):
         # plot-specific value alongside the additional options.
         plotly_config_options_pie = {}
         plotly_config_options_bar = {}
+        plotly_config_options_box = {
+            "modeBarButtons": [
+                plotly_config_options_base["modeBarButtons"][0]
+                + [
+                    "select2d",
+                    "lasso2d",
+                ]
+            ]
+        }
         plotly_config_options_scatter = {
             "modeBarButtons": [
                 plotly_config_options_base["modeBarButtons"][0]
@@ -167,6 +176,15 @@ class DashView(View):
                     fig_config_options = {
                         **plotly_config_options_base,
                         **plotly_config_options_scatter,
+                    }
+                elif element_style == "box":
+                    igraph = builduielements_dash.build_box_plot(
+                        data=element_contents["df"],
+                        title=element_contents["title"],
+                    )
+                    fig_config_options = {
+                        **plotly_config_options_base,
+                        **plotly_config_options_box,
                     }
                 # Create the plot
                 ielement = builduielements_dash.build_data_figure(
@@ -295,13 +313,17 @@ class DashView(View):
                 triggered_element_id = triggered_element["index"]
                 triggered_element_type = ctx.triggered_id["type"]
 
-                # Find the database field(s) represented by the clicked element.  Set
-                # this to "" if the UI element doesn't have a field (e.g. chips) or
+                # Find the database field(s) represented by the clicked element.  Keep
+                # this as '' if the UI element doesn't have a field (e.g. chips) or
                 # isn't in the Presenter's list of UI elements (e.g. reset button).
                 database_field = ui_element_info.get(triggered_element_id, "")
                 if database_field != "":
                     database_field = database_field["properties"].get("field", "")
-                if isinstance(database_field, list):
+                if isinstance(database_field, list) and len(database_field) == 1:
+                    # If the clicked element only represents one field, we can take it
+                    # immediately.  If there is more than one field represented, we need
+                    # to choose which to update later, because this can be different for
+                    # different types of e.g. plots.
                     database_field = database_field[0]
 
                 # Get new filter criteria.  How this happens depends on the type of
@@ -337,6 +359,42 @@ class DashView(View):
                         self.controller.trigger_update_filter_criteria(
                             {database_field: new_filter_criteria}
                         )
+                    elif triggered_element_style == "box":
+                        # Figure out if the user has selected points or the box part.
+                        if (
+                            "hoverOnBox"
+                            in ctx.triggered[0]["value"]["points"][0].keys()
+                        ):
+                            # The user has clicked a box.  Assume that they want to
+                            # filter by the x category (rather than only including
+                            # points inside the box, i.e. non-outliers) (this is the
+                            # same as the bar graph case).
+                            new_filter_criteria = [
+                                ctx.triggered[0]["value"]["points"][0]["x"]
+                            ]
+                            self.controller.trigger_update_filter_criteria(
+                                {database_field[1]: new_filter_criteria}
+                            )
+                        else:
+                            # The user has clicked on or selected multiple outliers.
+                            # Filter by the dataframe row (this is the same as the
+                            # scatterplot case)
+                            #
+                            # Get indices of selected points in the plotted dataframe
+                            selected_rows = [
+                                point["pointIndex"]
+                                for point in ctx.triggered[0]["value"]["points"]
+                            ]
+                            # Convert to the index in the main dataframe, which is the
+                            # subject ID
+                            selected_rows = list(
+                                ui_element_info[triggered_element_id]["contents"]["df"]
+                                .iloc[selected_rows]
+                                .index
+                            )
+                            # Select the appropriate rows
+                            self.controller.trigger_select_dataframe_rows(selected_rows)
+
                     elif triggered_element_style == "scatter":
                         # When I wrote this code, "pointNumber" and "pointIndex" were
                         # equal.  Note that if px.scatter() uses a color parameter,
@@ -475,6 +533,12 @@ class DashView(View):
                                     elif output_element_style == "scatter":
                                         new_figure_data.append(
                                             builduielements_dash.build_scatter_plot(
+                                                data, title
+                                            )
+                                        )
+                                    elif output_element_style == "box":
+                                        new_figure_data.append(
+                                            builduielements_dash.build_box_plot(
                                                 data, title
                                             )
                                         )

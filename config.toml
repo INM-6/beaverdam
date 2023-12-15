@@ -60,7 +60,7 @@ columns = [
 [plots]
 # Which fields to plot, and how to plot them.  Each plot must have the following keys:
 #   - data_field (string or list of strings): name of the field(s) to plot
-#   - plot_type (string): type of plot ("pie", "bar", "scatter")
+#   - plot_type (string): type of plot ("pie", "bar", "scatter", "box")
 monkey_name.data_field = "GivenName"
 monkey_name.plot_type = "pie"
 
@@ -69,3 +69,6 @@ task_name.plot_type = "bar"
 
 errors_vs_time.data_field = ["AverageErrorCount", "AverageTrialTime"]
 errors_vs_time.plot_type = "scatter"
+
+errors_vs_monkey.data_field = ["AverageErrorCount", "GivenName"]
+errors_vs_monkey.plot_type = "box"
