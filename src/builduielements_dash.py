@@ -296,7 +296,7 @@ def build_scatter_plot(data, title=[]):
         scatter_plot (px.scatter): Plotly Express object containing the graph
     """
     scatter_plot = px.scatter(
-        data_frame=data,
+        data_frame=data.map(unlist_element),
         x=data.columns[0],
         y=data.columns[1],
         hover_name=data.index,
