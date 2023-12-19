@@ -288,7 +288,7 @@ def build_bar_graph(data, title=[]):
 
 def build_box_plot(data, title=[]):
     box_plot = px.box(
-        data_frame=data,
+        data_frame=data.map(unlist_element),
         x=data.columns[1],
         y=data.columns[0],
         hover_name=data.index,
