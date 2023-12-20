@@ -174,7 +174,7 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
             html.Div(children=title),
             html.Div(
                 children=dcc.Checklist(
-                    options=items,
+                    options=[unlist_element(x) for x in items],
                     value=[],
                     id=set_ui_object_id(id=id, element_type=element_type),
                     labelStyle={"display": "block", "margin-bottom": "0px"},
