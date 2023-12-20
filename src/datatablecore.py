@@ -86,7 +86,6 @@ class DataTableCore(pd.DataFrame):
             # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
             for iCriteria, iVal in self.filter_criteria.items():
                 if len(iVal) > 0:
-
                     if iCriteria == "row_index":
                         # Initialize selection status for all rows of dataframe to False
                         is_criterion_met = [False for _ in range(len(self.df))]
@@ -97,7 +96,9 @@ class DataTableCore(pd.DataFrame):
                             if idx in self.filter_criteria["row_index"]:
                                 is_criterion_met[row_num] = True
                     else:
-                        is_criterion_met = self.df[iCriteria].isin(iVal)
+                        is_criterion_met = pd.DataFrame(
+                            self.df[iCriteria].tolist(), index=self.df.index
+                        ).isin(iVal)[0]
 
                     is_row_selected = [
                         x + [y] for x, y in zip(is_row_selected, is_criterion_met)
