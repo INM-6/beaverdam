@@ -103,6 +103,7 @@ def build_data_table(data, id=[], element_type=""):
             df=data,
             bordered=True,
         ),
+        style={"overflow": "auto"},
     )
 
 
