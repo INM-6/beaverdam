@@ -35,3 +35,7 @@
 .mantine-Group-root {
     margin-top: 8px;
 }
+
+.table {
+    white-space: nowrap!important;
+}

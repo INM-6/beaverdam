@@ -21,7 +21,7 @@ class DashView(View):
         self.app = Dash(
             __name__,
             external_stylesheets=[
-                dbc.themes.BOOTSTRAP,
+                dbc.themes.SANDSTONE,#BOOTSTRAP,
                 dbc.icons.FONT_AWESOME,
             ],
             assets_folder="../assets",
@@ -267,7 +267,7 @@ class DashView(View):
         app = self.app
 
         @app.callback(
-            Output({"type": "DataTable", "index": ALL}, "data"),
+            Output({"type": "DataTable_container", "index": ALL}, "children"),
             Output({"type": "FilterChecklist", "index": ALL}, "value"),
             Output({"type": "DataFigure", "index": ALL}, "figure"),
             Output({"type": "DataFigure", "index": ALL}, "clickData"),
@@ -496,7 +496,7 @@ class DashView(View):
                             ]
                             if output_element_type == "DataTable":
                                 new_table_data.append(
-                                    builduielements_dash.get_data_table_contents(
+                                    builduielements_dash.build_data_table_contents(
                                         presenter_ui_element
                                     )
                                 )

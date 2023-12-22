@@ -94,27 +94,32 @@ def build_data_table(data, id=[], element_type=""):
         (opt)
 
     Returns:
-        dash_table.DataTable: Dash DataTable
+        (html.Div): containing Dash Bootstrap table.  The table needs to be inside a div
+        in order to update the contents.
     """
-    return dash_table.DataTable(
-        id=set_ui_object_id(id=id, element_type=element_type),
-        data=df_to_dict(data),
-        style_table={"overflowX": "scroll"},
-        style_cell={"textAlign": "left"},
+    return html.Div(
+        id=set_ui_object_id(element_type="DataTable_container", id=id),
+        children=dbc.Table.from_dataframe(
+            df=data,
+            bordered=True,
+        ),
     )
 
 
-def get_data_table_contents(datatable_object):
-    """Get only the contents of the data table, in the format Dash likes
+def build_data_table_contents(datatable_object):
+    """Build the contents of a new data table
 
     Args:
         datatable_object (DataTablePresenter from Presenter module): formatted data for
         the table
 
     Returns:
-        (dict):  data to be shown in DataTable
+        (dbc.Table):  Dash Bootstrap table containing data
     """
-    return df_to_dict(datatable_object.contents["df"])
+    return dbc.Table.from_dataframe(
+        df=datatable_object.contents["df"],
+        bordered=True,
+    )
 
 
 def build_data_table_label(
