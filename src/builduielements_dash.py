@@ -4,10 +4,11 @@ from dash import dcc, dash_table, html
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
+from dash_bootstrap_templates import load_figure_template
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
-import theme_plots
+import theme_plots  # custom plot themes (themes are loaded immediately when imported)
 import uuid
 
 
@@ -256,43 +257,69 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
     return dash_graph
 
 
-def build_pie_chart(data, title=[]):
+def build_pie_chart(data, title=[], colourmode=[]):
     """Build a pie chart to include in a Dash figure
     Args:
         data (df with one column):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
+        colourmode (str):  name of theme from dash_bootstrap_templates (optional)
 
     Returns:
         pie_chart (px.pie): Plotly Express object containing the graph
     """
+    if colourmode:
+        load_figure_template(colourmode)
+        colourmode_template = colourmode + "+"
+    else:
+        colourmode_template = ""
     pie_chart = px.pie(
         data_frame=data.map(unlist_element),
         names=data.iloc[:, 0].tolist(),
         title=title,
     )
-    pie_chart.update_layout(template="main+pie")
+    pie_chart.update_layout(template=colourmode_template + "main+pie")
     return pie_chart
 
 
-def build_bar_graph(data, title=[]):
+def build_bar_graph(data, title=[], colourmode=[]):
     """Build a bar graph to include in a Dash figure
     Args:
         data (df with one column):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
+        colourmode (str):  name of theme from dash_bootstrap_templates (optional)
 
     Returns:
         bar_graph (px.histogram): Plotly Express object containing the graph
     """
+    if colourmode:
+        load_figure_template(colourmode)
+        colourmode_template = colourmode + "+"
+    else:
+        colourmode_template = ""
     bar_graph = px.histogram(
         data_frame=data.map(unlist_element),
         x=data.columns,
         title=title,
     )
-    bar_graph.update_layout(template="main+bar")
+    bar_graph.update_layout(template=colourmode_template + "main+bar")
     return bar_graph
 
 
-def build_box_plot(data, title=[]):
+def build_box_plot(data, title=[], colourmode=[]):
+    """Build a box plot to include in a Dash figure
+    Args:
+        data (df with two columns):  data to be plotted
+        title (str):  title of the graph (optional; default is no title)
+        colourmode (str):  name of theme from dash_bootstrap_templates (optional)
+
+    Returns:
+        scatter_plot (px.scatter): Plotly Express object containing the graph
+    """
+    if colourmode:
+        load_figure_template(colourmode)
+        colourmode_template = colourmode + "+"
+    else:
+        colourmode_template = ""
     box_plot = px.box(
         data_frame=data.map(unlist_element),
         x=data.columns[1],
@@ -300,19 +327,25 @@ def build_box_plot(data, title=[]):
         hover_name=data.index,
         title=title,
     )
-    box_plot.update_layout(template="main+box")
+    box_plot.update_layout(template=colourmode_template + "main+box")
     return box_plot
 
 
-def build_scatter_plot(data, title=[]):
+def build_scatter_plot(data, title=[], colourmode=[]):
     """Build a scatter plot to include in a Dash figure
     Args:
         data (df with two columns):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
+        colourmode (str):  name of theme from dash_bootstrap_templates (optional)
 
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
     """
+    if colourmode:
+        load_figure_template(colourmode)
+        colourmode_template = colourmode + "+"
+    else:
+        colourmode_template = ""
     scatter_plot = px.scatter(
         data_frame=data.map(unlist_element),
         x=data.columns[0],
@@ -320,7 +353,7 @@ def build_scatter_plot(data, title=[]):
         hover_name=data.index,
         title=title,
     )
-    scatter_plot.update_layout(template="main+scatter")
+    scatter_plot.update_layout(template=colourmode_template + "main+scatter")
     return scatter_plot
 
 

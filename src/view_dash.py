@@ -1,6 +1,6 @@
 """Builds a user interface using Dash"""
 
-from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL
+from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL, clientside_callback
 import dash_bootstrap_components as dbc  # also see dash-mantine-components
 
 from view import View
@@ -21,7 +21,7 @@ class DashView(View):
         self.app = Dash(
             __name__,
             external_stylesheets=[
-                dbc.themes.SANDSTONE,#BOOTSTRAP,
+                dbc.themes.SANDSTONE,  # BOOTSTRAP,
                 dbc.icons.FONT_AWESOME,
             ],
             assets_folder="../assets",
@@ -42,6 +42,21 @@ class DashView(View):
         """
         return html.Img(
             src=Dash.get_asset_url(self.app, image_file_name), height=image_height
+        )
+
+    def __build_color_mode_switch(self):
+        switch_id = builduielements_dash.set_ui_object_id("switch")
+        return html.Span(
+            [
+                dbc.Label(className="fa fa-moon", html_for=switch_id),
+                dbc.Switch(
+                    id=switch_id,
+                    value=False,
+                    className="d-inline-block ms-1",
+                    persistence=True,
+                ),
+                dbc.Label(className="fa fa-sun", html_for=switch_id),
+            ]
         )
 
     def build_layout(self):
@@ -202,6 +217,7 @@ class DashView(View):
         sidebar_elements = []
         mainpanel_elements = []
         topbar_elements.append(self.__get_image(logo_file_name, header_height))
+        topbar_elements.append(self.__build_color_mode_switch())
         sidebar_elements.append(
             builduielements_dash.build_button("Reset", "ResetButton")
         )
@@ -223,6 +239,7 @@ class DashView(View):
             [
                 dbc.Navbar(
                     topbar_elements,
+                    id="navbar",
                     style={
                         "height": header_height,
                     },
@@ -278,6 +295,7 @@ class DashView(View):
             Input({"type": "DataFigure", "index": ALL}, "clickData"),
             Input({"type": "DataFigure", "index": ALL}, "selectedData"),
             Input({"type": "SelectedCriteria", "index": ALL}, "value"),
+            Input({"type": "switch", "index": ALL}, "value"),
         )
         def filter_data(
             resetButtonClicks,
@@ -285,6 +303,7 @@ class DashView(View):
             figureClickData,
             figureSelectedData,
             chipData,
+            isSwitchOn,
         ):
             """Detect clicks on user interface then filter and display appropriately
 
@@ -476,6 +495,8 @@ class DashView(View):
             new_figure_clickdata = []
             new_text_output = []
             new_chips = []
+            # Get theme for figures based on colour mode
+            figure_colourmode_theme = "sandstone" if isSwitchOn[0] else "sandstone_dark"
             # Go through each UI element that's an output of the callback
             for output_type in outputs_list:
                 for ielement in output_type:
@@ -521,25 +542,25 @@ class DashView(View):
                                     if output_element_style == "pie":
                                         new_figure_data.append(
                                             builduielements_dash.build_pie_chart(
-                                                data, title
+                                                data, title, figure_colourmode_theme
                                             )
                                         )
                                     elif output_element_style == "bar":
                                         new_figure_data.append(
                                             builduielements_dash.build_bar_graph(
-                                                data, title
+                                                data, title, figure_colourmode_theme
                                             )
                                         )
                                     elif output_element_style == "scatter":
                                         new_figure_data.append(
                                             builduielements_dash.build_scatter_plot(
-                                                data, title
+                                                data, title, figure_colourmode_theme
                                             )
                                         )
                                     elif output_element_style == "box":
                                         new_figure_data.append(
                                             builduielements_dash.build_box_plot(
-                                                data, title
+                                                data, title, figure_colourmode_theme
                                             )
                                         )
                                 elif ielement["property"] == "clickData":
@@ -586,6 +607,29 @@ class DashView(View):
                 new_text_output,
                 new_chips,
             ]
+
+        @app.callback(
+            Output("navbar", "color"),
+            Input({"type": "switch", "index": ALL}, "value"),
+        )
+        def change_navbar_color(
+            isSwitchOn,
+        ):
+            # Change colour of navbar to match theme
+            return "light" if isSwitchOn[0] else "dark"
+
+        clientside_callback(
+            """ 
+            (switchOn) => {
+            switchOn[0]
+                ? document.documentElement.setAttribute('data-bs-theme', 'light')
+                : document.documentElement.setAttribute('data-bs-theme', 'dark')
+            return [window.dash_clientside.no_update]
+            }
+            """,
+            Output({"type": "switch", "index": ALL}, "id"),
+            Input({"type": "switch", "index": ALL}, "value"),
+        )
 
     def launch_ui(self):
         """Build and run frontend"""

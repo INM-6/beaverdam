@@ -11,7 +11,7 @@ def generate_colours():
     """
     figure_colours = [
         "#73adaa",  # blue
-        "#dbc172",  # yellow        
+        "#dbc172",  # yellow
         "#a6bc68",  # green
         "#dd8b52",  # orange
         "#cc4f4c",  # red
@@ -38,9 +38,10 @@ def generate_colours():
 pio.templates["main"] = go.layout.Template(
     layout=dict(
         plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=42, r=42, t=56, b=42),
         colorway=generate_colours(),
-        modebar=dict(orientation="v"),
+        modebar=dict(orientation="v", bgcolor="rgba(0,0,0,0)"),
     )
 )
 
@@ -56,13 +57,10 @@ pio.templates["bar"] = go.layout.Template(
     layout=dict(
         showlegend=False,
         xaxis=dict(
-            linecolor="rgb(1,1,1)",
             linewidth=1,
         ),
         yaxis=dict(
-            linecolor="rgb(1,1,1)",
             linewidth=1,
-            gridcolor="rgba(1,1,1,0.1)",
             gridwidth=1,
         ),
     )
@@ -97,16 +95,12 @@ pio.templates["scatter"] = go.layout.Template(
         dragmode="select",
         xaxis=dict(
             rangemode="tozero",
-            linecolor="rgb(1,1,1)",
             linewidth=1,
-            gridcolor="rgba(1,1,1,0.1)",
             gridwidth=1,
         ),
         yaxis=dict(
             rangemode="tozero",
-            linecolor="rgb(1,1,1)",
             linewidth=1,
-            gridcolor="rgba(1,1,1,0.1)",
             gridwidth=1,
         ),
     )
