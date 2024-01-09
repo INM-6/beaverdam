@@ -242,6 +242,8 @@ class DashView(View):
                     id="navbar",
                     style={
                         "height": header_height,
+                        "padding": "var(--bs-navbar-padding-y) 1vmin",
+                        "justify-content": "space-between",
                     },
                     sticky="top",
                 ),
