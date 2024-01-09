@@ -4,8 +4,11 @@
     margin: 1vmin;
 }
 
-/* Carousel buttons
+/* Carousel
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+/* Buttons */
+
 #FigureGallery .slick-prev:before {
     font-family: "Font Awesome 6 Free";
     content: '\f0d9';
@@ -20,6 +23,18 @@
     font-size: 40px;
     height: 40px;
     color: var(--bs-body-color);
+}
+
+/* Dots */
+
+#FigureGallery .slick-dots button:before {
+    color: var(--bs-tertiary-color);
+    opacity: 1;
+}
+
+#FigureGallery .slick-dots .slick-active button:before {
+    color: var(--bs-body-color);
+    opacity: 1;
 }
 
 /* Chips
@@ -41,5 +56,5 @@
 /* Table
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .table {
-    white-space: nowrap!important;
+    white-space: nowrap !important;
 }
