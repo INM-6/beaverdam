@@ -407,16 +407,6 @@ def build_chips(chip_items):
             radius="lg",
             checked=True,
             color="#808080",
-            # styles={
-            #     "label": {
-            #         "&[data-checked]": {
-            #             "&, &:hover": {
-            #                 "backgroundColor": "--var(bs-secondary-bg)",
-            #                 # "color": "white",
-            #             },
-            #         },
-            #     }
-            # }
         )
         for x in chip_items
     ]
