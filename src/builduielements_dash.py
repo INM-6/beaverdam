@@ -406,7 +406,6 @@ def build_chips(chip_items):
             size="s",
             radius="lg",
             checked=True,
-            color="#808080",
         )
         for x in chip_items
     ]
@@ -426,24 +425,18 @@ def build_chip_group(items, title=[], id=[], element_type=""):
     Returns:
         chip_group (dbc.Card): Dash Bootstrap Components card containing the chips and title
     """
-    chip_group = dmc.MantineProvider(
-        theme={
-            "primaryColor": "dark",
-            "primaryShade": 0,
-        },
-        children=display_as_card(
-            [
-                html.Div(children=title),
-                html.Div(
-                    children=dmc.ChipGroup(
-                        build_chips(items),
-                        id={"index": id, "type": element_type},
-                        position="left",
-                        spacing=8,
-                    )
-                ),
-            ],
-            card_margin="1vmin",
-        ),
+    chip_group = display_as_card(
+        [
+            html.Div(children=title),
+            html.Div(
+                children=dmc.ChipGroup(
+                    build_chips(items),
+                    id={"index": id, "type": element_type},
+                    position="left",
+                    spacing=8,
+                )
+            ),
+        ],
+        card_margin="1vmin",
     )
     return chip_group

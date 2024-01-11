@@ -52,10 +52,11 @@
 [data-checked][data-variant="outline"] {
     color: var(--bs-card-color);
     background-color: var(--bs-secondary-bg);
+    border: 0 !important;
 }
 
 [data-checked][data-variant="outline"]:hover {
-    background-color: var(--bs-primary-bg);
+    background-color: var(--bs-tertiary-bg);
 }
 
 .mantine-Group-root {
