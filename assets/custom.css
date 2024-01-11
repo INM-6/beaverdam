@@ -49,6 +49,15 @@
     opacity: 0.4;
 }
 
+[data-checked][data-variant="outline"] {
+    color: var(--bs-card-color);
+    background-color: var(--bs-secondary-bg);
+}
+
+[data-checked][data-variant="outline"]:hover {
+    background-color: var(--bs-primary-bg);
+}
+
 .mantine-Group-root {
     margin-top: 8px;
 }
