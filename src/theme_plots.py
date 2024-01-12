@@ -48,7 +48,7 @@ pio.templates["main"] = go.layout.Template(
 # Pie charts
 pio.templates["pie"] = go.layout.Template(
     layout=dict(
-        margin=dict(l=0, r=0, t=56, b=0),
+        piecolorway=generate_colours(),
     )
 )
 
