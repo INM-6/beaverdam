@@ -3,6 +3,10 @@ name = "beaverdam"
 version = "0.1.0"
 description = ""
 authors = ["Heather More <hmore@sfu.ca>"]
+license = "BSD-3-Clause"
+include = [
+    "LICENCE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
