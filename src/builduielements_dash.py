@@ -6,7 +6,6 @@ import dash_mantine_components as dmc
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
 from dash_bootstrap_templates import load_figure_template
 import plotly.express as px
-import plotly.graph_objects as go
 import plotly.io as pio
 import theme_plots  # custom plot themes (themes are loaded immediately when imported)
 import uuid
