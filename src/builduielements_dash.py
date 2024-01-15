@@ -269,15 +269,14 @@ def build_pie_chart(data, title=[], colourmode=[]):
     """
     if colourmode:
         load_figure_template(colourmode)
-        colourmode_template = colourmode + "+"
+        pio.templates.default = colourmode + "+main+pie"
     else:
-        colourmode_template = ""
+        pio.templates.default = "main+pie"
     pie_chart = px.pie(
         data_frame=data.map(unlist_element),
         names=data.iloc[:, 0].tolist(),
         title=title,
     )
-    pie_chart.update_layout(template=colourmode_template + "main+pie")
     return pie_chart
 
 
@@ -293,15 +292,14 @@ def build_bar_graph(data, title=[], colourmode=[]):
     """
     if colourmode:
         load_figure_template(colourmode)
-        colourmode_template = colourmode + "+"
+        pio.templates.default = colourmode + "+main+bar"
     else:
-        colourmode_template = ""
+        pio.templates.default = "main+bar"
     bar_graph = px.histogram(
         data_frame=data.map(unlist_element),
         x=data.columns,
         title=title,
     )
-    bar_graph.update_layout(template=colourmode_template + "main+bar")
     return bar_graph
 
 
@@ -317,9 +315,9 @@ def build_box_plot(data, title=[], colourmode=[]):
     """
     if colourmode:
         load_figure_template(colourmode)
-        colourmode_template = colourmode + "+"
+        pio.templates.default = colourmode + "+main+box"
     else:
-        colourmode_template = ""
+        pio.templates.default = "main+box"
     box_plot = px.box(
         data_frame=data.map(unlist_element),
         x=data.columns[1],
@@ -327,7 +325,6 @@ def build_box_plot(data, title=[], colourmode=[]):
         hover_name=data.index,
         title=title,
     )
-    box_plot.update_layout(template=colourmode_template + "main+box")
     return box_plot
 
 
@@ -343,9 +340,9 @@ def build_scatter_plot(data, title=[], colourmode=[]):
     """
     if colourmode:
         load_figure_template(colourmode)
-        colourmode_template = colourmode + "+"
+        pio.templates.default = colourmode + "+main+scatter"
     else:
-        colourmode_template = ""
+        pio.templates.default = "main+scatter"
     scatter_plot = px.scatter(
         data_frame=data.map(unlist_element),
         x=data.columns[0],
@@ -353,7 +350,6 @@ def build_scatter_plot(data, title=[], colourmode=[]):
         hover_name=data.index,
         title=title,
     )
-    scatter_plot.update_layout(template=colourmode_template + "main+scatter")
     return scatter_plot
 
 
