@@ -10,12 +10,12 @@ def generate_colours():
         them
     """
     figure_colours = [
-        "#4d75b3",  # blue
-        "#a7252d",  # red
+        "#5e82bb",  # blue
+        "#d27164",  # red
         "#97b14e",  # green
         "#dfaf20",  # yellow
-        "#d5712a",  # orange
-        "#725240",  # brown
+        "#856451",  # brown
+        "#9e79c8",  # purple
     ]
 
     return figure_colours
