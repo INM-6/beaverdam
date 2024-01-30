@@ -344,8 +344,8 @@ def build_scatter_plot(data, title=[], colourmode=[]):
         pio.templates.default = "main+scatter"
     scatter_plot = px.scatter(
         data_frame=data.map(unlist_element),
-        x=data.columns[0],
-        y=data.columns[1],
+        x=data.columns[1],
+        y=data.columns[0],
         hover_name=data.index,
         title=title,
     )
