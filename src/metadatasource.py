@@ -74,6 +74,30 @@ class MongoDbDatabase(MetadataSource):
             ]
         return field_names
 
+    def _get_client(self):
+        """Get the client specified by the database information
+
+        Returns:
+            MongoDB client
+        """
+        return MongoClient(self.__address, self.__port)
+
+    def _get_database(self):
+        """Get the database specified by the database information
+
+        Returns:
+            MongoDB database
+        """
+        return getattr(self._get_client(), self.__db_name)
+
+    def _get_collection(self):
+        """Get the collection specified by the database information
+
+        Returns:
+            MongoDB collection
+        """
+        return getattr(self._get_database(), self.__collection_name)
+
     def get_path(self, requested_field_names="all"):
         """Get list of paths from list of field names
 
@@ -128,12 +152,8 @@ class MongoDbDatabase(MetadataSource):
         # Use the projection ID as the index in the output dataframe
         index_id = "_id"
 
-        # Set up pointers to the database
-        client = MongoClient(self.__address, self.__port)
-        db = getattr(client, self.__db_name)
-        collection = getattr(db, self.__collection_name)
-
         # Query the database
+        collection = self._get_collection()
         cursor = collection.find(query_input, projection=query_output)
 
         # Put projection values into a dataframe.  For each session, make a dict where
@@ -145,7 +165,6 @@ class MongoDbDatabase(MetadataSource):
         )
         try:
             for doc in cursor:
-                row_to_add = {}
                 for proj_path in list(query_output.keys()):
                     # Get the value for each nested set of dict keys which are generated
                     # from the projection path
@@ -172,5 +191,32 @@ class MongoDbDatabase(MetadataSource):
                     ] = proj_val
 
         finally:
-            client.close()
+            self._get_client().close()
         return query_results
+
+    def delete_single_record(self, document_id):
+        """Delete a single record (document) from a collection, if it exists
+
+        Args:
+            document_id (str): _id field for the document to be deleted
+
+        Returns:
+            number of documents deleted (1 or 0)
+        """
+        collection = self._get_collection()
+        deletion_result = collection.delete_one({"_id": document_id})
+        return deletion_result.deleted_count
+
+    def insert_single_record(self, document_to_insert):
+        """Insert a single record (document) into a collection
+
+        Args:
+            document_to_insert (json or bson): contents of the document to insert.  If
+            the document doesn't have an _id field, one will be added automatically.
+
+        Returns:
+            _id property of the inserted document
+        """
+        collection = self._get_collection()
+        insertion_result = collection.insert_one(document_to_insert)
+        return insertion_result.inserted_id

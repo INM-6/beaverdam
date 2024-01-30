@@ -1,7 +1,15 @@
 # Configuration parameters for beaverdam
 
+[raw_metadata]
+# Information about the location and type of metadata files to include in the database.
+# Only needed to build a database, not to run a user interface with an existing 
+# database.
+directory = '/home/more/Documents/Beaverdam/Odml/odml_all_2022-09-08'
+file_type = '.odml'
+
 [database]
-# Information about the database containing metadata
+# Information about the database containing metadata.  This is the database which will 
+# be created, updated, or read from.
 address = "localhost"
 port = 27017
 db_name = "testodml"
