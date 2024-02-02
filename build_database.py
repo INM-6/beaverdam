@@ -5,6 +5,7 @@ sys.path.insert(0, "./src")
 from pathlib import Path
 from configparser import ConfigParser
 import glob
+from tqdm import tqdm
 from metadatasource import MongoDbDatabase
 from metadatafiletools import load_metadata
 
@@ -57,7 +58,7 @@ class BeaverDB:
         n_new_documents = 0
         # For each file in the list of files, manipulate it if needed then add it to the
         # database
-        for input_file in self.input_files:
+        for input_file in tqdm(self.input_files):
             # Load the file
             metadata_file = load_metadata(input_file)
             # Get the ID for the file to use in the database

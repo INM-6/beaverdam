@@ -21,6 +21,7 @@ dash-trich-components = "^1.0.0"
 dash-mantine-components = "^0.12.1"
 dash-bootstrap-templates = "^1.1.1"
 odML = "^1.5.4"
+tqdm = "^4.66.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
