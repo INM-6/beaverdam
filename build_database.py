@@ -52,6 +52,9 @@ class BeaverDB:
 
     def update_database(self):
         """Add or update database information from each metadata file"""
+        # Store info to print exit status
+        n_documents_deleted = 0
+        n_new_documents = 0
         # For each file in the list of files, manipulate it if needed then add it to the
         # database
         for input_file in self.input_files:
@@ -71,9 +74,14 @@ class BeaverDB:
             # this doesn't work well when the _id field is included in the new document.
             #
             # Delete existing document from database if present
-            n_documents_deleted = self.db.delete_single_record(db_record_id)
+            is_document_deleted = self.db.delete_single_record(db_record_id)
             # Insert the new document
             updated_document_id = self.db.insert_single_record(json_file)
+            # Record what happened
+            if is_document_deleted:
+                n_documents_deleted += 1
+            else:
+                n_new_documents += 1
 
             # Check that the updated document has the same _id as you intended
             if updated_document_id != db_record_id:
@@ -83,11 +91,12 @@ class BeaverDB:
                     )
                 )
 
-            # Display what happened
-            if n_documents_deleted > 0:
-                print("Overwrote previous record with id = {0}.".format(db_record_id))
-            elif n_documents_deleted == 0:
-                print("Created new record with id = {0}.".format(db_record_id))
+        # Report what happened
+        print(
+            "Database updated!  {0} existing documents modified, {1} new documents added.".format(
+                n_documents_deleted, n_new_documents
+            )
+        )
 
 
 def build_database():
