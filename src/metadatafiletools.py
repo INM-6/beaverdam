@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 import tempfile
+import sys
+import os
 
 import odml  # handling odml files; install with pip not conda
 import json  # handling JSON files; built in, don't need to install separate package
@@ -51,16 +53,29 @@ class OdmlMetadata(MetadataFile):
     def __init__(self, file_name):
         super().__init__(file_name)
 
-    def _load_file(self):
-        """Load raw data from odML file"""
+    def _load_file(self, suppress_validations=True):
+        """Load raw data from odML file
+        
+        Args:
+            suppress_warnings (bool): if True, won't print validation warnings
+            (optional; defaults to True)
+        """
+        error_suppressor = _ErrorSuppressor(suppress_validations)
+        error_suppressor.turn_on()
         self.file_contents = odml.load(self.file_name)
+        error_suppressor.turn_off()
 
-    def to_json(self):
+    def to_json(self, suppress_validations=True):
         """Convert odML data to json
+
+        Args:
+            suppress_warnings (bool): if True, won't print validation warnings
+            (optional; defaults to True)
 
         Returns:
             (json): json-serialized metadata
         """
+        error_suppressor = _ErrorSuppressor(suppress_validations)
         try:
             # See if you can get the session name from the odML contents.  This might
             # only work for odMLs from the Vision4Action project, but we start with it
@@ -74,7 +89,9 @@ class OdmlMetadata(MetadataFile):
         # Save a temporary json file
         with tempfile.TemporaryDirectory() as temp_dir_name:
             temp_file_path = Path(temp_dir_name) / Path(json_file_name_stem + ".json")
+            error_suppressor.turn_on()
             odml.save(self.file_contents, str(temp_file_path), "JSON")
+            error_suppressor.turn_off()
 
             # Load JSON output
             with open(temp_file_path, "r") as f:
@@ -144,6 +161,48 @@ class OdmlMetadata(MetadataFile):
 
         # Flatten list items in JSON so Mongo will query them more easily
         self.json["Document"] = change_list(self.json["Document"])
+
+class _ErrorSuppressor(ABC):
+    """Class to handle supression of errors/warnings.
+
+    odML Validations are checks that run automatically when a document is loaded or
+    saved, and print warnings or errors if the document doesn't meet odML
+    specifications.  The odML package doesn't include a way to turn these off.  Printing
+    validation warnings when loading odML documents to build the database gets really
+    annoying and clutters the terminal.  This class turns warnings on and off.
+
+    Description of odML validation:
+    https://github.com/G-Node/python-odml/blob/98fa2e658313c299c4d237e3b8e7dc16f6727e60/doc/advanced_features.rst#L19
+    
+    Validation errors are reported with the Validation.report() method starting on line
+    174:
+    https://github.com/G-Node/python-odml/blob/98fa2e658313c299c4d237e3b8e7dc16f6727e60/odml/validation.py#L100
+
+    I used the method of suppressing errors described here:
+    https://stackoverflow.com/a/2125776
+    I found that odML warnings only required blocking stderr, not stdout.
+    """
+    def __init__(self, has_effect=True) -> None:
+        """Initialize error suppressor
+
+        Args:
+            has_effect (bool, optional): whether or not the object can suppress errors.
+            Really only used to avoid multiple if/else statements.  Defaults to True.
+        """
+        super().__init__()
+        self.has_effect = has_effect
+
+    def turn_on(self):
+        """Suppress warnings and errors"""
+        if self.has_effect:
+            # sys.stdout = open(os.devnull, "w")
+            sys.stderr = open(os.devnull, "w")
+
+    def turn_off(self):
+        """Re-allow display of warnings and errors"""
+        if self.has_effect:
+            # sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
 
 
 def load_metadata(file_name: Path) -> MetadataFile:
