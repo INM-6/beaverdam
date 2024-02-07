@@ -55,7 +55,7 @@ class OdmlMetadata(MetadataFile):
 
     def _load_file(self, suppress_validations=True):
         """Load raw data from odML file
-        
+
         Args:
             suppress_warnings (bool): if True, won't print validation warnings
             (optional; defaults to True)
@@ -76,19 +76,9 @@ class OdmlMetadata(MetadataFile):
             (json): json-serialized metadata
         """
         error_suppressor = _ErrorSuppressor(suppress_validations)
-        try:
-            # See if you can get the session name from the odML contents.  This might
-            # only work for odMLs from the Vision4Action project, but we start with it
-            # here because right now that's the main use case
-            json_file_name_stem = self.get_session_name()
-        except:
-            # If the file doesn't have a session name, just use the original filename
-            # for the json
-            json_file_name_stem = self.file_name.stem
-
         # Save a temporary json file
         with tempfile.TemporaryDirectory() as temp_dir_name:
-            temp_file_path = Path(temp_dir_name) / Path(json_file_name_stem + ".json")
+            temp_file_path = Path(temp_dir_name) / Path(self.file_name.stem + ".json")
             error_suppressor.turn_on()
             odml.save(self.file_contents, str(temp_file_path), "JSON")
             error_suppressor.turn_off()
@@ -100,23 +90,6 @@ class OdmlMetadata(MetadataFile):
         # Convert the odML structure to nice names for json
         self._flatten_json_section_lists()
         return self.json
-
-    def get_session_name(self):
-        """Get session name from Vision4Action odML data"""
-        # Find session name in odML
-        session_name = (
-            self.file_contents["session"]["Session"].properties["Name"].values
-        )
-        if isinstance(session_name, list):
-            if len(session_name) > 1:
-                raise ValueError("Ambiguous session names found in odML file.")
-            session_name = session_name[0]
-        elif isinstance(session_name, str):
-            # If session_name is already a single string, do nothing
-            pass
-        else:
-            raise ValueError("Unknown session name in odML file.")
-        return session_name
 
     def _flatten_json_section_lists(self):
         """Convert the default odML-to-json section names into more meaningful names.
@@ -162,6 +135,7 @@ class OdmlMetadata(MetadataFile):
         # Flatten list items in JSON so Mongo will query them more easily
         self.json["Document"] = change_list(self.json["Document"])
 
+
 class _ErrorSuppressor(ABC):
     """Class to handle supression of errors/warnings.
 
@@ -173,7 +147,7 @@ class _ErrorSuppressor(ABC):
 
     Description of odML validation:
     https://github.com/G-Node/python-odml/blob/98fa2e658313c299c4d237e3b8e7dc16f6727e60/doc/advanced_features.rst#L19
-    
+
     Validation errors are reported with the Validation.report() method starting on line
     174:
     https://github.com/G-Node/python-odml/blob/98fa2e658313c299c4d237e3b8e7dc16f6727e60/odml/validation.py#L100
@@ -182,6 +156,7 @@ class _ErrorSuppressor(ABC):
     https://stackoverflow.com/a/2125776
     I found that odML warnings only required blocking stderr, not stdout.
     """
+
     def __init__(self, has_effect=True) -> None:
         """Initialize error suppressor
 
