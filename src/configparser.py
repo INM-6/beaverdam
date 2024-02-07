@@ -1,5 +1,6 @@
 """Parse the provided config file and save the variables in a useful way"""
 
+from pathlib import Path
 import tomli  # import tomllib in Python 3.11
 
 
@@ -10,7 +11,7 @@ class ConfigParser:
         """Parse configuration file
 
         Args:
-            fp (str): path to config file
+            fp (str or Path): path to config file
             sections_to_extract (string or list of strings):  [optional] which sections
             to get out of file.  Default is all sections.
         Returns:
@@ -32,11 +33,13 @@ class ConfigParser:
         """
 
         # Parse the config file
+        if isinstance(fp, str):
+            fp = Path(fp)
         try:
             with open(fp, "rb") as f:
                 config_contents = tomli.load(f)
         except:
-            raise Exception("File " + fp + " cannot be read.")
+            raise Exception("File " + str(fp.name) + " cannot be read.")
 
         # If no requested sections are provided, get all the sections in the config file
         if sections_to_extract == "all":

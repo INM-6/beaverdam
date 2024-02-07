@@ -1,6 +1,9 @@
 import sys
 
 sys.path.insert(0, "./src")
+
+from pathlib import Path
+
 from configparser import ConfigParser
 from core import Core
 from presenter import Presenter
@@ -11,7 +14,7 @@ from controller import Controller
 ## INPUTS
 
 # Name of configuration file
-cfg_file_name = "config.toml"
+cfg_file_name = Path("config.toml")
 
 
 ## CODE

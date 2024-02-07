@@ -13,7 +13,7 @@ from metadatafiletools import load_metadata
 ## INPUTS
 
 # Name of configuration file
-cfg_file_name = "config.toml"
+cfg_file_name = Path("config.toml")
 db_extension = ".json"
 
 
