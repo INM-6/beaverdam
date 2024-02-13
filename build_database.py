@@ -48,7 +48,10 @@ class BeaverDB:
         """
         log_file_name = Path("beaverdam.log")
         logging.basicConfig(
-            filename=directory / log_file_name, encoding="utf-8", level=logging.INFO
+            filename=directory / log_file_name,
+            encoding="utf-8",
+            format="%(levelname)s:%(message)s",
+            level=logging.INFO,
         )
 
     def _set_database(self):
