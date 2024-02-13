@@ -50,6 +50,7 @@ class BeaverDB:
         logging.basicConfig(
             filename=directory / log_file_name,
             encoding="utf-8",
+            filemode='w',
             format="%(levelname)s:%(message)s",
             level=logging.INFO,
         )
