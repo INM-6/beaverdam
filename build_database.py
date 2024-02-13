@@ -101,18 +101,18 @@ class BeaverDB:
 
             # Check that the updated document has the same _id as you intended
             if updated_document_id != db_record_id:
-                raise Exception(
-                    "Oh no, something went wrong!  The document with _id = {0} was updated, instead of id = {1}.".format(
+                logging.warning(
+                    "The document with _id = {0} was updated, instead of id = {1}.".format(
                         updated_document_id, db_record_id
                     )
                 )
 
         # Report what happened
-        print(
-            "Database updated!  {0} existing documents modified, {1} new documents added.".format(
-                n_documents_deleted, n_new_documents
-            )
+        update_message = "Database updated!  {0} existing documents modified, {1} new documents added.".format(
+            n_documents_deleted, n_new_documents
         )
+        print(update_message)
+        logging.info(update_message)
 
 
 def build_database():
