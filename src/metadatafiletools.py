@@ -3,6 +3,7 @@ from pathlib import Path
 import tempfile
 import sys
 import os
+import logging
 
 import odml  # handling odml files; install with pip not conda
 import json  # handling JSON files; built in, don't need to install separate package
@@ -199,6 +200,6 @@ def load_metadata(file_name: Path) -> MetadataFile:
     elif file_name.suffix == ".json":
         return JsonMetadata(file_name)
     else:
-        raise Exception(
+        logging.error(
             "Beaverdam doesn't know how to treat " + file_name.suffix + " files yet."
         )
