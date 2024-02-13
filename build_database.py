@@ -3,9 +3,11 @@ import sys
 sys.path.insert(0, "./src")
 
 from pathlib import Path
-from configparser import ConfigParser
 import glob
 from tqdm import tqdm
+import logging
+
+from configparser import ConfigParser
 from metadatasource import MongoDbDatabase
 from metadatafiletools import load_metadata
 
@@ -27,14 +29,27 @@ class BeaverDB:
         """Set up database and detect files to load
 
         Args:
-            fp_cfg (str): path to config file, including filename and extension
+            fp_cfg (Path): path to config file, including filename and extension
         """
+        # Set up logging, with the log file in the same directory as the config file
+        self._create_log(fp_cfg.parent)
         # Read config file
         self.cfg = ConfigParser(fp_cfg)
         # Set database
         self._set_database()
         # Get metadata file names
         self._find_files()
+
+    def _create_log(self, directory):
+        """Set up error logging
+
+        Args:
+            directory (Path): directory to place the log file in
+        """
+        log_file_name = Path("beaverdam.log")
+        logging.basicConfig(
+            filename=directory / log_file_name, encoding="utf-8", level=logging.INFO
+        )
 
     def _set_database(self):
         """Create a database object"""
