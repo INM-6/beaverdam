@@ -108,7 +108,8 @@ class OdmlMetadata(MetadataFile):
             for x in input_section["sections"]:
                 change_list(x)
 
-                # Un-list the properties sections to new dict items with keys = property names
+                # Un-list the properties sections to new dict items with keys = property
+                # names
                 if "properties" in x:
                     x["__properties"] = {}
                     for item in x["properties"]:
@@ -187,19 +188,26 @@ def load_metadata(file_name: Path) -> MetadataFile:
     Args:
         file_name (Path): path to the file, including filename and extension
 
-    Raises:
-        Exception: if the file type isn't found
-
     Returns:
         MetadataFile: some flavour of a MetadataFile object, depending on the input file
-        type
+        type.  Returns None if there is a problem with the file or the file doesn't
+        exist.
     """
-    # Create the correct type of file object depending on the extension
-    if file_name.suffix == ".odml":
-        return OdmlMetadata(file_name)
-    elif file_name.suffix == ".json":
-        return JsonMetadata(file_name)
-    else:
-        logging.error(
-            "Beaverdam doesn't know how to treat " + file_name.suffix + " files yet."
-        )
+    # Create the correct type of file object depending on the extension.  If there is a
+    # problem, report this in the log file.
+    try:
+        if file_name.suffix == ".odml":
+            return OdmlMetadata(file_name)
+        elif file_name.suffix == ".json":
+            return JsonMetadata(file_name)
+        else:
+            logging.error(
+                """File {0} skipped, because Beaverdam doesn't know how to treat 
+                {1} files yet.\n""".format(
+                    file_name, file_name.suffix
+                )
+            )
+            return None
+    except Exception as e:
+        logging.error("Problem with file {0}:\n".format(file_name) + e.args[0])
+        return None
