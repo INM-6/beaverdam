@@ -9,6 +9,7 @@ import plotly.express as px
 import plotly.io as pio
 import theme_plots  # custom plot themes (themes are loaded immediately when imported)
 import uuid
+from timeit import default_timer as timer  # timing how long things take
 
 
 def set_ui_object_id(element_type, id=[]):
@@ -250,13 +251,14 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
             id=set_ui_object_id(id=id, element_type=element_type),
             figure=graph_object,
             config=config,
+            className="dbc"
         ),
         card_margin="6px",
     )
     return dash_graph
 
 
-def build_pie_chart(data, title=[], colourmode=[]):
+def build_pie_chart(data, title=[], template="plotly"):#colourmode=[]):
     """Build a pie chart to include in a Dash figure
     Args:
         data (df with one column):  data to be plotted
@@ -266,20 +268,34 @@ def build_pie_chart(data, title=[], colourmode=[]):
     Returns:
         pie_chart (px.pie): Plotly Express object containing the graph
     """
-    if colourmode:
-        load_figure_template(colourmode)
-        pio.templates.default = colourmode + "+main+pie"
-    else:
-        pio.templates.default = "main+pie"
+    # colourmode=[]
+    t0 = timer()
+    # if colourmode:
+    #     t3 = timer()
+    #     load_figure_template(colourmode)
+    #     t4 = timer()
+    #     pio.templates.default = colourmode + "+main+pie"
+    #     t5 = timer()
+    # else:
+    #     t4 = timer()
+    #     pio.templates.default = "main+pie"
+    #     t5 = timer()
+    # t2 = timer()
+    # print("Loaded figure template {0} = {1}".format(colourmode, t4-t3))
+    # print("Set default figure template {0} = {1}".format(colourmode, t5-t4))
+    # print("Got colour mode of pie chart = {0}".format(t2-t0))
     pie_chart = px.pie(
         data_frame=data.map(unlist_element),
         names=data.iloc[:, 0].tolist(),
         title=title,
+        template=template,
     )
+    t1 = timer()
+    # print("Built pie chart = {0}".format(t1-t0))
     return pie_chart
 
 
-def build_bar_graph(data, title=[], colourmode=[]):
+def build_bar_graph(data, title=[], template="plotly"):#colourmode=[]):
     """Build a bar graph to include in a Dash figure
     Args:
         data (df with one column):  data to be plotted
@@ -289,20 +305,21 @@ def build_bar_graph(data, title=[], colourmode=[]):
     Returns:
         bar_graph (px.histogram): Plotly Express object containing the graph
     """
-    if colourmode:
-        load_figure_template(colourmode)
-        pio.templates.default = colourmode + "+main+bar"
-    else:
-        pio.templates.default = "main+bar"
+    # if colourmode:
+    #     load_figure_template(colourmode)
+    #     pio.templates.default = colourmode + "+main+bar"
+    # else:
+    #     pio.templates.default = "main+bar"
     bar_graph = px.histogram(
         data_frame=data.map(unlist_element),
         x=data.columns,
         title=title,
+        template=template,
     )
     return bar_graph
 
 
-def build_box_plot(data, title=[], colourmode=[]):
+def build_box_plot(data, title=[], template="plotly"):#colourmode=[]):
     """Build a box plot to include in a Dash figure
     Args:
         data (df with two columns):  data to be plotted
@@ -312,22 +329,23 @@ def build_box_plot(data, title=[], colourmode=[]):
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
     """
-    if colourmode:
-        load_figure_template(colourmode)
-        pio.templates.default = colourmode + "+main+box"
-    else:
-        pio.templates.default = "main+box"
+    # if colourmode:
+    #     load_figure_template(colourmode)
+    #     pio.templates.default = colourmode + "+main+box"
+    # else:
+    #     pio.templates.default = "main+box"
     box_plot = px.box(
         data_frame=data.map(unlist_element),
         x=data.columns[1],
         y=data.columns[0],
         hover_name=data.index,
         title=title,
+        template=template,
     )
     return box_plot
 
 
-def build_scatter_plot(data, title=[], colourmode=[]):
+def build_scatter_plot(data, title=[], template="plotly"):#colourmode=[]):
     """Build a scatter plot to include in a Dash figure
     Args:
         data (df with two columns):  data to be plotted
@@ -337,17 +355,18 @@ def build_scatter_plot(data, title=[], colourmode=[]):
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
     """
-    if colourmode:
-        load_figure_template(colourmode)
-        pio.templates.default = colourmode + "+main+scatter"
-    else:
-        pio.templates.default = "main+scatter"
+    # if colourmode:
+    #     load_figure_template(colourmode)
+    #     pio.templates.default = colourmode + "+main+scatter"
+    # else:
+    #     pio.templates.default = "main+scatter"
     scatter_plot = px.scatter(
         data_frame=data.map(unlist_element),
         x=data.columns[1],
         y=data.columns[0],
         hover_name=data.index,
         title=title,
+        template=template,
     )
     return scatter_plot
 
