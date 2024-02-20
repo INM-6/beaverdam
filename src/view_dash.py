@@ -2,6 +2,7 @@
 
 from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL, clientside_callback
 import dash_bootstrap_components as dbc  # also see dash-mantine-components
+# from timeit import default_timer as timer  # timing how long things take
 
 from view import View
 import builduielements_dash
@@ -67,7 +68,7 @@ class DashView(View):
         header_height = "56px"
         logo_file_name = "beaverdam-logo_long.png"
         # Options for the carousel displaying figures
-        n_figures_to_show = 2
+        n_figures_to_show = 3
         n_figures_to_scroll = 1
         carousel_margin_bottom = "5%"
         carousel_margin_side = "2.5%"
@@ -638,4 +639,4 @@ class DashView(View):
         if __name__ == "view_dash":
             self.build_layout()
             self.register_callbacks()
-            self.app.run_server(debug=False)
+            self.app.run(debug=False)
