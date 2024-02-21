@@ -251,7 +251,6 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
             id=set_ui_object_id(id=id, element_type=element_type),
             figure=graph_object,
             config=config,
-            className="dbc"
         ),
         card_margin="6px",
     )
@@ -291,7 +290,7 @@ def build_pie_chart(data, title=[], template="plotly"):#colourmode=[]):
         template=template,
     )
     t1 = timer()
-    # print("Built pie chart = {0}".format(t1-t0))
+    print("Built pie chart = {0}".format(t1-t0))
     return pie_chart
 
 
@@ -305,6 +304,7 @@ def build_bar_graph(data, title=[], template="plotly"):#colourmode=[]):
     Returns:
         bar_graph (px.histogram): Plotly Express object containing the graph
     """
+    t0=timer()
     # if colourmode:
     #     load_figure_template(colourmode)
     #     pio.templates.default = colourmode + "+main+bar"
@@ -314,8 +314,10 @@ def build_bar_graph(data, title=[], template="plotly"):#colourmode=[]):
         data_frame=data.map(unlist_element),
         x=data.columns,
         title=title,
-        template=template,
+        # template=template,
     )
+    t1=timer()
+    print("Built bar chart = {0}".format(t1-t0))
     return bar_graph
 
 
@@ -329,6 +331,7 @@ def build_box_plot(data, title=[], template="plotly"):#colourmode=[]):
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
     """
+    t0=timer()
     # if colourmode:
     #     load_figure_template(colourmode)
     #     pio.templates.default = colourmode + "+main+box"
@@ -340,8 +343,10 @@ def build_box_plot(data, title=[], template="plotly"):#colourmode=[]):
         y=data.columns[0],
         hover_name=data.index,
         title=title,
-        template=template,
+        # template=template,
     )
+    t1=timer()
+    print("Built box chart = {0}".format(t1-t0))
     return box_plot
 
 
@@ -355,6 +360,7 @@ def build_scatter_plot(data, title=[], template="plotly"):#colourmode=[]):
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
     """
+    t0=timer()
     # if colourmode:
     #     load_figure_template(colourmode)
     #     pio.templates.default = colourmode + "+main+scatter"
@@ -366,8 +372,10 @@ def build_scatter_plot(data, title=[], template="plotly"):#colourmode=[]):
         y=data.columns[0],
         hover_name=data.index,
         title=title,
-        template=template,
+        # template=template,
     )
+    t1=timer()
+    print("Built scatter chart = {0}".format(t1-t0))
     return scatter_plot
 
 

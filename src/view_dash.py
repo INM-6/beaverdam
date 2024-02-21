@@ -1,6 +1,17 @@
 """Builds a user interface using Dash"""
 
-from dash import Dash, html, Input, Output, ctx, State, MATCH, ALL, clientside_callback
+from dash import (
+    Dash,
+    html,
+    Input,
+    Output,
+    dcc,
+    ctx,
+    State,
+    MATCH,
+    ALL,
+    clientside_callback,
+)
 import dash_bootstrap_components as dbc  # also see dash-mantine-components
 from timeit import default_timer as timer  # timing how long things take
 import plotly.io as pio
@@ -70,6 +81,8 @@ class DashView(View):
         is_page_fluid = True
         header_height = "56px"
         logo_file_name = "beaverdam-logo_long.png"
+        loading_indicator_type = "default"
+        loading_indicator_color = "#c31a07"
         # Options for the carousel displaying figures
         n_figures_to_show = 3
         n_figures_to_scroll = 1
@@ -158,11 +171,16 @@ class DashView(View):
                 )
             elif element_type == "SelectedCriteria":
                 applied_filter_elements.append(
-                    builduielements_dash.build_chip_group(
-                        id=element_id,
-                        element_type=element_type,
-                        items=element_contents["items"],
-                        title=element_contents["title"],
+                    dcc.Loading(
+                        id=builduielements_dash.set_ui_object_id("loading"),
+                        type=loading_indicator_type,
+                        color=loading_indicator_color,
+                        children=builduielements_dash.build_chip_group(
+                            id=element_id,
+                            element_type=element_type,
+                            items=element_contents["items"],
+                            title=element_contents["title"],
+                        ),
                     )
                 )
             elif element_type == "DataFigure":
@@ -278,6 +296,7 @@ class DashView(View):
                 ),
             ],
             fluid=is_page_fluid,
+            className="dbc",
         )
 
     def register_callbacks(self):
@@ -335,6 +354,7 @@ class DashView(View):
 
             # On load, ctx.triggered_id is None, and we don't have to filter anyway
             if triggered_element is not None:
+                t2 = timer()
                 # Get specific information about the element that was triggered
                 triggered_element_id = triggered_element["index"]
                 triggered_element_type = ctx.triggered_id["type"]
@@ -486,8 +506,7 @@ class DashView(View):
 
                 # Update presenter
                 self.presenter.update()
-            t2 = timer()
-            print("Backend update time = {0}".format(t2-t0))
+            t3 = timer()
 
             # Make sure that all the elements of ctx.outputs_list are lists of dicts.
             # Default behaviour is for an element to be a dict if there is only one
@@ -505,11 +524,13 @@ class DashView(View):
             new_text_output = []
             new_chips = []
             # Set theme for figures based on colour mode
+            t5 = timer()
             figure_template = "sandstone" if isSwitchOn[0] else "sandstone_dark"
             load_figure_template(figure_template)
+            t4 = timer()
             # Go through each UI element that's an output of the callback
             for output_type in outputs_list:
-                t3 = timer()
+                t5 = timer()
                 for ielement in output_type:
                     # Get the element ID
                     try:
@@ -553,29 +574,34 @@ class DashView(View):
                                     if output_element_style == "pie":
                                         new_figure_data.append(
                                             builduielements_dash.build_pie_chart(
-                                                data, title, #figure_colourmode_theme
-                                                template = "main+pie"#"plotly_dark+main+pie"
+                                                data,
+                                                title,  # figure_colourmode_theme
+                                                template=figure_template
+                                                + "+main+pie",  # "plotly_dark+main+pie"
                                             )
                                         )
                                     elif output_element_style == "bar":
                                         new_figure_data.append(
                                             builduielements_dash.build_bar_graph(
-                                                data, title, #figure_colourmode_theme
-                                                template = "main+bar"
+                                                data,
+                                                title,  # figure_colourmode_theme
+                                                template="main+bar",
                                             )
                                         )
                                     elif output_element_style == "scatter":
                                         new_figure_data.append(
                                             builduielements_dash.build_scatter_plot(
-                                                data, title, #figure_colourmode_theme
-                                                template = "main+scatter"
+                                                data,
+                                                title,  # figure_colourmode_theme
+                                                template="main+scatter",
                                             )
                                         )
                                     elif output_element_style == "box":
                                         new_figure_data.append(
                                             builduielements_dash.build_box_plot(
-                                                data, title, #figure_colourmode_theme
-                                                template = "main+box"
+                                                data,
+                                                title,  # figure_colourmode_theme
+                                                template="main+box",
                                             )
                                         )
                                 elif ielement["property"] == "clickData":
@@ -613,11 +639,13 @@ class DashView(View):
                                 )
                     except:
                         pass
-                t4 = timer()
-                print("Updated {0} = {1}".format(output_type[0]['id']['type'], t4-t3))
+                t6 = timer()
+                print("Updated {0} = {1}".format(output_type[0]["id"]["type"], t6 - t5))
             t1 = timer()
-            print("Total frontend update time = {0}".format(t1-t2))
-            print("Total callback time = {0}".format(t1-t0))
+            print("Backend update time = {0}".format(t3 - t0))
+            print("Set theme = {0}".format(t4 - t5))
+            print("Frontend update time = {0}".format(t1 - t4))
+            print("Total callback time = {0}".format(t1 - t0))
 
             return [
                 new_table_data,
