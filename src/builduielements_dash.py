@@ -189,19 +189,6 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
     return filter_checklist
 
 
-def get_checklist_selection(filterchecklist_object):
-    """Get only the selected options of a filter checklist
-
-    Args:
-        filterchecklist_object (FilterChecklist from Presenter module): title and
-        options for the checklist
-
-    Returns:
-        the options from the checklist which are selected
-    """
-    return filterchecklist_object.contents["selected_options"]
-
-
 def build_button(button_text, button_type="button"):
     """Build Dash button with specified text
 

@@ -473,9 +473,7 @@ class DashView(View):
                                 )
                             elif output_element_type == "FilterChecklist":
                                 new_checklist_data.append(
-                                    builduielements_dash.get_checklist_selection(
-                                        presenter_ui_element
-                                    )
+                                    presenter_ui_element.contents["selected_options"]
                                 )
                             elif output_element_type == "DataFigure":
                                 if ielement["property"] == "figure":
