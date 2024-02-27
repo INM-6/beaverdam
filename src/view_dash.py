@@ -17,7 +17,7 @@ import plotly.io as pio
 
 from view import View
 import builduielements_dash
-import theme_plots  # custom plot themes (themes are loaded immediately when imported)
+import colours as bd_colours
 
 
 class DashView(View):
@@ -80,50 +80,12 @@ class DashView(View):
         header_height = "56px"
         logo_file_name = "beaverdam-logo_long.png"
         loading_indicator_type = "default"
-        loading_indicator_color = "#c31a07"
+        loading_indicator_color = bd_colours.beaverdam_red
         # Options for the carousel displaying figures
         n_figures_to_show = 3
         n_figures_to_scroll = 1
         carousel_margin_bottom = "5%"
         carousel_margin_side = "2.5%"
-        # Here are options for the graph layout -- use graph_object.update_layout() to
-        # set them after creating a Plotly graph object "graph_object"
-        # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Layout.html
-        #
-        # A list of Plotly modebar buttons is here:
-        # https://plotly.com/python/configuration-options/#removing-modebar-buttons
-        # Make sure that you give the list of modebar buttons as [[ buttonNames ]]
-        plotly_config_options_base = {
-            "displayModeBar": True,
-            "displaylogo": False,
-            "modeBarButtons": [["toImage"]],
-        }
-        # Note that if you redefine a key in a plot-specific dict of config options, it
-        # will override the values in the corresponding key of the base options, so if
-        # you want to add on to base options you have to include the base value in the
-        # plot-specific value alongside the additional options.
-        plotly_config_options_pie = {}
-        plotly_config_options_bar = {}
-        plotly_config_options_box = {
-            "modeBarButtons": [
-                plotly_config_options_base["modeBarButtons"][0]
-                + [
-                    "select2d",
-                    "lasso2d",
-                ]
-            ]
-        }
-        plotly_config_options_scatter = {
-            "modeBarButtons": [
-                plotly_config_options_base["modeBarButtons"][0]
-                + [
-                    "zoom2d",
-                    "pan2d",
-                    "select2d",
-                    "lasso2d",
-                ]
-            ]
-        }
 
         ui_elements = self.ui_elements
 
@@ -184,49 +146,31 @@ class DashView(View):
             elif element_type == "DataFigure":
                 ielement = []
                 igraph = []
-                fig_config_options = {}
                 if element_style == "pie":
                     igraph = builduielements_dash.build_pie_chart(
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
-                    fig_config_options = {
-                        **plotly_config_options_base,
-                        **plotly_config_options_pie,
-                    }
                 elif element_style == "bar":
                     igraph = builduielements_dash.build_bar_graph(
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
-                    fig_config_options = {
-                        **plotly_config_options_base,
-                        **plotly_config_options_bar,
-                    }
                 elif element_style == "scatter":
                     igraph = builduielements_dash.build_scatter_plot(
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
-                    fig_config_options = {
-                        **plotly_config_options_base,
-                        **plotly_config_options_scatter,
-                    }
                 elif element_style == "box":
                     igraph = builduielements_dash.build_box_plot(
                         data=element_contents["df"],
                         title=element_contents["title"],
                     )
-                    fig_config_options = {
-                        **plotly_config_options_base,
-                        **plotly_config_options_box,
-                    }
                 # Create the plot
                 ielement = builduielements_dash.build_data_figure(
                     graph_object=igraph,
                     id=element_id,
                     element_type=element_type,
-                    config=fig_config_options,
                 )
                 figure_elements.append(ielement)
 
@@ -622,7 +566,6 @@ class DashView(View):
                                 )
                     except:
                         pass
-
             return [
                 new_table_data,
                 new_checklist_data,

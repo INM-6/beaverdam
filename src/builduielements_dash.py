@@ -6,8 +6,7 @@ import dash_mantine_components as dmc
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
 from dash_bootstrap_templates import load_figure_template
 import plotly.express as px
-import plotly.io as pio
-import theme_plots  # custom plot themes (themes are loaded immediately when imported)
+import theme_plotly as theme_plotly  # custom plot themes (themes are loaded immediately when imported)
 import uuid
 
 
@@ -227,7 +226,7 @@ def build_button(button_text, button_type="button"):
     )
 
 
-def build_data_figure(graph_object, id=[], element_type="", config={}):
+def build_data_figure(graph_object, id=[], element_type=""):
     """Build a Dash data figure containing a graph and with appropriate Dash identifiers
 
     Args:
@@ -236,7 +235,6 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
         not provided)
         element_type (str):  type of object, for use with pattern-matching callbacks
         (opt)
-        config (dict):  configuration options for Plotly figures (optional)
 
     Returns:
         dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
@@ -246,7 +244,7 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
         dcc.Graph(
             id=set_ui_object_id(id=id, element_type=element_type),
             figure=graph_object,
-            config=config,
+            config=theme_plotly.modebar_layout(graph_object.data[0].type),
         ),
         card_margin="6px",
     )
