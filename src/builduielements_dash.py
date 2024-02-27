@@ -251,6 +251,30 @@ def build_data_figure(graph_object, id=[], element_type=""):
     return dash_graph
 
 
+def build_plot(data, title=[], style=""):
+    """Build a plot to include in a Dash figure
+    Args:
+        data (df):  data to be plotted.  Number of columns depends on the plot type.
+        title (str):  title of the graph (optional; default is no title)
+        style (str):  type of plot:  "pie", "bar", "box", "scatter"
+
+    Returns:
+        final_plot (px plot object): Plotly Express object containing the plot.  The
+        exact type of object depends on the plot type.
+    """
+    if style == "pie":
+        final_plot = build_pie_chart(data, title)
+    elif style == "bar":
+        final_plot = build_bar_graph(data, title)
+    elif style == "box":
+        final_plot = build_box_plot(data, title)
+    elif style == "scatter":
+        final_plot = build_scatter_plot(data, title)
+    else:
+        pass
+    return final_plot
+
+
 def build_pie_chart(data, title=[]):
     """Build a pie chart to include in a Dash figure
     Args:

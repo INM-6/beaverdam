@@ -144,31 +144,12 @@ class DashView(View):
                     )
                 )
             elif element_type == "DataFigure":
-                ielement = []
-                igraph = []
-                if element_style == "pie":
-                    igraph = builduielements_dash.build_pie_chart(
-                        data=element_contents["df"],
-                        title=element_contents["title"],
-                    )
-                elif element_style == "bar":
-                    igraph = builduielements_dash.build_bar_graph(
-                        data=element_contents["df"],
-                        title=element_contents["title"],
-                    )
-                elif element_style == "scatter":
-                    igraph = builduielements_dash.build_scatter_plot(
-                        data=element_contents["df"],
-                        title=element_contents["title"],
-                    )
-                elif element_style == "box":
-                    igraph = builduielements_dash.build_box_plot(
-                        data=element_contents["df"],
-                        title=element_contents["title"],
-                    )
-                # Create the plot
                 ielement = builduielements_dash.build_data_figure(
-                    graph_object=igraph,
+                    graph_object=builduielements_dash.build_plot(
+                        data=element_contents["df"],
+                        title=element_contents["title"],
+                        style=element_style,
+                    ),
                     id=element_id,
                     element_type=element_type,
                 )
@@ -498,39 +479,15 @@ class DashView(View):
                                 )
                             elif output_element_type == "DataFigure":
                                 if ielement["property"] == "figure":
-                                    output_element_style = output_element_properties[
-                                        "style"
-                                    ]
-                                    data = presenter_ui_element.contents["df"]
-                                    title = presenter_ui_element.contents["title"]
-                                    if output_element_style == "pie":
-                                        new_figure_data.append(
-                                            builduielements_dash.build_pie_chart(
-                                                data,
-                                                title,
-                                            )
+                                    new_figure_data.append(
+                                        builduielements_dash.build_plot(
+                                            data=presenter_ui_element.contents["df"],
+                                            title=presenter_ui_element.contents[
+                                                "title"
+                                            ],
+                                            style=output_element_properties["style"],
                                         )
-                                    elif output_element_style == "bar":
-                                        new_figure_data.append(
-                                            builduielements_dash.build_bar_graph(
-                                                data,
-                                                title,
-                                            )
-                                        )
-                                    elif output_element_style == "scatter":
-                                        new_figure_data.append(
-                                            builduielements_dash.build_scatter_plot(
-                                                data,
-                                                title,
-                                            )
-                                        )
-                                    elif output_element_style == "box":
-                                        new_figure_data.append(
-                                            builduielements_dash.build_box_plot(
-                                                data,
-                                                title,
-                                            )
-                                        )
+                                    )
                                 elif ielement["property"] == "clickData":
                                     # This fixes a bug in Dash where clicking the same
                                     # figure section (e.g. bar in a bar graph) multiple
