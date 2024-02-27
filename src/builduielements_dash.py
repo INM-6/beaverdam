@@ -97,7 +97,7 @@ def build_data_table(data, id=[], element_type=""):
         in order to update the contents.
     """
     return html.Div(
-        id=set_ui_object_id(element_type="DataTable_container", id=id),
+        id=set_ui_object_id(element_type=element_type, id=id),
         children=dbc.Table.from_dataframe(
             df=data,
             bordered=True,

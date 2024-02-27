@@ -231,7 +231,7 @@ class DashView(View):
         app = self.app
 
         @app.callback(
-            Output({"type": "DataTable_container", "index": ALL}, "children"),
+            Output({"type": "DataTable", "index": ALL}, "children"),
             Output({"type": "FilterChecklist", "index": ALL}, "value"),
             Output({"type": "DataFigure", "index": ALL}, "figure"),
             Output({"type": "DataFigure", "index": ALL}, "clickData"),
