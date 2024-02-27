@@ -65,6 +65,18 @@
 
 /* Table
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-.table {
-    white-space: nowrap !important;
+.dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+    font-family: var(--bs-font-sans-serif);
+}
+
+body .dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: var(--bs-border-width) solid var(--bs-border-color) !important;
+}
+
+body .dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th {
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-secondary-bg) !important;
 }

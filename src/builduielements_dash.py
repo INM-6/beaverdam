@@ -1,6 +1,6 @@
 """Functions to build elements of a Dash user interface"""
 
-from dash import dcc, html
+from dash import dcc, html, dash_table
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
@@ -98,11 +98,8 @@ def build_data_table(data, id=[], element_type=""):
     """
     return html.Div(
         id=set_ui_object_id(element_type=element_type, id=id),
-        children=dbc.Table.from_dataframe(
-            df=data,
-            bordered=True,
-        ),
-        style={"overflow": "auto"},
+        children=dash_table.DataTable(data=data.to_dict("records")),
+        className="dbc",
     )
 
 
@@ -116,9 +113,10 @@ def build_data_table_contents(datatable_object):
     Returns:
         (dbc.Table):  Dash Bootstrap table containing data
     """
-    return dbc.Table.from_dataframe(
-        df=datatable_object.contents["df"],
-        bordered=True,
+    return dash_table.DataTable(
+        data=datatable_object.contents["df"].to_dict("records"),
+        page_size=500,
+        cell_selectable=False,
     )
 
 
