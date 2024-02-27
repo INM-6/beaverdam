@@ -98,23 +98,23 @@ def build_data_table(data, id=[], element_type=""):
     """
     return html.Div(
         id=set_ui_object_id(element_type=element_type, id=id),
-        children=dash_table.DataTable(data=data.to_dict("records")),
+        children=build_data_table_contents(data),
         className="dbc",
     )
 
 
-def build_data_table_contents(datatable_object):
+def build_data_table_contents(data):
     """Build the contents of a new data table
 
     Args:
-        datatable_object (DataTablePresenter from Presenter module): formatted data for
-        the table
+        data (dataframe): data for the table, with column names the same as the headers
+        for the table
 
     Returns:
-        (dbc.Table):  Dash Bootstrap table containing data
+        (DataTable):  Dash DataTable containing data
     """
     return dash_table.DataTable(
-        data=datatable_object.contents["df"].to_dict("records"),
+        data=data.to_dict("records"),
         page_size=500,
         cell_selectable=False,
     )

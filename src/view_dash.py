@@ -463,7 +463,7 @@ class DashView(View):
                             if output_element_type == "DataTable":
                                 new_table_data.append(
                                     builduielements_dash.build_data_table_contents(
-                                        presenter_ui_element
+                                        presenter_ui_element.contents["df"]
                                     )
                                 )
                                 new_text_output.append(
