@@ -13,13 +13,11 @@ from dash import (
     clientside_callback,
 )
 import dash_bootstrap_components as dbc  # also see dash-mantine-components
-from timeit import default_timer as timer  # timing how long things take
 import plotly.io as pio
-import theme_plots  # custom plot themes (themes are loaded immediately when imported)
-from dash_bootstrap_templates import load_figure_template
 
 from view import View
 import builduielements_dash
+import theme_plots  # custom plot themes (themes are loaded immediately when imported)
 
 
 class DashView(View):
@@ -36,7 +34,7 @@ class DashView(View):
         self.app = Dash(
             __name__,
             external_stylesheets=[
-                dbc.themes.SANDSTONE,  # BOOTSTRAP,
+                dbc.themes.SANDSTONE,
                 dbc.icons.FONT_AWESOME,
             ],
             assets_folder="../assets",
@@ -296,7 +294,6 @@ class DashView(View):
                 ),
             ],
             fluid=is_page_fluid,
-            className="dbc",
         )
 
     def register_callbacks(self):
@@ -342,7 +339,6 @@ class DashView(View):
             Returns:
                 list: contains one list for each detected output
             """
-            t0 = timer()
             # Get id and type of element that was clicked
             triggered_element = ctx.triggered_id
 
@@ -354,7 +350,6 @@ class DashView(View):
 
             # On load, ctx.triggered_id is None, and we don't have to filter anyway
             if triggered_element is not None:
-                t2 = timer()
                 # Get specific information about the element that was triggered
                 triggered_element_id = triggered_element["index"]
                 triggered_element_type = ctx.triggered_id["type"]
@@ -506,7 +501,6 @@ class DashView(View):
 
                 # Update presenter
                 self.presenter.update()
-            t3 = timer()
 
             # Make sure that all the elements of ctx.outputs_list are lists of dicts.
             # Default behaviour is for an element to be a dict if there is only one
@@ -523,27 +517,21 @@ class DashView(View):
             new_figure_clickdata = []
             new_text_output = []
             new_chips = []
-            # Set theme for figures based on colour mode
-            t5 = timer()
-            figure_template = "sandstone" if isSwitchOn[0] else "sandstone_dark"
-            load_figure_template(figure_template)
-            t4 = timer()
             # Go through each UI element that's an output of the callback
             for output_type in outputs_list:
-                t5 = timer()
                 for ielement in output_type:
                     # Get the element ID
                     try:
                         output_element_id = ielement["id"]["index"]
-                        # We already make labels update automatically with their associated
-                        # element
+                        # We already make labels update automatically with their
+                        # associated element
                         if "_label" not in output_element_id:
                             output_element_properties = (
                                 self.presenter.get_element_properties(output_element_id)
                             )
                             output_element_type = output_element_properties["type"]
-                            # Get updated data for the element and add it to the appropriate
-                            # list
+                            # Get updated data for the element and add it to the
+                            # appropriate list
                             presenter_ui_element = self.presenter.ui_elements[
                                 ui_element_ids.index(output_element_id)
                             ]
@@ -575,33 +563,28 @@ class DashView(View):
                                         new_figure_data.append(
                                             builduielements_dash.build_pie_chart(
                                                 data,
-                                                title,  # figure_colourmode_theme
-                                                template=figure_template
-                                                + "+main+pie",  # "plotly_dark+main+pie"
+                                                title,
                                             )
                                         )
                                     elif output_element_style == "bar":
                                         new_figure_data.append(
                                             builduielements_dash.build_bar_graph(
                                                 data,
-                                                title,  # figure_colourmode_theme
-                                                template="main+bar",
+                                                title,
                                             )
                                         )
                                     elif output_element_style == "scatter":
                                         new_figure_data.append(
                                             builduielements_dash.build_scatter_plot(
                                                 data,
-                                                title,  # figure_colourmode_theme
-                                                template="main+scatter",
+                                                title,
                                             )
                                         )
                                     elif output_element_style == "box":
                                         new_figure_data.append(
                                             builduielements_dash.build_box_plot(
                                                 data,
-                                                title,  # figure_colourmode_theme
-                                                template="main+box",
+                                                title,
                                             )
                                         )
                                 elif ielement["property"] == "clickData":
@@ -639,13 +622,6 @@ class DashView(View):
                                 )
                     except:
                         pass
-                t6 = timer()
-                print("Updated {0} = {1}".format(output_type[0]["id"]["type"], t6 - t5))
-            t1 = timer()
-            print("Backend update time = {0}".format(t3 - t0))
-            print("Set theme = {0}".format(t4 - t5))
-            print("Frontend update time = {0}".format(t1 - t4))
-            print("Total callback time = {0}".format(t1 - t0))
 
             return [
                 new_table_data,
@@ -660,11 +636,16 @@ class DashView(View):
             Output("navbar", "color"),
             Input({"type": "switch", "index": ALL}, "value"),
         )
-        def change_navbar_color(
+        def change_theme(
             isSwitchOn,
         ):
-            # Change colour of navbar to match theme
-            return "light" if isSwitchOn[0] else "dark"
+            if isSwitchOn[0]:
+                theme_type = "light"
+                pio.templates.default = "main_light"
+            else:
+                theme_type = "dark"
+                pio.templates.default = "main_dark"
+            return theme_type
 
         clientside_callback(
             """ 

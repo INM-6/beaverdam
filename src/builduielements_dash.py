@@ -1,6 +1,6 @@
 """Functions to build elements of a Dash user interface"""
 
-from dash import dcc, dash_table, html
+from dash import dcc, html
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
@@ -9,7 +9,6 @@ import plotly.express as px
 import plotly.io as pio
 import theme_plots  # custom plot themes (themes are loaded immediately when imported)
 import uuid
-from timeit import default_timer as timer  # timing how long things take
 
 
 def set_ui_object_id(element_type, id=[]):
@@ -242,9 +241,6 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
     Returns:
         dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
     """
-    # Plotly themes have been imported when importing theme_plots.py
-    # Set default theme
-    pio.templates.default = "main"
     # Create plot
     dash_graph = display_as_card(
         dcc.Graph(
@@ -257,125 +253,92 @@ def build_data_figure(graph_object, id=[], element_type="", config={}):
     return dash_graph
 
 
-def build_pie_chart(data, title=[], template="plotly"):#colourmode=[]):
+def build_pie_chart(data, title=[]):
     """Build a pie chart to include in a Dash figure
     Args:
         data (df with one column):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
-        colourmode (str):  name of theme from dash_bootstrap_templates (optional)
 
     Returns:
         pie_chart (px.pie): Plotly Express object containing the graph
     """
-    # colourmode=[]
-    t0 = timer()
-    # if colourmode:
-    #     t3 = timer()
-    #     load_figure_template(colourmode)
-    #     t4 = timer()
-    #     pio.templates.default = colourmode + "+main+pie"
-    #     t5 = timer()
-    # else:
-    #     t4 = timer()
-    #     pio.templates.default = "main+pie"
-    #     t5 = timer()
-    # t2 = timer()
-    # print("Loaded figure template {0} = {1}".format(colourmode, t4-t3))
-    # print("Set default figure template {0} = {1}".format(colourmode, t5-t4))
-    # print("Got colour mode of pie chart = {0}".format(t2-t0))
     pie_chart = px.pie(
         data_frame=data.map(unlist_element),
         names=data.iloc[:, 0].tolist(),
         title=title,
-        template=template,
     )
-    t1 = timer()
-    print("Built pie chart = {0}".format(t1-t0))
     return pie_chart
 
 
-def build_bar_graph(data, title=[], template="plotly"):#colourmode=[]):
+def build_bar_graph(data, title=[]):
     """Build a bar graph to include in a Dash figure
     Args:
         data (df with one column):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
-        colourmode (str):  name of theme from dash_bootstrap_templates (optional)
 
     Returns:
         bar_graph (px.histogram): Plotly Express object containing the graph
     """
-    t0=timer()
-    # if colourmode:
-    #     load_figure_template(colourmode)
-    #     pio.templates.default = colourmode + "+main+bar"
-    # else:
-    #     pio.templates.default = "main+bar"
     bar_graph = px.histogram(
         data_frame=data.map(unlist_element),
         x=data.columns,
         title=title,
-        # template=template,
     )
-    t1=timer()
-    print("Built bar chart = {0}".format(t1-t0))
+    bar_graph.update_layout(
+        showlegend=False,
+    )
     return bar_graph
 
 
-def build_box_plot(data, title=[], template="plotly"):#colourmode=[]):
+def build_box_plot(data, title=[]):
     """Build a box plot to include in a Dash figure
     Args:
         data (df with two columns):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
-        colourmode (str):  name of theme from dash_bootstrap_templates (optional)
 
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
     """
-    t0=timer()
-    # if colourmode:
-    #     load_figure_template(colourmode)
-    #     pio.templates.default = colourmode + "+main+box"
-    # else:
-    #     pio.templates.default = "main+box"
     box_plot = px.box(
         data_frame=data.map(unlist_element),
         x=data.columns[1],
         y=data.columns[0],
         hover_name=data.index,
         title=title,
-        # template=template,
     )
-    t1=timer()
-    print("Built box chart = {0}".format(t1-t0))
+    box_plot.update_layout(
+        newselection_mode="gradual",
+        dragmode="select",
+    )
     return box_plot
 
 
-def build_scatter_plot(data, title=[], template="plotly"):#colourmode=[]):
+def build_scatter_plot(data, title=[]):
     """Build a scatter plot to include in a Dash figure
     Args:
         data (df with two columns):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
-        colourmode (str):  name of theme from dash_bootstrap_templates (optional)
 
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
     """
-    t0=timer()
-    # if colourmode:
-    #     load_figure_template(colourmode)
-    #     pio.templates.default = colourmode + "+main+scatter"
-    # else:
-    #     pio.templates.default = "main+scatter"
     scatter_plot = px.scatter(
         data_frame=data.map(unlist_element),
         x=data.columns[1],
         y=data.columns[0],
         hover_name=data.index,
         title=title,
-        # template=template,
     )
-    t1=timer()
-    print("Built scatter chart = {0}".format(t1-t0))
+    scatter_plot.update_layout(
+        newselection_mode="gradual",
+        dragmode="select",
+        xaxis=dict(
+            rangemode="tozero",
+        ),
+        yaxis=dict(
+            rangemode="tozero",
+        ),
+    )
     return scatter_plot
 
 
