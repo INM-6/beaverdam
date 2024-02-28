@@ -238,7 +238,7 @@ class DataTable(UiElement):
                 elif len(dataframe_cell) == 1:
                     new_cell_value = dataframe_cell[0]
                 else:
-                    new_cell_value = dataframe_cell
+                    new_cell_value = ", ".join([str(item) for item in dataframe_cell])
             else:
                 new_cell_value = dataframe_cell
             if isinstance(new_cell_value, bool):
