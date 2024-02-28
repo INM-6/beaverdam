@@ -218,6 +218,8 @@ class DataTable(UiElement):
 
         # For elements of the dataframe that are lists, display single-item lists as a
         # value.
+        # For elements of the dataframe that are boolean, display as a string "True" or
+        # "False"
         # TODO:  display a limited number of items from multi-item lists to avoid
         # blowing up the displayed dataframe with large lists
         def parse_df_cell(dataframe_cell):
@@ -239,9 +241,14 @@ class DataTable(UiElement):
                     new_cell_value = dataframe_cell
             else:
                 new_cell_value = dataframe_cell
+            if isinstance(new_cell_value, bool):
+                if new_cell_value:
+                    new_cell_value = "True"
+                else:
+                    new_cell_value = "False"
             return new_cell_value
 
-        self.contents["df"].map(parse_df_cell)
+        self.contents["df"] = self.contents["df"].map(parse_df_cell)
 
         # Store the total number of entries in the dataframe
         self.properties["current_num_records"] = len(self.contents["df"])
