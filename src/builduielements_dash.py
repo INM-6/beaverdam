@@ -117,6 +117,7 @@ def build_data_table_contents(data):
         data=data.to_dict("records"),
         page_size=500,
         cell_selectable=False,
+        style_table={"overflowX": "scroll"},
     )
 
 
