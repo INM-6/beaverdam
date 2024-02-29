@@ -3,6 +3,26 @@
 import pandas as pd
 
 
+def _is_value_in_criteria(x, criteria):
+    """Find if a value is contained in a list of criteria
+
+    Args:
+        x (anything): the value you want to check
+        criteria (list):  the list of criteria, of which x
+        should meet at least one to be accepted
+
+    Returns:
+        bool: whether or not x meets any of the criteria
+    """
+    if isinstance(x, list):
+        is_contained = any([True for i in x if i in criteria])
+    elif x is None:
+        is_contained = False
+    else:
+        is_contained = x in criteria
+    return is_contained
+
+
 class DataTableCore(pd.DataFrame):
     """Store data and filter criteria, and indicates which data meets the current filter
     criteria"""
@@ -96,9 +116,9 @@ class DataTableCore(pd.DataFrame):
                             if idx in self.filter_criteria["row_index"]:
                                 is_criterion_met[row_num] = True
                     else:
-                        is_criterion_met = pd.DataFrame(
-                            self.df[iCriteria].tolist(), index=self.df.index
-                        ).isin(iVal)[0]
+                        is_criterion_met = self.df[iCriteria].apply(
+                            _is_value_in_criteria, args=[iVal]
+                        )
 
                     is_row_selected = [
                         x + [y] for x, y in zip(is_row_selected, is_criterion_met)
