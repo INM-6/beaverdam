@@ -115,11 +115,8 @@ class FilterChecklist(UiElement):
             self.contents["title"] = field
         # Find all options for the checklist
         self.contents["checklist_options"] = source[field].drop_duplicates().to_list()
-        # Find which options are selected
-        try:
-            self.contents["selected_options"] = selected_options
-        except:
-            self.contents["selected_options"] = []
+        # Set which options are selected
+        self.contents["selected_options"] = selected_options
 
     def update(self, new_data_table):
         """Update which options are selected in the checklist
