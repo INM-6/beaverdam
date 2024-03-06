@@ -399,6 +399,7 @@ class DashView(View):
                     # each filter criterion, and store alongside the criterion (e.g. in
                     # the "value" property of a chip), or add the filter title to the
                     # property in the text on the chip.
+                    # TODO:  be robust to booleans
                     if filter_criteria_to_remove == "manual selection":
                         # We grouped scatterplot selection, with the "row_index" key,
                         # into a "manual selection" chip.  Use the original key to
@@ -415,9 +416,18 @@ class DashView(View):
                         elif filter_criteria_to_remove in val:
                             # If the chip represents a single element, keep only the
                             # other elements in that criterion
+                            #
+                            # Check for booleans explicitly, since they were converted
+                            # to strings when building chips.  Numbers may also need to
+                            # be checked for here.
+                            if filter_criteria_to_remove in ["True", "true"]:
+                                filter_criteria_to_remove = [filter_criteria_to_remove, True]
+                            elif filter_criteria_to_remove in ["False", "false"]:
+                                filter_criteria_to_remove = [filter_criteria_to_remove, False]
                             new_filter_criteria[criterion] = [
                                 x for x in val if x not in filter_criteria_to_remove
                             ]
+                            
                         else:
                             # If a criterion isn't affected by the selected chip, keep
                             # it the same

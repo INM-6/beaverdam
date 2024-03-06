@@ -64,6 +64,47 @@ def unlist_element(x):
         new_value = x
     return new_value
 
+def value_to_label(x):
+    """Make sure that a value is formatted appropriately to display in UI components.
+
+    Most UI components can display strings and numbers, but not e.g. booleans.  So
+    things like booleans need to be converted to strings.
+
+    If a value is None, it's a design choice whether to show it or not.  Currently, if a
+    value doesn't exist in the database, it is stored internally in the dataframe as
+    None.  It might be confusing to show a None, for example in a filter checklist,
+    because it implies that None was a value assigned to a piece of metadata.
+    Conversely, it might be useful to show None, because then users can see how many
+    undefined values there are (as long as they know that None means undefined).  Here,
+    I've chosen not to show None values (by leaving them as None), because they
+    currently aren't shown in plots.
+
+    Args:
+        x (a single item of undetermined type): value to format as labels
+        
+    Returns:
+        formatted_x (string or numeric or None, depending on the input):  formatted
+        label
+    """
+    # Labels must be strings or numbers.  In Python, numbers can be int, float,
+    # or complex.  But we have to check for bool first, because for historic
+    # reasons bool is a subclass of int so if you check for int first it'll
+    # return true even if item is bool.
+    if isinstance(x, bool):
+        if x:
+            formatted_x = "True"
+        else:
+            formatted_x = "False"
+    elif isinstance(x, (str, int, float, complex)):
+        formatted_x = x
+    elif x==None:
+        # To show None values, just get rid of this elif statement and they'll get
+        # converted to strings in the else part.
+        formatted_x = x
+    else:
+        formatted_x = str(x)
+    return formatted_x
+
 
 def display_as_card(card_body, card_margin="0vmin"):
     """Wrap a UI element in a card
@@ -173,12 +214,23 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
     Returns:
         filter_checklist (dbc.Card): Dash Bootstrap Components card containing the checklist title and options
     """
+    # Find checklist options
+    values = [unlist_element(x) for x in items]
+    options = []
+    for idx, item in enumerate(values):
+        if item is None:
+            # TODO:  decide if it makes sense to show None (i.e. missing) values in
+            # checklists, or not.  Currently they aren't shown in plots, so it seems
+            # weird to show them in checklists.
+            pass
+        else:
+            options.append({"label": value_to_label(item), "value": values[idx]})
     filter_checklist = display_as_card(
         [
             html.Div(children=title),
             html.Div(
                 children=dbc.Checklist(
-                    options=[unlist_element(x) for x in items],
+                    options=options,
                     value=[],
                     id=set_ui_object_id(id=id, element_type=element_type),
                     labelStyle={"display": "block", "margin-bottom": "0px"},
@@ -392,16 +444,22 @@ def build_chips(chip_items):
     Returns:
         chips (list):  all chips, in a list
     """
+    if len(chip_items)>0:
+        print("veronica")
     chips = [
         dmc.Chip(
-            [html.I(className="fa fa-solid fa-circle-xmark"), " ", x],
-            value=x,
+            [html.I(className="fa fa-solid fa-circle-xmark"), " ", value_to_label(x)],
+            # TODO:  figure out how to pass value, and not string, to callback when value was converted to label value=x,
+            # documentation here:  https://www.dash-mantine-components.com/components/chip
             size="s",
             radius="lg",
             checked=True,
+            value=x,
         )
         for x in chip_items
     ]
+    if len(chips) > 0:
+        print("veronica")
     return chips
 
 
