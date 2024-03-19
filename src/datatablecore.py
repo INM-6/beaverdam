@@ -103,7 +103,6 @@ class DataTableCore(pd.DataFrame):
             # For each criterion, find out if each row meets the criterion or not and
             # add this information as additional elements to each list inside the
             # selected_rows list.
-            # NOTE: Replace isin by e.g. > == etc. to do more complicated comparisons
             for iCriteria, iVal in self.filter_criteria.items():
                 if len(iVal) > 0:
                     if iCriteria == "row_index":
