@@ -390,44 +390,39 @@ class DashView(View):
                         self.presenter.core.data_table.get_filter_criteria()
                     )
                     filter_criteria_to_remove = ctx.triggered[0]["value"]
+                    # Get the criterion name and value of the clicked chip
+                    criterion_name, criterion_value = (
+                        builduielements_dash.decode_criterion_info(
+                            filter_criteria_to_remove
+                        )
+                    )
                     # Clicking a chip removes that criterion from the filter criteria.
                     # Be careful to not modify existing_filter_criteria, because this
                     # will also modify the actual filter criteria in the datatable.
-                    #
-                    # TODO:  be robust to criterion which have the same value but come
-                    # from different filters, e.g. keep track of which element changed
-                    # each filter criterion, and store alongside the criterion (e.g. in
-                    # the "value" property of a chip), or add the filter title to the
-                    # property in the text on the chip.
-                    # TODO:  be robust to booleans
-                    if filter_criteria_to_remove == "manual selection":
-                        # We grouped scatterplot selection, with the "row_index" key,
-                        # into a "manual selection" chip.  Use the original key to
-                        # select criteria to remove.
-                        filter_criteria_to_remove = "row_index"
                     new_filter_criteria = {}
                     for criterion, val in existing_filter_criteria.items():
                         # Go through each existing filter criterion and see which (if
                         # any) elements from it to keep
-                        if filter_criteria_to_remove == criterion:
-                            # If the chip represents a criterion (e.g. row_index),
-                            # delete all values in the criterion
+                        if criterion == "row_index":
+                            # If the chip representing manual selection was selected,
+                            # remove all these criteria
                             new_filter_criteria[criterion] = []
-                        elif filter_criteria_to_remove in val:
-                            # If the chip represents a single element, keep only the
-                            # other elements in that criterion
-                            #
-                            # Check for booleans explicitly, since they were converted
-                            # to strings when building chips.  Numbers may also need to
-                            # be checked for here.
-                            if filter_criteria_to_remove in ["True", "true"]:
-                                filter_criteria_to_remove = [filter_criteria_to_remove, True]
-                            elif filter_criteria_to_remove in ["False", "false"]:
-                                filter_criteria_to_remove = [filter_criteria_to_remove, False]
-                            new_filter_criteria[criterion] = [
-                                x for x in val if x not in filter_criteria_to_remove
-                            ]
-                            
+                        elif criterion == criterion_name:
+                            # Keep only the other elements in that criterion.  Using
+                            # .remove() was the best solution I found that was also
+                            # robust to bool.  Make sure to do .remove() separately from
+                            # assigning the result, because since .remove() doesn't
+                            # return anything you get e.g. a=None if you try a =
+                            # val.remove(b)
+                            val.remove(criterion_value)
+                            new_filter_criteria[criterion] = val
+                            # Removing the last criterion using .remove() results in
+                            # None, but we want an empty list.  Don't just remove the
+                            # entire entry from the criteria dict, or the filter update
+                            # won't work because it won't know which criterion to
+                            # update.
+                            if new_filter_criteria[criterion] is None:
+                                new_filter_criteria[criterion] = []
                         else:
                             # If a criterion isn't affected by the selected chip, keep
                             # it the same
@@ -518,15 +513,38 @@ class DashView(View):
                                         chip_criteria["row_index"] = "manual selection"
                                     else:
                                         del chip_criteria["row_index"]
+                                # Get values of each criterion to display in chips.
+                                # Also get and store the criterion associated with the
+                                # value, and the type of the value (e.g. int, str, bool)
+                                # in the chip's value property.  This way, the
+                                # criterion's value can be unambiguously associated with
+                                # its criterion if the chip is clicked on.  We have to
+                                # store all this as a string in the chip's value
+                                # property, because unlike for e.g. a checklist item,
+                                # Dash Mantine Component chips only take strings as
+                                # values.
                                 chip_criteria_values = []
-                                for val in chip_criteria.values():
-                                    if isinstance(val, str):
-                                        chip_criteria_values.append(val)
+                                chip_info = []
+                                for key, val in chip_criteria.items():
+                                    if isinstance(val, list):
+                                        for ival in val:
+                                            chip_criteria_values.append(ival)
+                                            chip_info.append(
+                                                builduielements_dash.encode_criterion_info(
+                                                    key, ival
+                                                )
+                                            )
                                     else:
-                                        chip_criteria_values.extend(val)
+                                        chip_criteria_values.append(val)
+                                        chip_info.append(
+                                            builduielements_dash.encode_criterion_info(
+                                                key, val
+                                            )
+                                        )
                                 new_chips.append(
                                     builduielements_dash.build_chips(
-                                        chip_criteria_values
+                                        chip_criteria_values,
+                                        item_info=chip_info,
                                     )
                                 )
                     except:

@@ -64,6 +64,7 @@ def unlist_element(x):
         new_value = x
     return new_value
 
+
 def value_to_label(x):
     """Make sure that a value is formatted appropriately to display in UI components.
 
@@ -81,7 +82,7 @@ def value_to_label(x):
 
     Args:
         x (a single item of undetermined type): value to format as labels
-        
+
     Returns:
         formatted_x (string or numeric or None, depending on the input):  formatted
         label
@@ -95,9 +96,9 @@ def value_to_label(x):
             formatted_x = "True"
         else:
             formatted_x = "False"
-    elif isinstance(x, (str, int, float, complex)):
+    elif isinstance(x, (str, int, float)):
         formatted_x = x
-    elif x==None:
+    elif x == None:
         # To show None values, just get rid of this elif statement and they'll get
         # converted to strings in the else part.
         formatted_x = x
@@ -435,39 +436,116 @@ def build_carousel(
     return carousel
 
 
-def build_chips(chip_items):
+def encode_criterion_info(criterion_name, criterion_value):
+    """Encode information about a criterion value into a string.
+
+    The resulting string can be decoded to uniquely recover the value and its associated
+    criterion.
+
+    Args:
+    criterion_name (str):  name of criterion
+    criterion_value (anything):  value of criterion
+
+    Returns:
+    criterion_info (string):  encodes the value, its type, and its associated criterion
+    """
+    criterion_info = (
+        "CRITERION="
+        + criterion_name
+        + "__VALUE="
+        + value_to_label(criterion_value)
+        + "__TYPE="
+        + type(criterion_value).__name__
+    )
+    return criterion_info
+
+
+def decode_criterion_info(criterion_info):
+    """Extract information about a criterion value from an encoded string.
+
+    Args:
+    criterion_info (string):  encodes the value, its type, and its associated criterion
+
+    Returns:
+    criterion_name (str):  name of criterion
+    criterion_value (anything):  value of criterion
+    """
+    string_components = criterion_info.split("__")
+
+    def get_value(key_name):
+        """Get the value associated with a key from encoded criterion info
+
+        Args:
+            key_name (str): name of the key
+
+        Returns:
+            str: value associated with the key
+        """
+        inds = [ind for ind, s in enumerate(string_components) if key_name in s]
+        return string_components[inds[0]].split(key_name + "=")[1]
+
+    criterion_name = get_value("CRITERION")
+    criterion_str_value = get_value("VALUE")
+    criterion_type = get_value("TYPE")
+    # Convert the criterion's value to its actual value, e.g. str, int, bool
+    if criterion_type == "str":
+        criterion_value = criterion_str_value
+    elif criterion_type == "int":
+        criterion_value = int(criterion_str_value)
+    elif criterion_type == "float":
+        criterion_value = float(criterion_str_value)
+    elif criterion_type == "bool":
+        # Bool values are more complicated to convert
+        if criterion_str_value.lower() == "true":
+            criterion_value = True
+        elif criterion_str_value.lower() == "false":
+            criterion_value = False
+        else:
+            raise ValueError("Undefined bool value")
+    else:
+        raise ValueError(
+            "Beaverdam doesn't know how to decode {0} yet.".format(criterion_type)
+        )
+    return criterion_name, criterion_value
+
+
+def build_chips(chip_items, item_info=[]):
     """Build chips from a list of items
 
     Args:
-        chip_items (list): each item in the list will be one chip
+        chip_items (list): each item in the list will be the text shown on one chip
+        item_info (list): each item in the list will be used as the value of the
+        corresponding chip.  Must have the same length as chip_items, and consist only
+        of strings.  Optional; defaults to None.
 
     Returns:
         chips (list):  all chips, in a list
     """
-    if len(chip_items)>0:
-        print("veronica")
+    # Check that hidden_info is the same size as chip_items, and if not set it to an
+    # empty list of the correct size
+    if len(item_info) != len(chip_items):
+        item_info = [None for _ in chip_items]
     chips = [
         dmc.Chip(
             [html.I(className="fa fa-solid fa-circle-xmark"), " ", value_to_label(x)],
-            # TODO:  figure out how to pass value, and not string, to callback when value was converted to label value=x,
-            # documentation here:  https://www.dash-mantine-components.com/components/chip
             size="s",
             radius="lg",
             checked=True,
-            value=x,
+            value=item_info[ind],
         )
-        for x in chip_items
+        for ind, x in enumerate(chip_items)
     ]
-    if len(chips) > 0:
-        print("veronica")
     return chips
 
 
-def build_chip_group(items, title=[], id=[], element_type=""):
+def build_chip_group(items, item_info=[], title="", id="", element_type=""):
     """Build chipgroup from chips and display in card
 
     Args:
         items (list): each item in the list will be one chip
+        item_info (list): each item in the list will be the value of the corresponding
+        chip.  Must have the same length as chip_items and contain only strings.
+        Optional; defaults to None.
         title (str):  title for the chipgroup
         id (str):  unique identifier
         element_type (str):  type of object, for use with pattern-matching callbacks
@@ -481,7 +559,7 @@ def build_chip_group(items, title=[], id=[], element_type=""):
             html.Div(children=title),
             html.Div(
                 children=dmc.ChipGroup(
-                    build_chips(items),
+                    build_chips(items, item_info),
                     id={"index": id, "type": element_type},
                     position="left",
                     spacing=8,
