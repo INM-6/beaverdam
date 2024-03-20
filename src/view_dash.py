@@ -42,7 +42,7 @@ class DashView(View):
 
         self.app.title = "Beaverdam"
 
-    def __get_image(self, image_file_name, image_height):
+    def _get_image(self, image_file_name, image_height):
         """Get an image from the assets folder
 
         Args:
@@ -57,7 +57,7 @@ class DashView(View):
             src=Dash.get_asset_url(self.app, image_file_name), height=image_height
         )
 
-    def __build_color_mode_switch(self):
+    def _build_color_mode_switch(self):
         switch_id = builduielements_dash.set_ui_object_id("switch")
         return html.Span(
             [
@@ -161,8 +161,8 @@ class DashView(View):
         topbar_elements = []
         sidebar_elements = []
         mainpanel_elements = []
-        topbar_elements.append(self.__get_image(logo_file_name, header_height))
-        topbar_elements.append(self.__build_color_mode_switch())
+        topbar_elements.append(self._get_image(logo_file_name, header_height))
+        topbar_elements.append(self._build_color_mode_switch())
         sidebar_elements.append(
             builduielements_dash.build_button("Reset", "ResetButton")
         )

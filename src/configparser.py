@@ -50,7 +50,7 @@ class ConfigParser:
             sections_to_extract = [sections_to_extract]
 
         # Check if the requested section(s) are present
-        self.__check_for_missing_sections(config_contents, sections_to_extract)
+        self._check_for_missing_sections(config_contents, sections_to_extract)
 
         # Extract desired section(s)
         self.contents = {}
@@ -73,7 +73,7 @@ class ConfigParser:
         """
 
         # Check that requested section(s) exist
-        self.__check_for_missing_sections(self.contents, section_name)
+        self._check_for_missing_sections(self.contents, section_name)
 
         section_contents = None
         # If one section is requested, return its contents
@@ -84,7 +84,7 @@ class ConfigParser:
 
         return section_contents
 
-    def __check_for_missing_sections(self, dict_to_check, requested_sections):
+    def _check_for_missing_sections(self, dict_to_check, requested_sections):
         """Check a dictionary to make sure all requested sections are present
 
         Args:

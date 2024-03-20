@@ -111,27 +111,27 @@ class OdmlMetadata(MetadataFile):
                 # Un-list the properties sections to new dict items with keys = property
                 # names
                 if "properties" in x:
-                    x["__properties"] = {}
+                    x["_properties"] = {}
                     for item in x["properties"]:
                         new_key = item["name"]
-                        x["__properties"].update({new_key: item})
+                        x["_properties"].update({new_key: item})
 
                     # Delete the original properties list
                     del x["properties"]
                     # Rename the key without the underscores
-                    x["properties"] = x.pop("__properties")
+                    x["properties"] = x.pop("_properties")
 
                 # Un-list the sections to new dict items with keys = section names
                 new_key = x["name"]
-                if "__sections" not in input_section:
-                    input_section["__sections"] = {}
-                input_section["__sections"].update({new_key: x})
+                if "_sections" not in input_section:
+                    input_section["_sections"] = {}
+                input_section["_sections"].update({new_key: x})
 
             # Delete the original section list
             del input_section["sections"]
             # Rename the key without the underscores
-            if "__sections" in input_section:
-                input_section["sections"] = input_section.pop("__sections")
+            if "_sections" in input_section:
+                input_section["sections"] = input_section.pop("_sections")
             return input_section
 
         # Flatten list items in JSON so Mongo will query them more easily

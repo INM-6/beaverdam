@@ -36,10 +36,10 @@ class MongoDbDatabase(MetadataSource):
                 documents you want to view
         """
         # Get database information
-        self.__address = cfg["address"]
-        self.__port = cfg["port"]
-        self.__db_name = cfg["db_name"]
-        self.__collection_name = cfg["collection_name"]
+        self._address = cfg["address"]
+        self._port = cfg["port"]
+        self._db_name = cfg["db_name"]
+        self._collection_name = cfg["collection_name"]
 
     def set_fields(self, field_dict):
         """Store name and access information for each metadata field
@@ -80,7 +80,7 @@ class MongoDbDatabase(MetadataSource):
         Returns:
             MongoDB client
         """
-        return MongoClient(self.__address, self.__port)
+        return MongoClient(self._address, self._port)
 
     def _get_database(self):
         """Get the database specified by the database information
@@ -88,7 +88,7 @@ class MongoDbDatabase(MetadataSource):
         Returns:
             MongoDB database
         """
-        return getattr(self._get_client(), self.__db_name)
+        return getattr(self._get_client(), self._db_name)
 
     def _get_collection(self):
         """Get the collection specified by the database information
@@ -96,7 +96,7 @@ class MongoDbDatabase(MetadataSource):
         Returns:
             MongoDB collection
         """
-        return getattr(self._get_database(), self.__collection_name)
+        return getattr(self._get_database(), self._collection_name)
 
     def get_path(self, requested_field_names="all"):
         """Get list of paths from list of field names
