@@ -186,9 +186,9 @@ class MongoDbDatabase(MetadataSource):
                     # https://stackoverflow.com/a/54447608
                     # and the documentation for .loc:
                     # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.loc.html
-                    query_results.loc[
-                        doc[index_id], self.get_field_name(proj_path)
-                    ] = proj_val
+                    query_results.loc[doc[index_id], self.get_field_name(proj_path)] = (
+                        proj_val
+                    )
 
         finally:
             self._get_client().close()

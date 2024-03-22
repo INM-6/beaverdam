@@ -1,27 +1,28 @@
 import uuid
 
-# Define classes for different types of user interface elements.
-#
-# The classes can inherit from each other.  Each class inherits properties of its
-# superclass(es), and can have new properties.
-#
-# Every instance of a class has to have a unique identifier (ID) that is automatically
-# generated if one isn't provided.
-#
-# Some properties are used to actually build the element ("contents"), and
-# others describe characteristics of the element that can be used e.g. to select
-# elements of certain types ("properties").
-#
-# The properties of an element are stored in a dict so that new ones can be added easily
-# and accessed by the get_properties() function, without having to rewrite stuff in
-# multiple places.  Subclasses inherit all properties of their parent classes, and can
-# add new properties.
-#
-# Here is a rough proposal for the properties:
-#   id:  unique identifier (will be generated if not provided)
-#   type:  FilterChecklist, DataTable, DataFigure
-#   field:  name of the df column(s) represented by the UiElement.  Must match the name assigned in the config file.
-#   style:  pie, bar, scatter
+"""Define classes for different types of user interface elements.
+
+The classes can inherit from each other.  Each class inherits properties of its
+superclass(es), and can have new properties.
+
+Every instance of a class has to have a unique identifier (ID) that is automatically
+generated if one isn't provided.
+
+Some properties are used to actually build the element ("contents"), and
+others describe characteristics of the element that can be used e.g. to select
+elements of certain types ("properties").
+
+The properties of an element are stored in a dict so that new ones can be added easily
+and accessed by the get_properties() function, without having to rewrite stuff in
+multiple places.  Subclasses inherit all properties of their parent classes, and can
+add new properties.
+
+Here is a rough proposal for the properties:
+  id:  unique identifier (will be generated if not provided)
+  type:  FilterChecklist, DataTable, DataFigure
+  field:  name of the df column(s) represented by the UiElement.  Must match the name assigned in the config file.
+  style:  pie, bar, scatter
+"""
 
 
 def rename_df_columns(df, col_name_dict={}):

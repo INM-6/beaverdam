@@ -4,7 +4,7 @@
 # Information about the location and type of metadata files to include in the database.
 # Only needed to build a database, not to run a user interface with an existing 
 # database.
-directory = '/home/more/Documents/Beaverdam/Odml/odml_all_2022-09-08'
+directory = '/home/more/Documents/Beaverdam/Odml/odml_r2g_all_2024-02-08'
 file_type = '.odml'
 
 [database]
@@ -13,27 +13,23 @@ file_type = '.odml'
 address = "localhost"
 port = 27017
 db_name = "testodml"
-collection_name = "odmlmetadata"
+collection_name = "odmlmetadata_r2g"
 
 [fields]
 # The name you want to use to refer to each metadata field, and the location of the
 # field in the database
-Name = "Document.sections.session.sections.Session.properties.Name.value"
-GivenName = "Document.sections.subject.sections.Subject.properties.GivenName.value"
-ShortName = "Document.sections.session.sections.Session.sections.Task.properties.ShortName.value"
-dtp_filename = "Document.sections.TaskParameters.properties.dtp_filename.value"
-AverageTrialTime = "Document.sections.session.sections.Session.sections.Performance.properties.AverageTrialTime.value"
-AverageErrorCount = "Document.sections.session.sections.Session.sections.Performance.properties.AverageErrorCount.value"
-SortingAuthor1 = "Document.sections.SessionInfo.sections.spike_sorting1.properties.SortingAuthor.value"
-SortingAuthor2 = "Document.sections.SessionInfo.sections.spike_sorting2.properties.SortingAuthor.value"
-SortingAuthor3 = "Document.sections.SessionInfo.sections.spike_sorting3.properties.SortingAuthor.value"
-SortingAuthor4 = "Document.sections.SessionInfo.sections.spike_sorting4.properties.SortingAuthor.value"
-ElectrophysQuality = "Document.sections.session.sections.Session.sections.DataQuality.properties.Electrophysiology.value"
-EyeQuality = "Document.sections.session.sections.Session.sections.DataQuality.properties.Eye.value"
-HandQuality = "Document.sections.session.sections.Session.sections.DataQuality.properties.Hand.value"
-Modality1 = "Document.sections.session.sections.Session.properties.Modality1.value"
-Modality2 = "Document.sections.session.sections.Session.properties.Modality2.value"
-Modality3 = "Document.sections.session.sections.Session.properties.Modality3.value"
+SessionID = "_id"
+GivenName = "Document.sections.Subject.properties.GivenName.value"
+Date = "Document.sections.Recording.properties.Date.value"
+Weekday = "Document.sections.Recording.properties.Weekday.value"
+Time = "Document.sections.Recording.properties.Time.value"
+Duration = "Document.sections.Recording.properties.Duration.value"
+TaskType = "Document.sections.Recording.properties.TaskType.value"
+TotalTrialCount = "Document.sections.Recording.sections.TaskSettings.properties.TotalTrialCount.value"
+CorrectTrialCount = "Document.sections.Recording.sections.TaskSettings.properties.CorrectTrialCount.value"
+GripErrorTrialCount = "Document.sections.Recording.sections.TaskSettings.properties.GripErrorTrialCount.value"
+IsSpikeSorted = "Document.sections.Recording.properties.IsSpikeSorted.value"
+TrialTypes = "Document.sections.Experiment.sections.Behavior.properties.TrialTypes.value"
 
 [filters]
 # Which fields you will be able to place conditions on to filter items.  These fields
@@ -41,28 +37,24 @@ Modality3 = "Document.sections.session.sections.Session.properties.Modality3.val
 # field.
 headings = [
     "GivenName",
-    "ShortName",
+    "TaskType",
+    "IsSpikeSorted",
 ]
 
 [table]
 # Which fields to show in the data table
 columns = [
-    "Name",
     "GivenName",
-    "ShortName",
-    "dtp_filename",
-    "AverageTrialTime",
-    "AverageErrorCount",
-    "SortingAuthor1",
-    "SortingAuthor2",
-    "SortingAuthor3",
-    "SortingAuthor4",
-    "ElectrophysQuality",
-    "EyeQuality",
-    "HandQuality",
-    "Modality1",
-    "Modality2",
-    "Modality3",
+    "Date",
+    "Weekday",
+    "Time",
+    "Duration",
+    "TaskType",
+    "TotalTrialCount",
+    "CorrectTrialCount",
+    "GripErrorTrialCount",
+    "IsSpikeSorted",
+    "TrialTypes",
 ]
 
 [plots]
@@ -72,11 +64,11 @@ columns = [
 monkey_name.data_field = "GivenName"
 monkey_name.plot_type = "pie"
 
-task_name.data_field = "ShortName"
+task_name.data_field = "TaskType"
 task_name.plot_type = "bar"
 
-errors_vs_time.data_field = ["AverageErrorCount", "AverageTrialTime"]
-errors_vs_time.plot_type = "scatter"
+errors_vs_monkey.data_field = ["GripErrorTrialCount", "Duration"]
+errors_vs_monkey.plot_type = "scatter"
 
-errors_vs_monkey.data_field = ["AverageErrorCount", "GivenName"]
-errors_vs_monkey.plot_type = "box"
+errors_vs_day.data_field = ["GripErrorTrialCount", "Weekday"]
+errors_vs_day.plot_type = "box"

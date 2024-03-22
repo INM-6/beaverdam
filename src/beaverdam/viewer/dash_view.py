@@ -14,10 +14,11 @@ from dash import (
 )
 import dash_bootstrap_components as dbc  # also see dash-mantine-components
 import plotly.io as pio
+from pathlib import Path
 
-from view import View
-import builduielements_dash
-import colours as bd_colours
+from .view import View
+from . import builduielements_dash
+from .colours import Colours
 
 
 class DashView(View):
@@ -37,7 +38,7 @@ class DashView(View):
                 dbc.themes.SANDSTONE,
                 dbc.icons.FONT_AWESOME,
             ],
-            assets_folder="../assets",
+            assets_folder=Path("_assets"),
         )
 
         self.app.title = "Beaverdam"
@@ -80,7 +81,7 @@ class DashView(View):
         header_height = "56px"
         logo_file_name = "beaverdam-logo_long.png"
         loading_indicator_type = "default"
-        loading_indicator_color = bd_colours.beaverdam_red
+        loading_indicator_color = Colours().beaverdam_red
         # Options for the carousel displaying figures
         n_figures_to_show = 3
         n_figures_to_scroll = 1
@@ -588,7 +589,6 @@ class DashView(View):
 
     def launch_ui(self):
         """Build and run frontend"""
-        if __name__ == "view_dash":
-            self.build_layout()
-            self.register_callbacks()
-            self.app.run(debug=False)
+        self.build_layout()
+        self.register_callbacks()
+        self.app.run(debug=False)

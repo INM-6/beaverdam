@@ -1,16 +1,10 @@
-import sys
-
-sys.path.insert(0, "./src")
-
 from pathlib import Path
-import glob
 from tqdm import tqdm
 import logging
 
-from configparser import ConfigParser
-from metadatasource import MongoDbDatabase
-from metadatafiletools import load_metadata
-from pluralize import pluralize
+from beaverdam._core import ConfigParser, MongoDbDatabase
+from .metadatafiletools import load_metadata
+from .pluralize import pluralize
 
 
 ## INPUTS
@@ -122,7 +116,9 @@ class BeaverDB:
                         )
                     )
             else:
-                logging.error("File {0} skipped due to file problems.".format(input_file))
+                logging.error(
+                    "File {0} skipped due to file problems.".format(input_file)
+                )
                 n_skipped_files += 1
 
         # Report what happened
@@ -145,6 +141,3 @@ class BeaverDB:
 def build_database():
     user_database = BeaverDB(cfg_file_name)
     user_database.update_database()
-
-
-build_database()

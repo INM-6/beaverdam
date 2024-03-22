@@ -1,7 +1,7 @@
 """Prepare data for visualization
 """
 
-from uielement import DataTable, FilterChecklist, DataFigure, SelectedCriteria
+from .uielement import DataTable, FilterChecklist, DataFigure, SelectedCriteria
 
 
 class Presenter:

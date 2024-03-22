@@ -1,14 +1,9 @@
-import sys
-
-sys.path.insert(0, "./src")
-
 from pathlib import Path
 
-from configparser import ConfigParser
-from core import Core
-from presenter import Presenter
-from view_dash import DashView
-from controller import Controller
+from beaverdam._core import Core, ConfigParser
+from .presenter import Presenter
+from .dash_view import DashView
+from .controller import Controller
 
 
 ## INPUTS
@@ -49,10 +44,11 @@ class BeaverUI:
         self.view.launch_ui()
 
 
-def main():
+def run_ui():
     """Create and run the main application"""
     user_interface = BeaverUI(cfg_file_name)
     user_interface.run()
 
 
-main()
+if __name__ == "__main__":
+    run_ui()

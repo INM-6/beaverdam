@@ -4,10 +4,13 @@ from dash import dcc, html, dash_table
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
-from dash_bootstrap_templates import load_figure_template
 import plotly.express as px
-import theme_plotly as theme_plotly  # custom plot themes (themes are loaded immediately when imported)
 import uuid
+
+from . import (
+    plotly_theme,
+)  # custom plot themes (themes are loaded immediately when imported)
+from .plotly_modebarlayout import modebar_layout
 
 
 def set_ui_object_id(element_type, id=[]):
@@ -283,7 +286,7 @@ def build_data_figure(graph_object, id=[], element_type=""):
         dcc.Graph(
             id=set_ui_object_id(id=id, element_type=element_type),
             figure=graph_object,
-            config=theme_plotly.modebar_layout(graph_object.data[0].type),
+            config=modebar_layout(graph_object.data[0].type),
         ),
         card_margin="6px",
     )

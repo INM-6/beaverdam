@@ -8,6 +8,8 @@ include = [
     "LICENCE",
 ]
 
+packages = [{include = "beaverdam", from = "src"}]
+
 [tool.poetry.dependencies]
 python = "^3.9"
 pymongo = "^4.3.2"
@@ -26,6 +28,10 @@ tqdm = "^4.66.1"
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 black = "^22.10.0"
+
+[tool.poetry.scripts]
+beaverdam_builder = 'beaverdam.builder:build_database'
+beaverdam_viewer = 'beaverdam.viewer:run_ui'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
