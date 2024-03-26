@@ -48,7 +48,3 @@ def run_ui():
     """Create and run the main application"""
     user_interface = BeaverUI(cfg_file_name)
     user_interface.run()
-
-
-if __name__ == "__main__":
-    run_ui()
