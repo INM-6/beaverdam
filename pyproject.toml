@@ -31,8 +31,6 @@ pytest = "^5.2"
 black = "^22.10.0"
 
 [tool.poetry.scripts]
-# beaverdam_builder = 'beaverdam.builder:build_database'
-# beaverdam_viewer = 'beaverdam.viewer:run_ui'
 beaverdam = 'beaverdam.cli:app'
 
 [build-system]

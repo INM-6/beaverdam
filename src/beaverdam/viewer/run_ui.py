@@ -44,7 +44,12 @@ class BeaverUI:
         self.view.launch_ui()
 
 
-def run_ui():
-    """Create and run the main application"""
+def run_ui(cfg_file_name):
+    """Create and run the main application
+    
+    Args:
+        cfg_file_name (str): relative path and name of configuration file
+    """
+    cfg_file_name = Path(cfg_file_name)
     user_interface = BeaverUI(cfg_file_name)
     user_interface.run()

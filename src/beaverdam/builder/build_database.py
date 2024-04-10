@@ -138,6 +138,12 @@ class BeaverDB:
         logging.info(update_message)
 
 
-def build_database():
+def build_database(cfg_file_name):
+    """ Create or update a database
+    
+    Args:
+        cfg_file_name (str): relative path and name of configuration file
+    """
+    cfg_file_name = Path(cfg_file_name)
     user_database = BeaverDB(cfg_file_name)
     user_database.update_database()

@@ -9,13 +9,11 @@ from beaverdam.viewer import run_ui
 
 # Create main app
 app = typer.Typer()
-# app.add_typer(build, name="build")
-# app.add_typer(view, name="view")
 
 @app.command()
-def build():
-    build_database()
+def build(config_file_name):
+    build_database(config_file_name)
 
 @app.command()
-def view():
-    run_ui()
+def view(config_file_name):
+    run_ui(config_file_name)
