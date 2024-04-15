@@ -73,7 +73,7 @@ TODO
 
 **Main authors:**  [Heather More](https://github.com/hlmore) and [Michael Denker](https://github.com/mdenker)
 
-**Contributors:**  [Angon Pirogov](https://github.com/apirogov)
+**Contributors:**  [Anton Pirogov](https://github.com/apirogov)
 
 Many of Beaverdam's tools and practices are from the [FAIR Python Cookiecutter](https://github.com/Materials-Data-Science-and-Informatics/fair-python-cookiecutter) template.
 
