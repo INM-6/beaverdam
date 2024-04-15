@@ -139,8 +139,8 @@ class BeaverDB:
 
 
 def build_database(cfg_file_name):
-    """ Create or update a database
-    
+    """Create or update a database
+
     Args:
         cfg_file_name (str): relative path and name of configuration file
     """

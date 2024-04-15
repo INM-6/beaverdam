@@ -1,5 +1,4 @@
-"""Prepare data for visualization
-"""
+"""Prepare data for visualization"""
 
 from .uielement import DataTable, FilterChecklist, DataFigure, SelectedCriteria
 

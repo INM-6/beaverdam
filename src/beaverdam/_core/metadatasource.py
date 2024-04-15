@@ -1,5 +1,4 @@
-"""Create an object for a source of metadata, and define how to access its information
-"""
+"""Create an object for a source of metadata, and define how to access its information"""
 
 from pymongo import MongoClient
 import pandas as pd

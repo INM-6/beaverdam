@@ -203,9 +203,7 @@ def load_metadata(file_name: Path) -> MetadataFile:
         else:
             logging.error(
                 """File {0} skipped, because Beaverdam doesn't know how to treat 
-                {1} files yet.\n""".format(
-                    file_name, file_name.suffix
-                )
+                {1} files yet.\n""".format(file_name, file_name.suffix)
             )
             return None
     except Exception as e:

@@ -46,7 +46,7 @@ class BeaverUI:
 
 def run_ui(cfg_file_name):
     """Create and run the main application
-    
+
     Args:
         cfg_file_name (str): relative path and name of configuration file
     """

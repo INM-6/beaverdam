@@ -1,5 +1,4 @@
-"""Query databases of metadata and filter the results.
-"""
+"""Query databases of metadata and filter the results."""
 
 from .metadatasource import MongoDbDatabase
 from .datatablecore import DataTableCore
