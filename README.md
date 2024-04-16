@@ -37,26 +37,25 @@ Beaverdam requires the following to be installed on your computer, plus a browse
 
 ### Configuration
 
-A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit the example configuration file `config.toml` with your specific information.  Find more information on the contents of the configuration file in its comments and in the documentation [TODO].
+A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit the example configuration file `config.toml` with your specific information.  Find more information on the contents of the configuration file in the comments within the configuration file and in the documentation [TODO].
 
 ### Build a database
 
 1. Ensure all your metadata files are under one parent directory.  Within the directory, they can be sorted into subdirectories, and there can also be non-metadata files present.  Beaverdam will recursively search the parent directory to identify and ingest all files with a specified file extension. **IMPORTANT:**  each file should have a unique name; Beaverdam will replace entries in the database for files with the same name.
-1. [Install](#installation) Beaverdam and edit the [configuration](#configuration) file.  Important parameters for this step are:
-   - location (parent directory) and type (file extension) of metadata files
-   - database information
+1. [Install](#installation) Beaverdam and edit the [configuration file](#configuration).  Important sections for this step are:
+   - `[raw_metadata]`:  location (parent directory) and type (file extension) of metadata files
+   - `[database]`:  location of database
 1. In a terminal, enter the Python interpreter or the virtual environment where you [installed](#installation) beaverdam, and run `beaverdam build config.toml`, where `config.toml` is the name and **relative** path of your configuration file
 
-You will see a progress bar appear as Beaverdam builds or updates your database.  Any errors or warnings will be written to `beaverdam.log`, so please check this file afterwards in a text editor to see if there was a problem!
+You will see a progress bar appear as Beaverdam builds or updates your database.  Any errors or warnings will be written to `beaverdam.log` in the same directory as your configuration file - please check the log file afterwards in a text editor to see if there was a problem!
 
 ### View a database
 
 1. [Build](#build-a-database) a database
-1. Edit the [configuration](#configuration) file.  Important parameters for this step are:
-   - database information
-   - location within a metadata file of each field you want to show - see the documentation for more information [TODO]
-     - for metadata files with complex structures, it might be helpful to find field locations using a tool like [Studio3T](https://studio3t.com/free/) or its free-forever predecessor [Robo3T](https://github.com/Studio3T/robomongo)
-   - which metadata fields to show as filters, in the datatable, and in graphs
+1. Edit the [configuration file](#configuration).  Important sections for this step are:
+   - `[database]`:  location of database
+   - `[fields]`:  location of each field you want to show
+   - `[filters]`, `[table]`, and `[plots]`:  which metadata fields to show as filters, in the datatable, and in graphs
 1. In a terminal, enter the Python interpreter or the virtual environment where you [installed](#installation) beaverdam, and run `beaverdam view config.toml`, where `config.toml` is the name and **relative** path of your configuration file
 1. Follow the instructions to open the resulting link in your web browser - on Linux, this is `Ctrl+click`
 1. Use the filter checkboxes and interactive graphs to explore your metadata!
