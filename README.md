@@ -31,10 +31,7 @@ Beaverdam requires the following to be installed on your computer, plus a browse
     - **Install from GitHub:**
         - `pip install git+ssh://git@github.com/INM-6/beaverdam`
     - **Install from PyPi:**
-        - TODO
-    - **Install from .whl**
-        - [*in another terminal or in a browser*] download the `beaverdam*.whl` file from the Beaverdam repository (`*` can be different depending on the release)
-        - `pip install beaverdam*.whl` where `beaverdam*.whl` is the file you downloaded (including its relative path)
+        - *coming soon*
 
 ## How to use Beaverdam
 
