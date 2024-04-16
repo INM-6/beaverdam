@@ -41,7 +41,7 @@ A single configuration file contains all the information for Beaverdam to access
 
 ### Build a database
 
-1. Ensure all your metadata files are under one parent directory.  Within the directory, they can be sorted into subdirectories, and there can also be non-metadata files present.  Beaverdam will recursively search the parent directory to identify and ingest all files with a specified file extension.
+1. Ensure all your metadata files are under one parent directory.  Within the directory, they can be sorted into subdirectories, and there can also be non-metadata files present.  Beaverdam will recursively search the parent directory to identify and ingest all files with a specified file extension. **IMPORTANT:**  each file should have a unique name; Beaverdam will replace entries in the database for files with the same name.
 1. [Install](#installation) Beaverdam and edit the [configuration](#configuration) file.  Important parameters for this step are:
    - location (parent directory) and type (file extension) of metadata files
    - database information
