@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+title: Beaverdam
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Heather
+    family-names: More
+    affiliation: >-
+      Institute for Advanced Simulation (IAS-6 and IAS-9)   
+      Jülich Research Centre, Jülich, Germany
+    email: h.more@fz-juelich.de
+  - given-names: Michael
+    family-names: Denker
+    affiliation: >-
+      Institute for Advanced Simulation (IAS-6)    Jülich
+      Research Centre, Jülich, Germany
+    email: m.denker@fz-juelich.de
+repository-code: 'https://github.com/INM-6/beaverdam'
+license: BSD-3-Clause
