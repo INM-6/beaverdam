@@ -88,8 +88,9 @@ class BeaverDB:
 
                 # Convert the file to JSON if it isn't already
                 json_file = metadata_file.to_json()
-                # Add a meaningful _id tag for MongoDB
-                json_file["_id"] = db_record_id
+                # Add a meaningful _id tag for MongoDB, if it doesn't already exist
+                if "_id" not in json_file:
+                    json_file["_id"] = db_record_id
 
                 # Update the database.  Note that some databases (e.g. MongoDB) have a
                 # single function which updates a record -or- creates a new record if
