@@ -1,6 +1,7 @@
 from pathlib import Path
 from tqdm import tqdm
 import logging
+import os
 
 from beaverdam._core import ConfigParser, MongoDbDatabase
 from .metadatafiletools import load_metadata
@@ -57,13 +58,19 @@ class BeaverDB:
 
     def _find_files(self):
         """Detect metadata files to include in the database"""
-        # Find metadata files
+        # Get information from config file
         input_file_info = self.cfg.get_section("raw_metadata")
-        # Store file names
-        input_file_directory = Path(input_file_info["directory"])
-        self.input_files = list(
-            input_file_directory.glob("*" + input_file_info["file_type"])
-        )
+        # Recursively search parent directory and store the locations of files having
+        # the requested extension.  I used os.walk() because it's backwards-compatible -
+        # on Python 3.12 and higher, you could use Path.walk().
+        self.input_files = []
+        for dirpath, dirnames, filenames in os.walk(input_file_info["directory"]):
+            filepaths = [
+                Path(dirpath, x)
+                for x in filenames
+                if x.endswith(input_file_info["file_type"])
+            ]
+            self.input_files.extend(filepaths)
 
     def update_database(self):
         """Add or update database information from each metadata file"""
