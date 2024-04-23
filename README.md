@@ -94,7 +94,7 @@ Do you want to fix a problem yourself, or add a new feature?  Awesome!  Please o
 
 ## Acknowledgements
 
-Many of Beaverdam's tools and practices are from the [FAIR Python Cookiecutter](https://github.com/Materials-Data-Science-and-Informatics/fair-python-cookiecutter) template.
+Many of Beaverdam's tools and practices are from the [FAIR Python Cookiecutter](https://github.com/Materials-Data-Science-and-Informatics/fair-python-cookiecutter) template.  Beaverdam uses [somesy](https://github.com/Materials-Data-Science-and-Informatics/somesy) to manage its metadata.
 
 The initial version of Beaverdam (called Owl) was produced by Lena Blind, Annika Röthenbacher, Jana Schelter, Julia Wellmann, and Jianing Sun.
 
