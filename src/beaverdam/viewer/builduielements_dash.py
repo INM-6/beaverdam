@@ -1,30 +1,33 @@
-"""Functions to build elements of a Dash user interface"""
+"""Functions to build elements of a Dash user interface."""
 
-from dash import dcc, html, dash_table
+import uuid
+
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import dash_trich_components as dtc  # alternative for carousel: dash_slick
 import plotly.express as px
-import uuid
+from dash import dash_table, dcc, html
 
+# Custom plot themes (themes are loaded immediately when imported)
 from . import (
-    plotly_theme,
-)  # custom plot themes (themes are loaded immediately when imported)
+    plotly_theme,  # noqa: F401
+)
 from .plotly_modebarlayout import modebar_layout
 
 
 def set_ui_object_id(element_type, id=[]):
-    """Set the id field of a Dash UI object so that it works with pattern-matching callbacks
+    """Set the id field of a Dash UI object so that it works with pattern-matching callbacks.
 
     Args:
         element_type (str):  the type of object
-        id (str):  unique identifier for the object (optional; will be auto-generated if omitted)
+        id (str):  unique identifier for the object (optional; will be auto-generated if
+        omitted)
 
     Returns:
         ui_id (dict):  keys "index" and "type".  Compatible with Dash pattern-matching
         callbacks which select UI elements based on type.
-    """
 
+    """
     # Set defaults
     ui_id = {"index": str(uuid.uuid4()), "type": "undefined"}
 
@@ -38,22 +41,24 @@ def set_ui_object_id(element_type, id=[]):
 
 
 def df_to_dict(df):
-    """Convert dataframe to the data format that Dash wants for a DataTable
+    """Convert dataframe to the data format that Dash wants for a DataTable.
 
     Args:
         df (dict): data to be shown in DataTable
+
     """
     return df.to_dict("records")
 
 
 def unlist_element(x):
-    """Check whether an element is a list, and if so convert it to not a list
+    """Check whether an element is a list, and if so convert it to not a list.
 
     Args:
         x (undefined): element to unlist if it's a list
 
     Returns:
         new_value (undefined):  element that isn't a list
+
     """
     if isinstance(x, list):
         if len(x) < 1:
@@ -89,6 +94,7 @@ def value_to_label(x):
     Returns:
         formatted_x (string or numeric or None, depending on the input):  formatted
         label
+
     """
     # Labels must be strings or numbers.  In Python, numbers can be int, float,
     # or complex.  But we have to check for bool first, because for historic
@@ -101,7 +107,7 @@ def value_to_label(x):
             formatted_x = "False"
     elif isinstance(x, (str, int, float)):
         formatted_x = x
-    elif x == None:
+    elif x is None:
         # To show None values, just get rid of this elif statement and they'll get
         # converted to strings in the else part.
         formatted_x = x
@@ -111,7 +117,7 @@ def value_to_label(x):
 
 
 def display_as_card(card_body, card_margin="0vmin"):
-    """Wrap a UI element in a card
+    """Wrap a UI element in a card.
 
     Args:
         card_body (Dash or html element | list of Dash or html elements): the contents
@@ -121,13 +127,14 @@ def display_as_card(card_body, card_margin="0vmin"):
 
     Returns:
         dbc.Card (dbc.Card):  Dash Bootstrap Components card
+
     """
     card_body = [card_body] if not isinstance(card_body, list) else card_body
     return dbc.Card([dbc.CardBody(children=card_body)], style={"margin": card_margin})
 
 
 def build_data_table(data, id=[], element_type=""):
-    """Build Dash data table
+    """Build Dash data table.
 
     Args:
         data (dataframe): data for the table, with column names the same as the headers
@@ -140,6 +147,7 @@ def build_data_table(data, id=[], element_type=""):
     Returns:
         (html.Div): containing Dash Bootstrap table.  The table needs to be inside a div
         in order to update the contents.
+
     """
     return html.Div(
         id=set_ui_object_id(element_type=element_type, id=id),
@@ -149,7 +157,7 @@ def build_data_table(data, id=[], element_type=""):
 
 
 def build_data_table_contents(data):
-    """Build the contents of a new data table
+    """Build the contents of a new data table.
 
     Args:
         data (dataframe): data for the table, with column names the same as the headers
@@ -157,6 +165,7 @@ def build_data_table_contents(data):
 
     Returns:
         (DataTable):  Dash DataTable containing data
+
     """
     return dash_table.DataTable(
         data=data.to_dict("records"),
@@ -169,7 +178,7 @@ def build_data_table_contents(data):
 def build_data_table_label(
     current_num_records, initial_num_records, id=[], element_type=""
 ):
-    """Generate text specifying number of selected and total records
+    """Generate text specifying number of selected and total records.
 
     Args:
         current_num_records (int): number of records currently selected
@@ -182,6 +191,7 @@ def build_data_table_label(
     Returns:
         dbc.Stack: text in a Dash Bootstrap Components stack, with the current number of
         selected records having the provided ID
+
     """
     return dbc.Stack(
         [
@@ -206,7 +216,7 @@ def build_data_table_label(
 
 
 def build_filter_checklist(items, title=[], id=[], element_type=""):
-    """Build Dash checklist
+    """Build Dash checklist.
 
     Args:
         items (list):  options for the checklist
@@ -217,6 +227,7 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
 
     Returns:
         filter_checklist (dbc.Card): Dash Bootstrap Components card containing the checklist title and options
+
     """
     # Find checklist options
     values = [unlist_element(x) for x in items]
@@ -247,7 +258,7 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
 
 
 def build_button(button_text, button_type="button"):
-    """Build Dash button with specified text
+    """Build Dash button with specified text.
 
     Args:
         button_text (str):  text to display on the button
@@ -255,6 +266,7 @@ def build_button(button_text, button_type="button"):
 
     Returns:
         html.Div containing button
+
     """
     return html.Div(
         children=[
@@ -269,7 +281,7 @@ def build_button(button_text, button_type="button"):
 
 
 def build_data_figure(graph_object, id=[], element_type=""):
-    """Build a Dash data figure containing a graph and with appropriate Dash identifiers
+    """Build Dash data figure containing a graph and with appropriate Dash identifiers.
 
     Args:
         graph_object (Plotly Express object containing a graph):  the plot
@@ -280,6 +292,7 @@ def build_data_figure(graph_object, id=[], element_type=""):
 
     Returns:
         dash_graph (dbc.Card): Dash Bootstrap Components card containing the graph
+
     """
     # Create plot
     dash_graph = display_as_card(
@@ -294,7 +307,8 @@ def build_data_figure(graph_object, id=[], element_type=""):
 
 
 def build_plot(data, title=[], style=""):
-    """Build a plot to include in a Dash figure
+    """Build a plot to include in a Dash figure.
+
     Args:
         data (df):  data to be plotted.  Number of columns depends on the plot type.
         title (str):  title of the graph (optional; default is no title)
@@ -303,6 +317,7 @@ def build_plot(data, title=[], style=""):
     Returns:
         final_plot (px plot object): Plotly Express object containing the plot.  The
         exact type of object depends on the plot type.
+
     """
     if style == "pie":
         final_plot = build_pie_chart(data, title)
@@ -318,13 +333,15 @@ def build_plot(data, title=[], style=""):
 
 
 def build_pie_chart(data, title=[]):
-    """Build a pie chart to include in a Dash figure
+    """Build a pie chart to include in a Dash figure.
+
     Args:
         data (df with one column):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
 
     Returns:
         pie_chart (px.pie): Plotly Express object containing the graph
+
     """
     pie_chart = px.pie(
         data_frame=data.map(unlist_element),
@@ -335,13 +352,15 @@ def build_pie_chart(data, title=[]):
 
 
 def build_bar_graph(data, title=[]):
-    """Build a bar graph to include in a Dash figure
+    """Build a bar graph to include in a Dash figure.
+
     Args:
         data (df with one column):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
 
     Returns:
         bar_graph (px.histogram): Plotly Express object containing the graph
+
     """
     bar_graph = px.histogram(
         data_frame=data.map(unlist_element),
@@ -355,13 +374,15 @@ def build_bar_graph(data, title=[]):
 
 
 def build_box_plot(data, title=[]):
-    """Build a box plot to include in a Dash figure
+    """Build a box plot to include in a Dash figure.
+
     Args:
         data (df with two columns):  data to be plotted
-        title (str):  title of the graph (optional; default is no title)
+        title (str):  title of the graph (optional; default is no title).
 
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
+
     """
     box_plot = px.box(
         data_frame=data.map(unlist_element),
@@ -378,13 +399,15 @@ def build_box_plot(data, title=[]):
 
 
 def build_scatter_plot(data, title=[]):
-    """Build a scatter plot to include in a Dash figure
+    """Build a scatter plot to include in a Dash figure.
+
     Args:
         data (df with two columns):  data to be plotted
         title (str):  title of the graph (optional; default is no title)
 
     Returns:
         scatter_plot (px.scatter): Plotly Express object containing the graph
+
     """
     scatter_plot = px.scatter(
         data_frame=data.map(unlist_element),
@@ -409,7 +432,7 @@ def build_scatter_plot(data, title=[]):
 def build_carousel(
     figures, n_figs=1, n_scroll=1, margin_bottom="5%", margin_side="2.5%"
 ):
-    """Arrange figures in a carousel
+    """Arrange figures in a carousel.
 
     Args:
         figures (list): figures to show, as some sort of Dash UI element
@@ -420,6 +443,7 @@ def build_carousel(
 
     Returns:
         carousel (dtc.Carousel):  carousel containing the figures
+
     """
     carousel = dtc.Carousel(
         figures,
@@ -451,6 +475,7 @@ def encode_criterion_info(criterion_name, criterion_value):
 
     Returns:
     criterion_info (string):  encodes the value, its type, and its associated criterion
+
     """
     criterion_info = (
         "CRITERION="
@@ -472,17 +497,19 @@ def decode_criterion_info(criterion_info):
     Returns:
     criterion_name (str):  name of criterion
     criterion_value (anything):  value of criterion
+
     """
     string_components = criterion_info.split("__")
 
     def get_value(key_name):
-        """Get the value associated with a key from encoded criterion info
+        """Get the value associated with a key from encoded criterion info.
 
         Args:
             key_name (str): name of the key
 
         Returns:
             str: value associated with the key
+
         """
         inds = [ind for ind, s in enumerate(string_components) if key_name in s]
         return string_components[inds[0]].split(key_name + "=")[1]
@@ -513,7 +540,7 @@ def decode_criterion_info(criterion_info):
 
 
 def build_chips(chip_items, item_info=[]):
-    """Build chips from a list of items
+    """Build chips from a list of items.
 
     Args:
         chip_items (list): each item in the list will be the text shown on one chip
@@ -523,6 +550,7 @@ def build_chips(chip_items, item_info=[]):
 
     Returns:
         chips (list):  all chips, in a list
+
     """
     # Check that hidden_info is the same size as chip_items, and if not set it to an
     # empty list of the correct size
@@ -542,7 +570,7 @@ def build_chips(chip_items, item_info=[]):
 
 
 def build_chip_group(items, item_info=[], title="", id="", element_type=""):
-    """Build chipgroup from chips and display in card
+    """Build chipgroup from chips and display in card.
 
     Args:
         items (list): each item in the list will be one chip
@@ -556,6 +584,7 @@ def build_chip_group(items, item_info=[], title="", id="", element_type=""):
 
     Returns:
         chip_group (dbc.Card): Dash Bootstrap Components card containing the chips and title
+
     """
     chip_group = display_as_card(
         [

@@ -42,4 +42,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff.lint]
 extend-select = ["I", "D", "B", "S", "W"]
-ignore = ["D203", "D213", "D407", "B008"]
+ignore = ["D203", "D213", "D407", "B008", "B006", "E722", "S110", "B024", "D107"]

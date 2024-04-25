@@ -1,35 +1,35 @@
-"""Builds a user interface using Dash"""
+"""Builds a user interface using Dash."""
 
-from dash import (
-    Dash,
-    html,
-    Input,
-    Output,
-    dcc,
-    ctx,
-    State,
-    MATCH,
-    ALL,
-    clientside_callback,
-)
-import dash_bootstrap_components as dbc  # also see dash-mantine-components
-import plotly.io as pio
 from pathlib import Path
 
-from .view import View
+import dash_bootstrap_components as dbc  # also see dash-mantine-components
+import plotly.io as pio
+from dash import (
+    ALL,
+    Dash,
+    Input,
+    Output,
+    clientside_callback,
+    ctx,
+    dcc,
+    html,
+)
+
 from . import builduielements_dash
 from .colours import Colours
+from .view import View
 
 
 class DashView(View):
-    """Use a Dash dashboard for the user interface
+    """Use a Dash dashboard for the user interface.
 
     Args:
         View (View): this class is based on the generic View class
+
     """
 
     def __init__(self):
-        """Define Dash as a frontend"""
+        """Define Dash as a frontend."""
         super().__init__()
 
         self.app = Dash(
@@ -44,7 +44,7 @@ class DashView(View):
         self.app.title = "Beaverdam"
 
     def _get_image(self, image_file_name, image_height):
-        """Get an image from the assets folder
+        """Get an image from the assets folder.
 
         Args:
             image_file_name (str): name of the image file.  The file should be located
@@ -53,6 +53,7 @@ class DashView(View):
 
         Returns:
             the image as an html component
+
         """
         return html.Img(
             src=Dash.get_asset_url(self.app, image_file_name), height=image_height
@@ -74,8 +75,7 @@ class DashView(View):
         )
 
     def build_layout(self):
-        """Assemble elements of the user interface"""
-
+        """Assemble elements of the user interface."""
         # Define some parameters for UI
         is_page_fluid = True
         header_height = "56px"
@@ -95,7 +95,7 @@ class DashView(View):
         applied_filter_elements = []
         datatable_elements = []
         figure_elements = []
-        for key, val in ui_elements.items():
+        for _key, val in ui_elements.items():
             element_properties = val["properties"]
             element_id = element_properties["id"]
             element_type = element_properties["type"]
@@ -223,11 +223,12 @@ class DashView(View):
         )
 
     def register_callbacks(self):
-        """Define actions that occur on user interaction; update frontend appropriately
+        """Define actions that occur on user interaction; update frontend appropriately.
 
-        Returns:
+        Returns
             Updated versions of checklists, plots, and tables
             Resets clickData to None for all plots
+
         """
         app = self.app
 
@@ -253,7 +254,7 @@ class DashView(View):
             chipData,
             isSwitchOn,
         ):
-            """Detect clicks on user interface then filter and display appropriately
+            """Detect clicks on user interface then filter and display appropriately.
 
             Args:
                 resetButtonClicks (_type_): trigger when reset button clicked
@@ -261,9 +262,12 @@ class DashView(View):
                 figureClickData (_type_): trigger when figures clicked
                 figureSelectedData (_type_): trigger when data in a figure (e.g.
                 scatterplot) is selected
+                chipData (_type_):  trigger when a chip is clicked
+                isSwitchOn (_type_):  trigger when dark/light mode switch is clicked
 
             Returns:
                 list: contains one list for each detected output
+
             """
             # Get id and type of element that was clicked
             triggered_element = ctx.triggered_id
@@ -575,7 +579,7 @@ class DashView(View):
             return theme_type
 
         clientside_callback(
-            """ 
+            """
             (switchOn) => {
             switchOn[0]
                 ? document.documentElement.setAttribute('data-bs-theme', 'light')
@@ -588,7 +592,7 @@ class DashView(View):
         )
 
     def launch_ui(self):
-        """Build and run frontend"""
+        """Build and run frontend."""
         self.build_layout()
         self.register_callbacks()
         self.app.run(debug=False)

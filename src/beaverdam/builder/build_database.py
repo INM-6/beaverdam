@@ -1,12 +1,15 @@
-from pathlib import Path
-from tqdm import tqdm
+"""Main functionality to build and update a database."""
+
 import logging
 import os
+from pathlib import Path
+
+from tqdm import tqdm
 
 from beaverdam._core import ConfigParser, MongoDbDatabase
+
 from .metadatafiletools import load_metadata
 from .pluralize import pluralize
-
 
 ## INPUTS
 
@@ -19,13 +22,14 @@ db_extension = ".json"
 
 
 class BeaverDB:
-    """Create or update a database from a directory of metadata files"""
+    """Create or update a database from a directory of metadata files."""
 
     def __init__(self, fp_cfg):
-        """Set up database and detect files to load
+        """Set up database and detect files to load.
 
         Args:
             fp_cfg (Path): path to config file, including filename and extension
+
         """
         # Set up logging, with the log file in the same directory as the config file
         self._create_log(fp_cfg.parent)
@@ -37,10 +41,11 @@ class BeaverDB:
         self._find_files()
 
     def _create_log(self, directory):
-        """Set up error logging
+        """Set up error logging.
 
         Args:
             directory (Path): directory to place the log file in
+
         """
         log_file_name = Path("beaverdam.log")
         logging.basicConfig(
@@ -52,19 +57,19 @@ class BeaverDB:
         )
 
     def _set_database(self):
-        """Create a database object"""
+        """Create a database object."""
         # Set database information
         self.db = MongoDbDatabase(self.cfg.get_section("database"))
 
     def _find_files(self):
-        """Detect metadata files to include in the database"""
+        """Detect metadata files to include in the database."""
         # Get information from config file
         input_file_info = self.cfg.get_section("raw_metadata")
         # Recursively search parent directory and store the locations of files having
         # the requested extension.  I used os.walk() because it's backwards-compatible -
         # on Python 3.12 and higher, you could use Path.walk().
         self.input_files = []
-        for dirpath, dirnames, filenames in os.walk(input_file_info["directory"]):
+        for dirpath, _dirnames, filenames in os.walk(input_file_info["directory"]):
             filepaths = [
                 Path(dirpath, x)
                 for x in filenames
@@ -73,7 +78,7 @@ class BeaverDB:
             self.input_files.extend(filepaths)
 
     def update_database(self):
-        """Add or update database information from each metadata file"""
+        """Add or update database information from each metadata file."""
         # Print entry status
         update_message = "{0} file{1} found in filesystem directory.".format(
             len(self.input_files), pluralize(len(self.input_files))
@@ -118,7 +123,7 @@ class BeaverDB:
                 # Check that the updated document has the same _id as you intended
                 if updated_document_id != db_record_id:
                     logging.warning(
-                        """The document with _id = {0} was updated, 
+                        """The document with _id = {0} was updated,
                         instead of id = {1}.""".format(
                             updated_document_id, db_record_id
                         )
@@ -147,10 +152,11 @@ class BeaverDB:
 
 
 def build_database(cfg_file_name):
-    """Create or update a database
+    """Create or update a database.
 
     Args:
         cfg_file_name (str): relative path and name of configuration file
+
     """
     cfg_file_name = Path(cfg_file_name)
     user_database = BeaverDB(cfg_file_name)

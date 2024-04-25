@@ -1,5 +1,3 @@
-import uuid
-
 """Define classes for different types of user interface elements.
 
 The classes can inherit from each other.  Each class inherits properties of its
@@ -24,9 +22,11 @@ Here is a rough proposal for the properties:
   style:  pie, bar, scatter
 """
 
+import uuid
+
 
 def rename_df_columns(df, col_name_dict={}):
-    """Rename the columns of a dataframe
+    """Rename the columns of a dataframe.
 
     Columns not contained in col_name_dict will not be renamed.
 
@@ -35,6 +35,7 @@ def rename_df_columns(df, col_name_dict={}):
         col_name_dict (dict; opt): dictionary containing keys=new names, vals=old names
     Returns:
         renamed_df (dataframe): dataframe with renamed columns
+
     """
     # Reverse the dict so keys=old names, vals=new names
     col_name_dict_reversed = {y: x for x, y in col_name_dict.items()}
@@ -43,15 +44,16 @@ def rename_df_columns(df, col_name_dict={}):
 
 
 class UiElement:
-    """General class for all UI elements"""
+    """General class for all UI elements."""
 
     def __init__(self):
-        """Initialize any fields that all UiElements should contain
+        """Initialize any fields that all UiElements should contain.
 
         Args:
             UIelement (structure, optional): use this to manually define the ID for an
             element by providing some kind of structure with an "id" field that can be
             accessed by UIelement.id. Defaults to [], to auto-generate an ID.
+
         """
         self.properties = {}
         self.contents = {}
@@ -62,37 +64,40 @@ class UiElement:
         self.properties["type"] = "undefined"
 
     def get_properties(self):
-        """Return an object's properties
+        """Return an object's properties.
 
-        Returns:
+        Returns
             properties (dict): everything in self.properties
+
         """
         return self.properties
 
     def get_contents(self):
-        """Return the data and labels etc. for the resulting figure
+        """Return the data and labels etc. for the resulting figure.
 
-        Returns:
+        Returns
             contents (dict): everything in self.contents
+
         """
         return self.contents
 
     def update(self, new_data_table):
-        """Update the element with new data
+        """Update the element with new data.
 
         Args:
             new_data_table (DataTableCore): data_table.df is a dataframe containing data
             to be shown in the table; data_table.selection_state_column_name gives the
             name of the column indicating the selections state of each row
+
         """
         pass
 
 
 class FilterChecklist(UiElement):
-    """Checklist containing filter criteria"""
+    """Checklist containing filter criteria."""
 
     def __init__(self, source, field, checklist_title=[], selected_options=[]):
-        """Store checklist options and other properties
+        """Store checklist options and other properties.
 
         Args:
             source (dataframe):  the data that the checklist will filter
@@ -101,6 +106,7 @@ class FilterChecklist(UiElement):
             field_location will be used)
             selected_options (list):  which checklist options are selected (optional; if
             not given, no options will be selected)
+
         """
         super().__init__()
 
@@ -120,11 +126,12 @@ class FilterChecklist(UiElement):
         self.contents["selected_options"] = selected_options
 
     def update(self, new_data_table):
-        """Update which options are selected in the checklist
+        """Update which options are selected in the checklist.
 
         Args:
             new_data_table (DataTableCore): new_data_table.filter_criteria is a dict of
             criteria, with key=column name, val=allowable values.
+
         """
         try:
             # If options have been selected for this checklist, get them
@@ -138,15 +145,16 @@ class FilterChecklist(UiElement):
 
 
 class SelectedCriteria(UiElement):
-    """Display items from a list"""
+    """Display items from a list."""
 
     def __init__(self, title=[], items=[]):
-        """Create the list with initial content
+        """Create the list with initial content.
 
         Args:
             title (str):  title for the list (optional)
             items (list):  items to show (optional; if not given, no options will
             be shown)
+
         """
         super().__init__()
 
@@ -159,11 +167,12 @@ class SelectedCriteria(UiElement):
         self.contents["items"] = items
 
     def update(self, new_data_table):
-        """Update which criteria to show
+        """Update which criteria to show.
 
         Args:
             new_data_table (DataTableCore): new_data_table.filter_criteria is a dict of
             criteria, with key=column name, val=allowable values.
+
         """
         # Get all allowable values
         # veronica -- get all values out of the dict and expand all lists of allowable values
@@ -176,10 +185,10 @@ class SelectedCriteria(UiElement):
 
 
 class DataTable(UiElement):
-    """Data tables"""
+    """Data tables."""
 
     def __init__(self, data_table, new_column_names={}):
-        """Store data table options and other properties
+        """Store data table options and other properties.
 
         Args:
             data_table (DataTableCore): data_table.df is a dataframe containing data to
@@ -188,6 +197,7 @@ class DataTable(UiElement):
             new_column_names (opt; dict):  keys = new column names to display, vals =
             column names in df.  If a column name is not specified in the dict, the
             original column name will be retained.
+
         """
         super().__init__()
 
@@ -202,12 +212,13 @@ class DataTable(UiElement):
         self.properties["initial_num_records"] = len(self.contents["df"])
 
     def update(self, new_data_table):
-        """Update data table contents
+        """Update data table contents.
 
         Args:
             new_data_table (DataTableCore): new_data_table.df is a dataframe containing
             data to be shown in the table; data_table.selection_state_column_name gives
             the name of the column indicating the selections state of each row
+
         """
         # Get only the selected rows of the dataframe, and rename columns
         self.contents["df"] = rename_df_columns(
@@ -221,7 +232,7 @@ class DataTable(UiElement):
         # TODO:  display a limited number of items from multi-item lists to avoid
         # blowing up the displayed dataframe with large lists
         def parse_df_cell(dataframe_cell):
-            """Parse cells of a dataframe for display
+            """Parse cells of a dataframe for display.
 
             Args:
                 dataframe_cell: contents of a dataframe cell (can be any type)
@@ -229,6 +240,7 @@ class DataTable(UiElement):
             Returns:
                 new_cell_value: what to display for the cell's value (can be any type,
                 for now)
+
             """
             if isinstance(dataframe_cell, list):
                 if len(dataframe_cell) < 1:
@@ -253,10 +265,10 @@ class DataTable(UiElement):
 
 
 class DataFigure(UiElement):
-    """General class for figures"""
+    """General class for figures."""
 
     def __init__(self, data_table, field, style, title=[]):
-        """Set common DataFigure properties
+        """Set common DataFigure properties.
 
         Args:
             data_table (DataTableCore): object with data_table.df containing the
@@ -266,6 +278,7 @@ class DataFigure(UiElement):
             columns of the dataframe contain data to plot
             style (string):  type of plot, e.g. "pie", "bar", "scatter"
             title (string):  title of the plot.  Optional; default is to use the field
+
         """
         super().__init__()
 
@@ -281,12 +294,13 @@ class DataFigure(UiElement):
         self.update(data_table)
 
     def update(self, new_data_table):
-        """Update the data shown in the figure
+        """Update the data shown in the figure.
 
         Args:
             new_data_table (DataTableCore): new_data_table.df contains the dataframe
             with data to plot, and new_data_table.selection_state_column_names gives the
             name of the column indicating the selection state of each row
+
         """
         self.contents["df"] = new_data_table.get_selected_rows().filter(
             items=self.properties["field"]

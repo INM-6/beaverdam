@@ -1,14 +1,14 @@
 """Query databases of metadata and filter the results."""
 
-from .metadatasource import MongoDbDatabase
 from .datatablecore import DataTableCore
+from .metadatasource import MongoDbDatabase
 
 
 class Core:
-    """The core/model of the user interface"""
+    """The core/model of the user interface."""
 
     def __init__(self, cfg):
-        """Query database to create data table
+        """Query database to create data table.
 
         Args:
             cfg (ConfigParser):  contains dicts with information to configure each
@@ -16,8 +16,8 @@ class Core:
                 'database' -- information required to access the database
                 'fields' -- location in the database of each metadata field, and the
                     name to use to refer to each metadata field
-        """
 
+        """
         # Define database info
         self.db = MongoDbDatabase(cfg.get_section("database"))
         # Store information about fields to query and their field names

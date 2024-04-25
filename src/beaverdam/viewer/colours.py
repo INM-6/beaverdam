@@ -1,7 +1,9 @@
-"""Colours for Beaverdam user interface"""
+"""Colours for Beaverdam user interface."""
 
 
 class Colours:
+    """Define colours."""
+
     def __init__(self) -> None:
         self.beaverdam_red = "#c31a07"
         self.beaverdam_brown_light = "#b06c3e"

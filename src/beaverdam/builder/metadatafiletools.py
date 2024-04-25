@@ -1,65 +1,87 @@
+"""Various functionalities to read and manipulate metadata files."""
+
+import json  # handling JSON files; built in, don't need to install separate package
+import logging
+import os
+import sys
+import tempfile
 from abc import ABC, abstractmethod
 from pathlib import Path
-import tempfile
-import sys
-import os
-import logging
 
 import odml  # handling odml files; install with pip not conda
-import json  # handling JSON files; built in, don't need to install separate package
 
 
 class MetadataFile(ABC):
-    """Generic class to store all types of metadata files and control their manipulation"""
+    """Generic class to store all types of metadata files and control their manipulation."""
 
     def __init__(self, file_name: Path):
-        """Load the file
+        """Load the file.
 
         Args:
             file_name (Path): path containing the file path, file name, and extension
+
         """
         self.file_name = file_name
         self._load_file()
 
     @abstractmethod
     def _load_file(self):
-        """Load the raw data from the file using the given file_name"""
+        """Load the raw data from the file using the given file_name."""
 
     @abstractmethod
     def to_json(self):  # return json dict
-        """Convert the metadata file to json format"""
+        """Convert the metadata file to json format."""
 
 
 class JsonMetadata(MetadataFile):
-    """Control handling of json files"""
+    """Control handling of json files."""
 
     def __init__(self, file_name):
+        """Initialize object.
+
+        Args:
+            file_name (_type_): path and name of metadata file
+
+        """
         super().__init__(file_name)
 
     def _load_file(self):
-        """Load raw data from json file"""
+        """Load raw data from json file."""
         with open(self.file_name, "r") as f:
             # Since the data is already in json format, we can put it directly in
             # self.json
             self.json = json.load(f)
 
     def to_json(self):
+        """Convert metadata to json.
+
+        Returns
+            self.json: metadata in json format
+
+        """
         # The metadata is already in json format, so just return it
         return self.json
 
 
 class OdmlMetadata(MetadataFile):
-    """Control handling of odML files"""
+    """Control handling of odML files."""
 
     def __init__(self, file_name):
+        """Initialize object.
+
+        Args:
+            file_name (_type_): path and name of metadata file
+
+        """
         super().__init__(file_name)
 
     def _load_file(self, suppress_validations=True):
-        """Load raw data from odML file
+        """Load raw data from odML file.
 
         Args:
-            suppress_warnings (bool): if True, won't print validation warnings
+            suppress_validations (bool): if True, won't print validation warnings
             (optional; defaults to True)
+
         """
         error_suppressor = _ErrorSuppressor(suppress_validations)
         error_suppressor.turn_on()
@@ -67,14 +89,15 @@ class OdmlMetadata(MetadataFile):
         error_suppressor.turn_off()
 
     def to_json(self, suppress_validations=True):
-        """Convert odML data to json
+        """Convert odML data to json.
 
         Args:
-            suppress_warnings (bool): if True, won't print validation warnings
+            suppress_validations (bool): if True, won't print validation warnings
             (optional; defaults to True)
 
         Returns:
             (json): json-serialized metadata
+
         """
         error_suppressor = _ErrorSuppressor(suppress_validations)
         # Save a temporary json file
@@ -94,6 +117,7 @@ class OdmlMetadata(MetadataFile):
 
     def _flatten_json_section_lists(self):
         """Convert the default odML-to-json section names into more meaningful names.
+
         Because odML sections and properties contain lists, converting to json results
         in a lot of useless heirarchical levels named e.g. 01, 02 when the lists get
         expanded.  Replace the list items with logically-named json sections which take
@@ -160,30 +184,31 @@ class _ErrorSuppressor(ABC):
     """
 
     def __init__(self, has_effect=True) -> None:
-        """Initialize error suppressor
+        """Initialize error suppressor.
 
         Args:
             has_effect (bool, optional): whether or not the object can suppress errors.
             Really only used to avoid multiple if/else statements.  Defaults to True.
+
         """
         super().__init__()
         self.has_effect = has_effect
 
     def turn_on(self):
-        """Suppress warnings and errors"""
+        """Suppress warnings and errors."""
         if self.has_effect:
             # sys.stdout = open(os.devnull, "w")
             sys.stderr = open(os.devnull, "w")
 
     def turn_off(self):
-        """Re-allow display of warnings and errors"""
+        """Re-allow display of warnings and errors."""
         if self.has_effect:
             # sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
 
 
 def load_metadata(file_name: Path) -> MetadataFile:
-    """Load metadata from any file type
+    """Load metadata from any file type.
 
     Args:
         file_name (Path): path to the file, including filename and extension
@@ -192,6 +217,7 @@ def load_metadata(file_name: Path) -> MetadataFile:
         MetadataFile: some flavour of a MetadataFile object, depending on the input file
         type.  Returns None if there is a problem with the file or the file doesn't
         exist.
+
     """
     # Create the correct type of file object depending on the extension.  If there is a
     # problem, report this in the log file.
@@ -202,7 +228,7 @@ def load_metadata(file_name: Path) -> MetadataFile:
             return JsonMetadata(file_name)
         else:
             logging.error(
-                """File {0} skipped, because Beaverdam doesn't know how to treat 
+                """File {0} skipped, because Beaverdam doesn't know how to treat
                 {1} files yet.\n""".format(file_name, file_name.suffix)
             )
             return None

@@ -1,9 +1,4 @@
-import plotly.graph_objects as go
-import plotly.io as pio
-
-from .colours import Colours
-
-"""Define themes for Plotly plots, and modebar styles for different plot types"""
+"""Define themes for Plotly plots, and modebar styles for different plot types."""
 
 # Generate and save themes (templates) for Plotly plots.
 #
@@ -29,6 +24,10 @@ from .colours import Colours
 # After importing, you can access specific properties using dict notation, e.g.:
 #   pio.templates["sandstone"].layout.font
 
+import plotly.graph_objects as go
+import plotly.io as pio
+
+from .colours import Colours
 
 # General figure properties
 pio.templates["main"] = go.layout.Template(

@@ -1,10 +1,12 @@
+"""Choose UI backend and frontend, then run the UI."""
+
 from pathlib import Path
 
-from beaverdam._core import Core, ConfigParser
-from .presenter import Presenter
-from .dash_view import DashView
-from .controller import Controller
+from beaverdam._core import ConfigParser, Core
 
+from .controller import Controller
+from .dash_view import DashView
+from .presenter import Presenter
 
 ## INPUTS
 
@@ -12,17 +14,15 @@ from .controller import Controller
 cfg_file_name = Path("config.toml")
 
 
-## CODE
-
-
 class BeaverUI:
-    """Define and configure modules to be included in the user interface"""
+    """Define and configure modules to be included in the user interface."""
 
     def __init__(self, fp_cfg):
-        """Link modules to each other and provide them with configuration information
+        """Link modules to each other and provide them with configuration information.
 
         Args:
             fp_cfg (str): name of configuration file
+
         """
         # Read config file
         self.cfg = ConfigParser(fp_cfg)
@@ -40,15 +40,16 @@ class BeaverUI:
         self.view.set_controller(self.controller)
 
     def run(self):
-        """Launch the user interface"""
+        """Launch the user interface."""
         self.view.launch_ui()
 
 
 def run_ui(cfg_file_name):
-    """Create and run the main application
+    """Create and run the main application.
 
     Args:
         cfg_file_name (str): relative path and name of configuration file
+
     """
     cfg_file_name = Path(cfg_file_name)
     user_interface = BeaverUI(cfg_file_name)

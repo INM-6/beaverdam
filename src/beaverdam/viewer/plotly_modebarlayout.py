@@ -1,5 +1,8 @@
+"""Define Plotly modebar layouts for different plot types."""
+
+
 def modebar_layout(plot_type):
-    """Define modebar layout for different plot types
+    """Define modebar layout for different plot types.
 
     Use these as config options when creating a dcc.Graph object containing a plot.
 
@@ -14,8 +17,8 @@ def modebar_layout(plot_type):
 
     Returns:
         modebar_layout (dict): orientation, buttons, and options for the modebar
-    """
 
+    """
     # Define general modebar properties
     modebar_base = {
         "displayModeBar": True,

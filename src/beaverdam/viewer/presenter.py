@@ -1,34 +1,35 @@
-"""Prepare data for visualization"""
+"""Prepare data for visualization."""
 
-from .uielement import DataTable, FilterChecklist, DataFigure, SelectedCriteria
+from .uielement import DataFigure, DataTable, FilterChecklist, SelectedCriteria
 
 
 class Presenter:
-    """Collects and prepares data so it's ready to be presented"""
+    """Collects and prepares data so it's ready to be presented."""
 
     def __init__(self, cfg):
-        """Store configuration information
+        """Store configuration information.
 
         Args:
             cfg (ConfigParser):  contains a dict with information from config file.
             Required sections:  filters, plots
+
         """
         self.cfg = cfg
 
     def set_core(self, core_to_use):
-        """Set backend logic
+        """Set backend logic.
 
         Args:
             core_to_use (Core): backend logic, e.g. database access information, filter
             criteria, central data table, filtering functions
+
         """
         self.core = core_to_use
         # Load current info from core
         self.build()
 
     def build(self):
-        """Assemble all information for user interface, e.g. plots, filters, data tables"""
-
+        """Assemble all information for user interface, e.g. plots, filters, data tables."""
         # TODO:  improvement: make this a dict, with keys as the element IDs
         self.ui_elements = []
 
@@ -64,16 +65,17 @@ class Presenter:
             self.ui_elements.append(SelectedCriteria(title="Applied filters", items=[]))
 
     def update(self):
-        """Apply the current filter to all UI elements"""
+        """Apply the current filter to all UI elements."""
         for ielement in self.ui_elements:
             ielement.update(new_data_table=self.core.data_table)
 
     def get_elements(self):
-        """Get information about all elements in the Presenter
+        """Get information about all elements in the Presenter.
 
-        Returns:
+        Returns
             ui_elements (dict):  information about each UI element (e.g. element ID and
             type) and contents of the element
+
         """
         ui_elements = {}
 
@@ -94,13 +96,14 @@ class Presenter:
         return ui_elements
 
     def get_element_properties(self, element_id):
-        """Get the properties of an element, given the element's id
+        """Get the properties of an element, given the element's id.
 
         Args:
             element_id (str):  the unique id of the element
 
         Returns:
             element_properties (dict):  properties of the element
+
         """
         all_elements = self.get_elements()
         element_properties = all_elements[element_id]["properties"]

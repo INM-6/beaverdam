@@ -1,26 +1,27 @@
-"""Parse the provided config file and save the variables in a useful way"""
+"""Parse the provided config file and save the variables in a useful way."""
 
 from pathlib import Path
+
 import tomli  # import tomllib in Python 3.11
 
 
 class ConfigParser:
-    """Parse configuration file and store parameters"""
+    """Parse configuration file and store parameters."""
 
     def __init__(self, fp, sections_to_extract="all"):
-        """Parse configuration file
+        """Parse configuration file.
 
         Args:
             fp (str or Path): path to config file
             sections_to_extract (string or list of strings):  [optional] which sections
             to get out of file.  Default is all sections.
+
         Returns:
             self.contents (dict):  dict with keys obtained from the headings of the
             config file, and vals containing contains dicts of keys/vals obtained from
             the section of the config file under each heading (see example)
 
         Example:
-
             TOML file -- the file pointed to by fp
                 [heading]
                 key1 = val1
@@ -30,8 +31,8 @@ class ConfigParser:
                     {'key1': val1, 'key2': val2}
                 self.contents['heading']['key1']
                     val1
-        """
 
+        """
         # Parse the config file
         if isinstance(fp, str):
             fp = Path(fp)
@@ -39,7 +40,7 @@ class ConfigParser:
             with open(fp, "rb") as f:
                 config_contents = tomli.load(f)
         except:
-            raise Exception("File " + str(fp.name) + " cannot be read.")
+            raise Exception("File " + str(fp.name) + " cannot be read.") from None
 
         # If no requested sections are provided, get all the sections in the config file
         if sections_to_extract == "all":
@@ -58,7 +59,7 @@ class ConfigParser:
             self.contents[key] = config_contents[key]
 
     def get_section(self, section_name):
-        """Return the contents of one or more sections of the config file
+        """Return the contents of one or more sections of the config file.
 
         Args:
             section_name (string | list of strings):  names of the section(s) to
@@ -70,8 +71,8 @@ class ConfigParser:
                 - ? -- if one section is requested, and that section contains a single
                   value -- the value will be returned (whatever it is)
                 - dict -- if multiple sections are requested
-        """
 
+        """
         # Check that requested section(s) exist
         self._check_for_missing_sections(self.contents, section_name)
 
@@ -85,7 +86,7 @@ class ConfigParser:
         return section_contents
 
     def _check_for_missing_sections(self, dict_to_check, requested_sections):
-        """Check a dictionary to make sure all requested sections are present
+        """Check a dictionary to make sure all requested sections are present.
 
         Args:
             dict_to_check (dict): dictionary whose sections you want to check the
@@ -95,8 +96,8 @@ class ConfigParser:
 
         Returns:
             Exception if a requested section is not present as a key in dict_to_check
-        """
 
+        """
         # Make sure that requested sections are a list
         requested_sections = (
             [requested_sections]

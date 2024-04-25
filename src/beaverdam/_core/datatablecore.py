@@ -1,10 +1,10 @@
-"""A table containing data and indicating the selection status of each row"""
+"""A table containing data and indicating the selection status of each row."""
 
 import pandas as pd
 
 
 def _is_value_in_criteria(x, criteria):
-    """Find if a value is contained in a list of criteria
+    """Find if a value is contained in a list of criteria.
 
     Args:
         x (anything): the value you want to check
@@ -13,6 +13,7 @@ def _is_value_in_criteria(x, criteria):
 
     Returns:
         bool: whether or not x meets any of the criteria
+
     """
     if isinstance(x, list):
         is_contained = any([True for i in x if i in criteria])
@@ -24,8 +25,7 @@ def _is_value_in_criteria(x, criteria):
 
 
 class DataTableCore(pd.DataFrame):
-    """Store data and filter criteria, and indicates which data meets the current filter
-    criteria"""
+    """Store data and filter criteria; indicates which data meets current filter criteria."""
 
     def __init__(self, df):
         selection_state_column_name = "selectionState"
@@ -43,14 +43,13 @@ class DataTableCore(pd.DataFrame):
         self.filter_criteria = {}
 
     def set_filter(self, filter_criteria):
-        """Set filter criteria as specified, and filter dataframe.  Overwrites previous
-        filter criteria.
+        """Set filter criteria and filter dataframe.  Overwrites previous filter criteria.
 
         Args:
             filter_criteria (dict): dict of criteria, with key=column name,
             val=allowable values.
-        """
 
+        """
         self.filter_criteria = filter_criteria
 
         # Update selection status of rows
@@ -65,8 +64,8 @@ class DataTableCore(pd.DataFrame):
             filter criteria, its value will be overwritten with the provided value.  If
             an existing key is not provided in new_filter_criteria, it will retain its
             original value.
-        """
 
+        """
         # Find keys of new criteria
         new_filter_criteria_keys = list(new_filter_criteria.keys())
         # Check for existing filter criteria with the same key
@@ -82,7 +81,6 @@ class DataTableCore(pd.DataFrame):
 
     def clear_filter(self):
         """Remove all filter criteria and reset dataframe selection status."""
-
         self.filter_criteria = {}
 
         # Update selection status of rows
@@ -90,7 +88,6 @@ class DataTableCore(pd.DataFrame):
 
     def apply_filter(self):
         """Determine which rows of a DataTable meet filter criteria placed on columns."""
-
         # If there are no filter criteria, accept all rows
         if all(ele == [] for ele in list(self.filter_criteria.values())):
             is_row_selected = [True for _ in range(len(self.df))]
@@ -140,15 +137,14 @@ class DataTableCore(pd.DataFrame):
 
         Args:
             row_inds (list): list of row indices, as set in the target dataframe
-        """
 
+        """
         self.update_filter({"row_index": row_inds})
         # Update selection status of rows
         self.apply_filter()
 
     def undo_row_selection(self):
-        """Remove the filter criteria which selects rows based on row indices"""
-
+        """Remove the filter criteria which selects rows based on row indices."""
         if "row_index" in list(self.filter_criteria.keys()):
             del self.filter_criteria["row_index"]
 
@@ -156,17 +152,17 @@ class DataTableCore(pd.DataFrame):
         self.apply_filter()
 
     def get_selected_rows(self):
-        """Remove dataframe rows not contained in the selection-state column
+        """Remove dataframe rows not contained in the selection-state column.
 
-        Returns:
+        Returns
             filtered_df (dataframe):  dataframe (1) without the selection-state column
             and (2) with only selected rows
-        """
 
+        """
         # Drop any unselected rows.  Use the default of inplace=False so that df.drop
         # returns a new dataframe rather than modifying the original dataframe.
         filtered_df = self.df.drop(
-            self.df[self.df[self.selection_state_column_name] == False].index
+            self.df[self.df[self.selection_state_column_name] == False].index  # noqa: E712
         )
         # Remove column denoting selection state.  Use inplace=True so that df.drop
         # modifies the dataframe it's called on, rather than returning a new dataframe.
@@ -174,19 +170,21 @@ class DataTableCore(pd.DataFrame):
         return filtered_df
 
     def get_filter_criteria(self):
-        """Get filter criteria
+        """Get filter criteria.
 
-        Returns:
+        Returns
             filter_criteria (dict): dict of criteria, with key=column name,
             val=allowable values
+
         """
         return self.filter_criteria
 
     def get_filter_criteria_values(self):
-        """Get all the values for applied filter criteria
+        """Get all the values for applied filter criteria.
 
-        Returns:
+        Returns
             filter_criteria_values (list): specified values for all filter criteria
+
         """
         filter_criteria_values = [
             item for sublist in self.filter_criteria.values() for item in sublist

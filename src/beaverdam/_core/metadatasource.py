@@ -1,30 +1,30 @@
-"""Create an object for a source of metadata, and define how to access its information"""
+"""Create an object for a source of metadata, and define how to access its information."""
 
-from pymongo import MongoClient
 import pandas as pd
+from pymongo import MongoClient
 
 
 class MetadataSource:
-    """Store information about where to get metadata"""
+    """Store information about where to get metadata."""
 
     def __init__(self):
         pass
 
     def set_fields():
-        """Store name and access information for each metadata field"""
+        """Store name and access information for each metadata field."""
         pass
 
     def query():
-        """Get metadata from source"""
+        """Get metadata from source."""
         # Should return a dataframe
         pass
 
 
 class MongoDbDatabase(MetadataSource):
-    """Use a MongoDB database as a metadata source"""
+    """Use a MongoDB database as a metadata source."""
 
     def __init__(self, cfg):
-        """Define database properties
+        """Define database properties.
 
         Args:
             cfg (dict):  configuration information with keys:
@@ -33,6 +33,7 @@ class MongoDbDatabase(MetadataSource):
                 'db_name': string -- name of the MongoDB database
                 'collection_name' -- string: name of the collection containing the
                 documents you want to view
+
         """
         # Get database information
         self._address = cfg["address"]
@@ -41,21 +42,23 @@ class MongoDbDatabase(MetadataSource):
         self._collection_name = cfg["collection_name"]
 
     def set_fields(self, field_dict):
-        """Store name and access information for each metadata field
+        """Store name and access information for each metadata field.
 
         Args:
             field_dict (dict): keys = field names, vals = path to metadata field in
             database
+
         """
         self.fields = field_dict
 
     def get_field_name(self, requested_paths="all"):
-        """Get list of field names from list of paths
+        """Get list of field names from list of paths.
 
         Args:
             requested_paths (str or list): string or list of strings, with each string
             corresponding to a path in the database.  Defaults to "all" to return all
             paths.
+
         """
         if requested_paths == "all":
             field_names = list(self.fields.keys())
@@ -74,36 +77,40 @@ class MongoDbDatabase(MetadataSource):
         return field_names
 
     def _get_client(self):
-        """Get the client specified by the database information
+        """Get the client specified by the database information.
 
-        Returns:
+        Returns
             MongoDB client
+
         """
         return MongoClient(self._address, self._port)
 
     def _get_database(self):
-        """Get the database specified by the database information
+        """Get the database specified by the database information.
 
-        Returns:
+        Returns
             MongoDB database
+
         """
         return getattr(self._get_client(), self._db_name)
 
     def _get_collection(self):
-        """Get the collection specified by the database information
+        """Get the collection specified by the database information.
 
-        Returns:
+        Returns
             MongoDB collection
+
         """
         return getattr(self._get_database(), self._collection_name)
 
     def get_path(self, requested_field_names="all"):
-        """Get list of paths from list of field names
+        """Get list of paths from list of field names.
 
         Args:
             requested_field_names (str or list): string or list of strings, with each
             string corresponding to a field name as defined in the config file.
             Defaults to "all" to return all field names.
+
         """
         if requested_field_names == "all":
             field_paths = list(self.fields.values())
@@ -114,7 +121,7 @@ class MongoDbDatabase(MetadataSource):
         return field_paths
 
     def query(self, query_input={}, query_output={}):
-        """Query a MongoDB database
+        """Query a MongoDB database.
 
         Args:
             query_input (dict or list of str):  requested queries.  If dict, should be a
@@ -133,6 +140,7 @@ class MongoDbDatabase(MetadataSource):
 
         Returns:
             query_results (dataframe): rows=documents and cols=projections
+
         """
         # TODO:  if the query inputs isn't a dict, convert it
         if not isinstance(query_input, dict):
@@ -194,20 +202,21 @@ class MongoDbDatabase(MetadataSource):
         return query_results
 
     def delete_single_record(self, document_id):
-        """Delete a single record (document) from a collection, if it exists
+        """Delete a single record (document) from a collection, if it exists.
 
         Args:
             document_id (str): _id field for the document to be deleted
 
         Returns:
             number of documents deleted (1 or 0)
+
         """
         collection = self._get_collection()
         deletion_result = collection.delete_one({"_id": document_id})
         return deletion_result.deleted_count
 
     def insert_single_record(self, document_to_insert):
-        """Insert a single record (document) into a collection
+        """Insert a single record (document) into a collection.
 
         Args:
             document_to_insert (json or bson): contents of the document to insert.  If
@@ -215,6 +224,7 @@ class MongoDbDatabase(MetadataSource):
 
         Returns:
             _id property of the inserted document
+
         """
         collection = self._get_collection()
         insertion_result = collection.insert_one(document_to_insert)
