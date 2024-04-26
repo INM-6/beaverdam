@@ -18,7 +18,5 @@ authors:
       Research Centre, Jülich, Germany
     email: m.denker@fz-juelich.de
 repository-code: 'https://github.com/INM-6/beaverdam'
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.11070922
+doi: 10.5281/zenodo.11070922
 license: BSD-3-Clause
