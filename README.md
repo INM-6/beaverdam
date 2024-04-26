@@ -46,9 +46,19 @@ Beaverdam requires the following to be installed on your computer, plus a browse
 
 A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit the example configuration file `config.toml` with your specific information.  Find more information on the contents of the configuration file in the comments within the configuration file.
 
+### (Meta)data files
+
+We designed Beaverdam to have as few restrictions as possible.  However in order to properly find and parse information, Beaverdam makes the following assumptions:
+
+- **One parent directory**:  Beaverdam looks for files in all subdirectories of a specified parent directory
+- **Same file extension** (`.odml` or `.json`):  Beaverdam will include all files with this extension inside the parent directory.  Other types of files can be present; Beaverdam will ignore them.
+- **One file per record** (e.g. experiment, session, person)
+- **Unique file names**:  Beaverdam uses filenames as unique identifiers, and will replace records in the database if files have the same name.  Hover text in plots often includes the filename to identify data points, so to make your life easier we suggest choosing meaningful names :)
+- **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  This is a restriction from MongoDB.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam expects can only combine this with `name` sections in other files if they are also contained within `subject`.
+
 ### Build a database
 
-1. Ensure all your (meta)data files are under one parent directory and have the same file extension.  Beaverdam expects one file per record (e.g. experiment, session, person...).  Within the parent directory, files can be sorted into subdirectories, and there can also be files with other extensions present (these will be ignored).  **IMPORTANT:**  each file should have a unique name; Beaverdam will replace records in the database if files have the same name.
+1. Ensure all your (meta)data files are (#(Meta)data-files) are organized and formatted correctly.
 1. [Install](#installation) Beaverdam and edit the [configuration file](#configuration).  Important sections for this step are:
    - `[raw_metadata]`:  location (parent directory) and type (file extension) of metadata files
    - `[database]`:  location of database
