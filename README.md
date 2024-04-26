@@ -73,7 +73,7 @@ A single configuration file contains all the information for Beaverdam to access
     ```
     where `config.toml` is the name and **relative** path of your configuration file
 
-You will see a progress bar appear as Beaverdam builds or updates your database.  Any errors or warnings will be written to `beaverdam.log` in the same directory as your configuration file - please check the log file afterwards in a text editor to see if there was a problem!
+    You will see a progress bar appear as Beaverdam builds or updates your database.  Any errors or warnings will be written to `beaverdam.log` in the same directory as your configuration file - please check the log file afterwards in a text editor to see if there was a problem!
 
 ### View a database
 
