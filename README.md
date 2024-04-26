@@ -49,7 +49,7 @@ We designed Beaverdam to have as few restrictions as possible.  However, in orde
 - **One file per record** (e.g. experiment, session, person)
 - **Unique file names**:  Beaverdam uses filenames as unique identifiers, and will replace records in the database if files have the same name.  Hover text in plots often includes the filename to identify data points, so to make your life easier we suggest choosing meaningful names :)
 - **Same file extension** (`.odml` or `.json`):  Beaverdam will include all files with this extension inside the parent directory.  Other types of files can be present; Beaverdam will ignore them.
-- **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  This is a restriction from MongoDB.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam can only combine this with `name` sections in other files if they are also contained within `subject`.
+- **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  This is a restriction from MongoDB.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam can only combine this with `name` information from other files that's contained within a `subject` section.
 
 ### Configuration
 
