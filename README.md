@@ -45,7 +45,7 @@ You can try out building and viewing a database using the example dataset and co
 
 Schematically, Beaverdam works like this:
 
-![Beaverdam schematic](/img/beaverdam_flowchart.png)
+![Beaverdam schematic](/img/beaverdam_schematic.png)
 
 ### (Meta)data files
 
