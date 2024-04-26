@@ -59,7 +59,7 @@ We designed Beaverdam to have as few restrictions as possible.  However, in orde
 
 ### Configuration
 
-A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit a **copy** of the example configuration file `config.toml` with your specific information.  Find more information on the contents of the configuration file in the comments within the configuration file.
+A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit a copy of the example configuration file `config_countries.toml` (find it [here](example/config_countries.toml)) with your specific information.  Find more information on the contents of the configuration file in the comments within the configuration file.
 
 ### Build a database
 
@@ -84,7 +84,7 @@ A single configuration file contains all the information for Beaverdam to access
    - `[filters]`, `[table]`, and `[plots]`:  which metadata fields to show as filters, in the datatable, and in graphs
 1. In a terminal, enter the virtual environment where you [installed](#installation) beaverdam, and run
     ```
-    beaverdam build config.toml
+    beaverdam view config.toml
     ```
     where `config.toml` is the name and **relative** path of your configuration file
 1. Follow the instructions to open the resulting link in your web browser - on Linux, this is `Ctrl+click`
