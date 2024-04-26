@@ -30,39 +30,38 @@ Beaverdam requires the following to be installed on your computer, plus a browse
 
 ## Installation
 
-1. Make sure you have the [dependencies](#dependencies).
-1. [*Optional but recommended*] Create a Python virtual environment using e.g. [venv](https://docs.python.org/3/library/venv.html) or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
-1. In a terminal, ensure you are in the Python interpreter or your virtual environment, and do one of the following:
-    - **Install from GitHub:**
-      ```
-      pip install git+ssh://git@github.com/INM-6/beaverdam
-      ```
-    - **Install from PyPi:**
-        - *coming soon*
+1. Make sure you have the dependencies (see [Dependencies](#dependencies)).
+1. [*Optional but recommended*] Create a Python virtual environment using e.g. [venv](https://docs.python.org/3/library/venv.html) or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
+1. In a terminal [*recommended to be in your virtual environment*], run
+    ```
+    pip install git+ssh://git@github.com/INM-6/beaverdam
+    ```
 
 ## How to use Beaverdam
 
-### Configuration
-
-A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit the example configuration file `config.toml` with your specific information.  Find more information on the contents of the configuration file in the comments within the configuration file.
+Using Beaverdam is a two-step process:  first, build a database from your (meta)data files; next, view and explore the database by generating a dashboard in a browser window.  Before carrying out these two steps, you will need to ensure your files are Beaverdam-friendly, and set up the necessary configuration file.
 
 ### (Meta)data files
 
-We designed Beaverdam to have as few restrictions as possible.  However in order to properly find and parse information, Beaverdam makes the following assumptions:
+We designed Beaverdam to have as few restrictions as possible.  However, in order to properly find and parse information, Beaverdam makes the following assumptions:
 
 - **One parent directory**:  Beaverdam looks for files in all subdirectories of a specified parent directory
-- **Same file extension** (`.odml` or `.json`):  Beaverdam will include all files with this extension inside the parent directory.  Other types of files can be present; Beaverdam will ignore them.
 - **One file per record** (e.g. experiment, session, person)
 - **Unique file names**:  Beaverdam uses filenames as unique identifiers, and will replace records in the database if files have the same name.  Hover text in plots often includes the filename to identify data points, so to make your life easier we suggest choosing meaningful names :)
-- **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  This is a restriction from MongoDB.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam expects can only combine this with `name` sections in other files if they are also contained within `subject`.
+- **Same file extension** (`.odml` or `.json`):  Beaverdam will include all files with this extension inside the parent directory.  Other types of files can be present; Beaverdam will ignore them.
+- **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  This is a restriction from MongoDB.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam can only combine this with `name` sections in other files if they are also contained within `subject`.
+
+### Configuration
+
+A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit a **copy** of the example configuration file `config.toml` with your specific information.  Find more information on the contents of the configuration file in the comments within the configuration file.
 
 ### Build a database
 
-1. Ensure all your (meta)data files are (#(Meta)data-files) are organized and formatted correctly.
+1. Ensure all your [files](#metadata-files) are organized and formatted correctly.
 1. [Install](#installation) Beaverdam and edit the [configuration file](#configuration).  Important sections for this step are:
    - `[raw_metadata]`:  location (parent directory) and type (file extension) of metadata files
    - `[database]`:  location of database
-1. In a terminal, enter the Python interpreter or the virtual environment where you [installed](#installation) beaverdam, and run
+1. In a terminal, enter the virtual environment where you [installed](#installation) beaverdam, and run
     ```
     beaverdam build config.toml
     ```
@@ -77,7 +76,7 @@ You will see a progress bar appear as Beaverdam builds or updates your database.
    - `[database]`:  location of database
    - `[fields]`:  location of each field you want to show
    - `[filters]`, `[table]`, and `[plots]`:  which metadata fields to show as filters, in the datatable, and in graphs
-1. In a terminal, enter the Python interpreter or the virtual environment where you [installed](#installation) beaverdam, and run
+1. In a terminal, enter the virtual environment where you [installed](#installation) beaverdam, and run
     ```
     beaverdam build config.toml
     ```
