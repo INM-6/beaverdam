@@ -41,7 +41,7 @@ Beaverdam requires the following to be installed on your computer, plus a browse
 
 Using Beaverdam is a two-step process:  first, build a database from your (meta)data files; next, view and explore the database by generating a dashboard in a browser window.  Before carrying out these two steps, you will need to ensure your files are Beaverdam-friendly, and set up the necessary configuration file.
 
-You can try out building and viewing a database using the example dataset and configuration file in the `/example` directory of this repo.
+You can try out building and viewing a database using the example dataset and configuration file in the [`/example` directory](example/README.md#beaverdam-example) of this repo.
 
 Schematically, Beaverdam works like this:
 
