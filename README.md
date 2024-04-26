@@ -43,6 +43,10 @@ Using Beaverdam is a two-step process:  first, build a database from your (meta)
 
 You can try out building and viewing a database using the example dataset and configuration file in the `/example` directory of this repo.
 
+Schematically, Beaverdam works like this:
+
+![Beaverdam schematic](/img/beaverdam_flowchart.png)
+
 ### (Meta)data files
 
 We designed Beaverdam to have as few restrictions as possible.  However, in order to properly find and parse information, Beaverdam makes the following assumptions:
