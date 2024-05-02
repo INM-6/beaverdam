@@ -59,7 +59,7 @@ We designed Beaverdam to have as few restrictions as possible.  However, in orde
 
 ### Configuration
 
-A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit a copy of the example configuration file `config_countries.toml` (find it [here](example/config_countries.toml)) with your specific information.  Find more information on the contents of the configuration file in the comments within the configuration file.
+A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit the template configuration file `config_template.toml` with your specific details.  Find more information within the configuration file.
 
 ### Build a database
 
