@@ -2,36 +2,36 @@
 # and synchronize all the high-level project metadata across multiple files.
 # To see which other metadata can be added, check out the somesy documentation
 # https://materials-data-science-and-informatics.github.io/somesy/main/
-# [tool.somesy.project]
-# name = "beaverdam"
-# version = "0.1.0"
-# description = "Build, explore, and visualize experimental databases of metadata"
-# license = "BSD-3-Clause"
+[tool.somesy.project]
+name = "beaverdam"
+version = "0.1.0"
+description = "Build, explore, and visualize experimental databases of metadata"
+license = "BSD-3-Clause"
 
-# repository = "https://github.com/INM-6/beaverdam"
-# homepage = "https://github.com/INM-6/beaverdam"
-# documentation = "https://github.com/INM-6/beaverdam"
+repository = "https://github.com/INM-6/beaverdam"
+homepage = "https://github.com/INM-6/beaverdam"
+documentation = "https://github.com/INM-6/beaverdam"
 
-# [[tool.somesy.project.people]]
-# given-names = "Heather"
-# family-names = "More"
-# email = "h.more@fz-juelich.de"
-# affiliation = "Institute for Advanced Simulation (IAS-6 and IAS-9), Jülich Research Centre, Jülich, Germany"
-# orcid = "http://orcid.org/0000-0002-7514-2199"
-# author = true
-# maintainer = true
+[[tool.somesy.project.people]]
+given-names = "Heather"
+family-names = "More"
+email = "h.more@fz-juelich.de"
+affiliation = "Institute for Advanced Simulation (IAS-6 and IAS-9), Jülich Research Centre, Jülich, Germany"
+orcid = "http://orcid.org/0000-0002-7514-2199"
+author = true
+maintainer = true
 
-# [[tool.somesy.project.people]]
-# given-names = "Michael"
-# family-names = "Denker"
-# email = "m.denker@fz-juelich.de"
-# affiliation = "Institute for Advanced Simulation (IAS-6), Jülich Research Centre, Jülich, Germany"
-# orcid = "https://orcid.org/0000-0003-1255-7300"
-# author = true
-# maintainer = true
+[[tool.somesy.project.people]]
+given-names = "Michael"
+family-names = "Denker"
+email = "m.denker@fz-juelich.de"
+affiliation = "Institute for Advanced Simulation (IAS-6), Jülich Research Centre, Jülich, Germany"
+orcid = "https://orcid.org/0000-0003-1255-7300"
+author = true
+maintainer = true
 
-# [tool.somesy.config]
-# verbose = true
+[tool.somesy.config]
+verbose = true
 
 [tool.poetry]
 # ---- DO NOT EDIT - core project metadata managed by somesy  ----
