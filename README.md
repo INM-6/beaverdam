@@ -12,7 +12,7 @@ Currently, Beaverdam runs locally on your machine, and can build or access local
 
 Beaverdam's dashboard shows configurable filters, plots, and a table with details of each (meta)data file.  It even has dark and light mode!  Here's an example:
 
-![Beaverdam screenshot](/img/2024-04-12_dark-light.png)
+![Beaverdam screenshot](/img/2024-04-12_17-15_light_cropped.png)
 
 ## Dependencies
 
@@ -23,7 +23,7 @@ Beaverdam requires the following to be installed on your computer, plus a browse
   - Some people prefer the [conda](https://www.anaconda.com/download/) distribution of Python, which includes extra features and packages - consider [miniconda](https://docs.anaconda.com/free/miniconda/index.html) instead if you don't want to install >4GB of stuff ;)
 - **MongoDB** (to handle databases)
   - We tested Beaverdam with MongoDB Community Edition.  Installation instructions for various operating systems are in the [MongoDB documentation](https://www.mongodb.com/docs/manual/tutorial/).
-  - We recommend enabling MongoDB to start automatically when your computer boots, so you don't have to manually start it each time you run Beaverdam.  On Linux, enable this option using:
+  - After installing MongoDB, we recommend enabling it to start automatically when your computer boots, so you don't have to manually start it each time you run Beaverdam.  On Linux, enable this option using:
     ```
     sudo systemctl enable mongod
     ```
@@ -41,7 +41,7 @@ Beaverdam requires the following to be installed on your computer, plus a browse
 
 Using Beaverdam is a two-step process:  first, build a database from your (meta)data files; next, view and explore the database by generating a dashboard in a browser window.  Before carrying out these two steps, you will need to ensure your files are Beaverdam-friendly, and set up the necessary configuration file.
 
-You can try out building and viewing a database using the example dataset and configuration file in the [`/example` directory](example/README.md#beaverdam-example) of this repo.
+You can try out building and viewing a database using the example dataset and configuration file in the [`/example`](example/README.md#beaverdam-example) directory of this repo.
 
 Schematically, Beaverdam works like this:
 
@@ -59,7 +59,7 @@ We designed Beaverdam to have as few restrictions as possible.  However, in orde
 
 ### Configuration
 
-A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to edit the template configuration file `config_template.toml` with your specific details.  Find more information within the configuration file.
+A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to download the template configuration file `config_template.toml` from the main directory of this repository, then edit it with your specific details.  Find more information within the configuration file.
 
 ### Build a database
 
@@ -67,6 +67,7 @@ A single configuration file contains all the information for Beaverdam to access
 1. [Install](#installation) Beaverdam and edit the [configuration file](#configuration).  Important sections for this step are:
    - `[raw_metadata]`:  location (parent directory) and type (file extension) of metadata files
    - `[database]`:  location of database
+1. Make sure MongoDB is running.  If you have just installed it, or haven't enabled it to start automatically when your computer boots, you will need to do this manually.  On Linux, follow [these instructions](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#start-mongodb).
 1. In a terminal, enter the virtual environment where you [installed](#installation) beaverdam, and run
     ```
     beaverdam build config.toml
@@ -82,6 +83,7 @@ A single configuration file contains all the information for Beaverdam to access
    - `[database]`:  location of database
    - `[fields]`:  location of each field you want to show
    - `[filters]`, `[table]`, and `[plots]`:  which metadata fields to show as filters, in the datatable, and in graphs
+1. Make sure MongoDB is running.  If you just built a database, it's already running and you can proceed to the next step.  If not, and if you haven't enabled MongoDB to start automatically when your computer boots, you will need to do this manually.  On Linux, follow [these instructions](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#start-mongodb).
 1. In a terminal, enter the virtual environment where you [installed](#installation) beaverdam, and run
     ```
     beaverdam view config.toml
