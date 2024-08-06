@@ -1,7 +1,7 @@
 """Query databases of metadata and filter the results."""
 
-from .datatablecore import DataTableCore
-from .metadatasource import MongoDbDatabase
+from beaverdam._core.datatablecore import DataTableCore
+from beaverdam._core.metadatasource import MongoDbDatabase
 
 
 class Core:

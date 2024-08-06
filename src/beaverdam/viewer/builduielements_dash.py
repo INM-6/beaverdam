@@ -12,7 +12,7 @@ from dash import dash_table, dcc, html
 from . import (
     plotly_theme,  # noqa: F401
 )
-from .plotly_modebarlayout import modebar_layout
+from beaverdam.viewer.plotly_modebarlayout import modebar_layout
 
 
 def set_ui_object_id(element_type, id=[]):

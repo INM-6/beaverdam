@@ -8,8 +8,8 @@ from tqdm import tqdm
 
 from beaverdam._core import ConfigParser, MongoDbDatabase
 
-from .metadatafiletools import load_metadata
-from .pluralize import pluralize
+from beaverdam.builder.metadatafiletools import load_metadata
+from beaverdam.builder.pluralize import pluralize
 
 ## INPUTS
 

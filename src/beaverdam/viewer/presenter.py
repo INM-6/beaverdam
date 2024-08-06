@@ -1,6 +1,6 @@
 """Prepare data for visualization."""
 
-from .uielement import DataFigure, DataTable, FilterChecklist, SelectedCriteria
+from beaverdam.viewer.uielement import DataFigure, DataTable, FilterChecklist, SelectedCriteria
 
 
 class Presenter:
