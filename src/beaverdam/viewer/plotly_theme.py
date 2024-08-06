@@ -27,7 +27,7 @@
 import plotly.graph_objects as go
 import plotly.io as pio
 
-from .colours import Colours
+from beaverdam.viewer.colours import Colours
 
 # General figure properties
 pio.templates["main"] = go.layout.Template(

@@ -15,9 +15,9 @@ from dash import (
     html,
 )
 
-from . import builduielements_dash
-from .colours import Colours
-from .view import View
+from beaverdam.viewer import builduielements_dash
+from beaverdam.viewer.colours import Colours
+from beaverdam.viewer.view import View
 
 
 class DashView(View):
