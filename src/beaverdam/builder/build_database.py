@@ -6,19 +6,11 @@ from pathlib import Path
 
 from tqdm import tqdm
 
-from beaverdam._core import ConfigParser, MongoDbDatabase
+from beaverdam._core import ConfigParser
+from beaverdam._core.metadatasource import set_database
 
 from .metadatafiletools import load_metadata
 from .pluralize import pluralize
-
-## INPUTS
-
-# Name of configuration file
-cfg_file_name = Path("config.toml")
-db_extension = ".json"
-
-
-## CODE
 
 
 class BeaverDB:
@@ -36,7 +28,7 @@ class BeaverDB:
         # Read config file
         self.cfg = ConfigParser(fp_cfg)
         # Set database
-        self._set_database()
+        self.db = set_database(self.cfg.get_section("database"))
         # Get metadata file names
         self._find_files()
 
@@ -55,11 +47,6 @@ class BeaverDB:
             format="%(levelname)s:%(message)s",
             level=logging.INFO,
         )
-
-    def _set_database(self):
-        """Create a database object."""
-        # Set database information
-        self.db = MongoDbDatabase(self.cfg.get_section("database"))
 
     def _find_files(self):
         """Detect metadata files to include in the database."""
