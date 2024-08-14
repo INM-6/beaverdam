@@ -348,57 +348,67 @@ class DashView(View):
                             ctx.triggered[0]["value"]["points"][0]["label"]
                         ]
 
-                        # An idiosyncracy of Plotly pie charts is that when they are
-                        # created from booleans they convert the booleans to lowercase
-                        # strings ("true", "false", or "null" if the element is empty).
-                        # This doesn't happen with other plot types, e.g. bar chart.  As
-                        # a dirty workaround for this problem, if a user clicks on a pie
-                        # chart segment labelled with a boolean-like string, check the
-                        # types of values in the plotted data and make a guess about
-                        # which values to filter on.
-                        #
-                        # Define the possibilities for true and false values.  Because
-                        # odML values will be in lists, also allow lists of these
-                        # values.
-                        true_values = ["true", "True", "TRUE", True, 1, "1"]
-                        true_values.extend([[x] for x in true_values])
-                        false_values = ["false", "False", "FALSE", False, 0, "0"]
-                        false_values.extend([[x] for x in false_values])
-                        # Get ID of the plot
-                        plot_id = ctx.triggered[0]["prop_id"].split('"index":"')[1]
-                        plot_id = plot_id.split('"')[0]
-                        if new_filter_criteria in true_values:
-                            # Check which value is in the plotted values
-                            is_value_in_data = [
-                                self._is_in_plot_data(plot_id, x) for x in true_values
-                            ]
-                            # Take the first item that's in the plotted values, because
-                            # if e.g. the actual value is True, this also matches 1.
-                            # NOTE that this depends on the order that the truthy and
-                            # falsey values are put into the vectors!!
-                            actual_value = [
-                                true_values[ind]
-                                for ind, x in enumerate(is_value_in_data)
-                                if x
-                            ]
-                            new_filter_criteria = actual_value[0]
-                        elif new_filter_criteria in false_values:
-                            # Check which value is in the plotted values
-                            is_value_in_data = [
-                                self._is_in_plot_data(plot_id, x) for x in false_values
-                            ]
-                            # Take the first item that's in the plotted values, because
-                            # if e.g. the actual value is True, this also matches 1.
-                            # NOTE that this depends on the order that the truthy and
-                            # falsey values are put into the vectors!!
-                            actual_value = [
-                                false_values[ind]
-                                for ind, x in enumerate(is_value_in_data)
-                                if x
-                            ]
-                            new_filter_criteria = actual_value[0]
-                        else:
-                            pass
+                        if isinstance(new_filter_criteria[0], str):
+                            # An idiosyncracy of Plotly pie charts is that when they are
+                            # created from booleans they convert the booleans to
+                            # lowercase strings ("true", "false", or "null" if the
+                            # element is empty).  This doesn't happen with other plot
+                            # types, e.g. bar chart.  As a dirty workaround for this
+                            # problem, if a user clicks on a pie chart segment labelled
+                            # with a boolean-like string, check the types of values in
+                            # the plotted data and make a guess about which values to
+                            # filter on.
+                            #
+                            # Define the possibilities for true and false values.
+                            # Because odML values will be in lists, also allow lists of
+                            # these values.
+                            true_values = ["true", "True", "TRUE", True, 1, "1"]
+                            true_values.extend([[x] for x in true_values])
+                            false_values = ["false", "False", "FALSE", False, 0, "0"]
+                            false_values.extend([[x] for x in false_values])
+                            # Get ID of the plot
+                            plot_id = ctx.triggered[0]["prop_id"].split('"index":"')[1]
+                            plot_id = plot_id.split('"')[0]
+                            if new_filter_criteria in true_values:
+                                # Check which value is in the plotted values
+                                is_value_in_data = [
+                                    self._is_in_plot_data(plot_id, x)
+                                    for x in true_values
+                                ]
+                                # Take the first item that's in the plotted values,
+                                # because if e.g. the actual value is True, the single
+                                # actual value will match both True and 1 in true_values
+                                # and you'll have multiple matches, despite only one
+                                # actual value being provided.
+                                # NOTE that this depends on the order that the truthy
+                                # and falsey values are put into the vectors!!
+                                actual_value = [
+                                    true_values[ind]
+                                    for ind, x in enumerate(is_value_in_data)
+                                    if x
+                                ]
+                                new_filter_criteria = actual_value[0]
+                            elif new_filter_criteria in false_values:
+                                # Check which value is in the plotted values
+                                is_value_in_data = [
+                                    self._is_in_plot_data(plot_id, x)
+                                    for x in false_values
+                                ]
+                                # Take the first item that's in the plotted values,
+                                # because if e.g. the actual value is False, the single
+                                # actual value will match both False and 0 in
+                                # true_values and you'll have multiple matches, despite
+                                # only one actual value being provided.
+                                # NOTE that this depends on the order that the truthy
+                                # and falsey values are put into the vectors!!
+                                actual_value = [
+                                    false_values[ind]
+                                    for ind, x in enumerate(is_value_in_data)
+                                    if x
+                                ]
+                                new_filter_criteria = actual_value[0]
+                            else:
+                                pass
                         # Update the filter criteria with the actual value
                         self.controller.trigger_update_filter_criteria(
                             {database_field: new_filter_criteria}
