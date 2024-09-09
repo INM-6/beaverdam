@@ -1,0 +1,56 @@
+{
+  "@context": [
+    "https://doi.org/10.5063/schema/codemeta-2.0",
+    "https://w3id.org/software-iodata",
+    "https://raw.githubusercontent.com/jantman/repostatus.org/master/badges/latest/ontology.jsonld",
+    "https://schema.org",
+    "https://w3id.org/software-types"
+  ],
+  "@type": "SoftwareSourceCode",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Heather",
+      "familyName": "More",
+      "email": "h.more@fz-juelich.de",
+      "@id": "https://orcid.org/0000-0002-7514-2199",
+      "affiliation": "Institute for Advanced Simulation (IAS-6 and IAS-9), Jülich Research Centre, Jülich, Germany"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Michael",
+      "familyName": "Denker",
+      "email": "m.denker@fz-juelich.de",
+      "@id": "https://orcid.org/0000-0003-1255-7300",
+      "affiliation": "Institute for Advanced Simulation (IAS-6), Jülich Research Centre, Jülich, Germany"
+    }
+  ],
+  "name": "beaverdam",
+  "description": "Build, explore, and visualize experimental databases of metadata",
+  "version": "0.1.0",
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Heather",
+      "familyName": "More",
+      "email": "h.more@fz-juelich.de",
+      "@id": "https://orcid.org/0000-0002-7514-2199",
+      "affiliation": "Institute for Advanced Simulation (IAS-6 and IAS-9), Jülich Research Centre, Jülich, Germany"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Michael",
+      "familyName": "Denker",
+      "email": "m.denker@fz-juelich.de",
+      "@id": "https://orcid.org/0000-0003-1255-7300",
+      "affiliation": "Institute for Advanced Simulation (IAS-6), Jülich Research Centre, Jülich, Germany"
+    }
+  ],
+  "license": [
+    "https://spdx.org/licenses/BSD-3-Clause"
+  ],
+  "softwareHelp": "https://github.com/INM-6/beaverdam",
+  "codeRepository": "https://github.com/INM-6/beaverdam",
+  "buildInstructions": "https://github.com/INM-6/beaverdam",
+  "url": "https://github.com/INM-6/beaverdam"
+}

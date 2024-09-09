@@ -17,7 +17,7 @@ given-names = "Heather"
 family-names = "More"
 email = "h.more@fz-juelich.de"
 affiliation = "Institute for Advanced Simulation (IAS-6 and IAS-9), Jülich Research Centre, Jülich, Germany"
-orcid = "http://orcid.org/0000-0002-7514-2199"
+orcid = "https://orcid.org/0000-0002-7514-2199"
 author = true
 maintainer = true
 
@@ -39,8 +39,8 @@ verbose = true
 # and run somesy: poetry run somesy
 name = "beaverdam"
 version = "0.1.0"
-description = ""
-authors = ["Heather More <hmore@sfu.ca>"]
+description = "Build, explore, and visualize experimental databases of metadata"
+authors = ["Heather More <h.more@fz-juelich.de>", "Michael Denker <m.denker@fz-juelich.de>"]
 license = "BSD-3-Clause"
 # ----
 
@@ -51,6 +51,10 @@ include = [
 ]
 
 packages = [{include = "beaverdam", from = "src"}]
+maintainers = ["Michael Denker <m.denker@fz-juelich.de>", "Heather More <h.more@fz-juelich.de>"]
+homepage = "https://github.com/INM-6/beaverdam"
+repository = "https://github.com/INM-6/beaverdam"
+documentation = "https://github.com/INM-6/beaverdam"
 
 [tool.poetry.dependencies]
 python = "^3.9"
