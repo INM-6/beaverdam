@@ -1,7 +1,7 @@
 """Query databases of metadata and filter the results."""
 
 from .datatablecore import DataTableCore
-from .metadatasource import set_database
+from .metadatasource import create_database
 
 
 class Core:
@@ -19,7 +19,7 @@ class Core:
 
         """
         # Define database info
-        self.db = set_database(cfg.get_section("database"))
+        self.db = create_database(cfg.get_section("database"))
         # Store information about fields to query and their field names
         # keys = field names, vals = access information for database (e.g. location)
         self.db.set_fields(cfg.get_section("fields"))
