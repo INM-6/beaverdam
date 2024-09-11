@@ -7,7 +7,6 @@ from pathlib import Path
 from tqdm import tqdm
 
 from beaverdam._core import ConfigParser, MongoDbDatabase
-
 from beaverdam.builder.metadatafiletools import load_metadata
 from beaverdam.builder.pluralize import pluralize
 

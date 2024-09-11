@@ -3,7 +3,6 @@
 from pathlib import Path
 
 from beaverdam._core import ConfigParser, Core
-
 from beaverdam.viewer.controller import Controller
 from beaverdam.viewer.dash_view import DashView
 from beaverdam.viewer.presenter import Presenter
