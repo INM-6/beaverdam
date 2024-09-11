@@ -7,10 +7,9 @@ from pathlib import Path
 from tqdm import tqdm
 
 from beaverdam._core import ConfigParser
-from beaverdam._core.metadatasource import set_database
-
-from .metadatafiletools import load_metadata
-from .pluralize import pluralize
+from beaverdam._core.metadatasource import create_database
+from beaverdam.builder.metadatafiletools import load_metadata
+from beaverdam.builder.pluralize import pluralize
 
 
 class BeaverDB:
@@ -28,7 +27,7 @@ class BeaverDB:
         # Read config file
         self.cfg = ConfigParser(fp_cfg)
         # Set database
-        self.db = set_database(self.cfg.get_section("database"))
+        self.db = create_database(self.cfg.get_section("database"))
         # Get metadata file names
         self._find_files()
 

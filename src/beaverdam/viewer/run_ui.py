@@ -3,10 +3,9 @@
 from pathlib import Path
 
 from beaverdam._core import ConfigParser, Core
-
-from .controller import Controller
-from .dash_view import DashView
-from .presenter import Presenter
+from beaverdam.viewer.controller import Controller
+from beaverdam.viewer.dash_view import DashView
+from beaverdam.viewer.presenter import Presenter
 
 ## INPUTS
 
