@@ -279,6 +279,8 @@ class TinyDbJson(MetadataSource):
         # lookup table for this as a dict with key=_id (string), val=id (int set by
         # TinyDB). This is only used for creating the database.
         self._record_ids = {}
+        # Make a pointer to the database
+        self._db = TinyDB(self._location)
 
     def query(self, query_input={}, query_output=[]):
         """Query a TinyDB json database.
@@ -305,8 +307,7 @@ class TinyDbJson(MetadataSource):
         record_id_field_name = "_id"
 
         # Query the database
-        db = TinyDB(self._location)
-        query_results = db.search(Query()[record_id_field_name].exists())
+        query_results = self._db.search(Query()[record_id_field_name].exists())
         # Unlike MongoDB, TinyDB can only return the entire document, not a subset of
         # fields
         # https://stackoverflow.com/a/61548225
@@ -358,14 +359,13 @@ class TinyDbJson(MetadataSource):
             number of documents deleted (1 or 0)
 
         """
-        db = TinyDB(self._location)
         # The document ID will only be in the lookup table of record IDs if the record
         # was already added.
         if document_id in self._record_ids:
             # Convert the provided document ID to the ID used by TinyDB
             tinydb_id = self._record_ids[document_id]
-            if db.contains(doc_id=tinydb_id):
-                deletion_result = db.remove(doc_ids=[self._record_ids[tinydb_id]])
+            if self._db.contains(doc_id=tinydb_id):
+                deletion_result = self._db.remove(doc_ids=[self._record_ids[tinydb_id]])
             else:
                 deletion_result = []
         else:
@@ -383,9 +383,8 @@ class TinyDbJson(MetadataSource):
             _id property of the inserted document
 
         """
-        db = TinyDB(self._location)
         # Insert document into database
-        insertion_result = db.insert(document_to_insert)
+        insertion_result = self._db.insert(document_to_insert)
         # Store the TinyDB ID of the inserted document in the lookup table along with
         # the _id field of the original document.  If the document didn't have an _id
         # field, make this a string equal to the TinyDB ID.
