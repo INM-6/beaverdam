@@ -10,15 +10,6 @@ from beaverdam._core import ConfigParser, MongoDbDatabase
 from beaverdam.builder.metadatafiletools import load_metadata
 from beaverdam.builder.pluralize import pluralize
 
-## INPUTS
-
-# Name of configuration file
-cfg_file_name = Path("config.toml")
-db_extension = ".json"
-
-
-## CODE
-
 
 class BeaverDB:
     """Create or update a database from a directory of metadata files."""
@@ -160,3 +151,15 @@ def build_database(cfg_file_name):
     cfg_file_name = Path(cfg_file_name)
     user_database = BeaverDB(cfg_file_name)
     user_database.update_database()
+
+if __name__ == "__main__":
+    # Edit the name and location of the config file appropriately.
+    #
+    # An alternative approach is to define cfg_file_name in the configurations section
+    # of launch.json if you are using VSCode, e.g.:
+    #    env: {"cfg_file_name": "config_countries.toml"}
+    # Then access this variable here using e.g.:
+    #    import os
+    #    cfg_file_name = os.environ.get("cfg_file_name")
+    cfg_file_name = "config_countries.toml"
+    build_database(cfg_file_name)
