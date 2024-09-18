@@ -7,11 +7,6 @@ from beaverdam.viewer.controller import Controller
 from beaverdam.viewer.dash_view import DashView
 from beaverdam.viewer.presenter import Presenter
 
-## INPUTS
-
-# Name of configuration file
-cfg_file_name = Path("config.toml")
-
 
 class BeaverUI:
     """Define and configure modules to be included in the user interface."""
@@ -53,3 +48,17 @@ def run_ui(cfg_file_name):
     cfg_file_name = Path(cfg_file_name)
     user_interface = BeaverUI(cfg_file_name)
     user_interface.run()
+
+if __name__ == "__main__":
+    # Edit the name and RELATIVE (to this file) location of the config file
+    # appropriately.
+    #
+    # An alternative approach is to define cfg_file_name in the configurations section
+    # of launch.json if you are using VSCode, e.g.:
+    #    env: {"cfg_file_name": "config_countries.toml"}
+    # Then access this variable here using e.g.:
+    #    import os
+    #    cfg_file_name = os.environ.get("cfg_file_name")
+    cfg_file_name = Path(__file__).parents[3] / "config_countries.toml"
+    # Generate the UI
+    run_ui(cfg_file_name)
