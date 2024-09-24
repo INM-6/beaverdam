@@ -273,14 +273,18 @@ class TinyDbJson(MetadataSource):
         """
         # Get database information
         self._location = cfg["location"]
+        # Make a pointer to the database
+        self._db = TinyDB(self._location)
         # TindyDB uses integers for document IDs, but Beaverdam uses strings.  The
         # simplest way to solve this is to keep the _id field expected by Beaverdam, and
         # query it for the value associated with the numeric TinyDB id -- set up a
         # lookup table for this as a dict with key=_id (string), val=id (int set by
         # TinyDB). This is only used for creating the database.
         self._record_ids = {}
-        # Make a pointer to the database
-        self._db = TinyDB(self._location)
+        record_id_field_name = "_id"
+        query_results = self._db.search(Query()[record_id_field_name].exists())
+        for doc in query_results:
+            self._record_ids[doc[record_id_field_name]] = doc.doc_id
 
     def query(self, query_input={}, query_output=[]):
         """Query a TinyDB json database.
@@ -359,13 +363,13 @@ class TinyDbJson(MetadataSource):
             number of documents deleted (1 or 0)
 
         """
-        # The document ID will only be in the lookup table of record IDs if the record
-        # was already added.
+        # The document ID will only be a key in the lookup table of record IDs if the
+        # record was already added.
         if document_id in self._record_ids:
             # Convert the provided document ID to the ID used by TinyDB
             tinydb_id = self._record_ids[document_id]
             if self._db.contains(doc_id=tinydb_id):
-                deletion_result = self._db.remove(doc_ids=[self._record_ids[tinydb_id]])
+                deletion_result = self._db.remove(doc_ids=[tinydb_id])
             else:
                 deletion_result = []
         else:
