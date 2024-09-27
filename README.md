@@ -16,12 +16,13 @@ Beaverdam's dashboard shows configurable filters, plots, and a table with detail
 
 ## Dependencies
 
-Beaverdam requires the following to be installed on your computer, plus a browser and terminal of your choice:
+Beaverdam needs the following to be installed on your computer, plus a browser and terminal of your choice:
 
-- **Python** (to run Beaverdam)
+- **Python** *[required]* - to run Beaverdam
   - Downloads and installation instructions for various operating systems are on the [Python downloads page](https://www.python.org/downloads/)
   - Some people prefer the [conda](https://www.anaconda.com/download/) distribution of Python, which includes extra features and packages - consider [miniconda](https://docs.anaconda.com/free/miniconda/index.html) instead if you don't want to install >4GB of stuff ;)
-- **MongoDB** (to handle databases)
+- **MongoDB** *[optional]* - to handle large databases
+  - When handling a lot of (meta)data -- hundreds of files or hundreds of lines per file -- it may take a long time for Beaverdam to update a database or run a dashboard using its built-in database (TinyDB).  MongoDB speeds up database operations.
   - We tested Beaverdam with MongoDB Community Edition.  Installation instructions for various operating systems are in the [MongoDB documentation](https://www.mongodb.com/docs/manual/tutorial/).
   - After installing MongoDB, we recommend enabling it to start automatically when your computer boots, so you don't have to manually start it each time you run Beaverdam.  On Linux, enable this option using:
     ```
