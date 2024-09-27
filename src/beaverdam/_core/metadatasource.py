@@ -117,33 +117,11 @@ class MongoDbDatabase(MetadataSource):
         self._port = cfg["port"]
         self._db_name = cfg["db_name"]
         self._collection_name = cfg["collection_name"]
-
-    def _get_client(self):
-        """Get the client specified by the database information.
-
-        Returns
-            MongoDB client
-
-        """
-        return MongoClient(self._address, self._port)
-
-    def _get_database(self):
-        """Get the database specified by the database information.
-
-        Returns
-            MongoDB database
-
-        """
-        return getattr(self._get_client(), self._db_name)
-
-    def _get_collection(self):
-        """Get the collection specified by the database information.
-
-        Returns
-            MongoDB collection
-
-        """
-        return getattr(self._get_database(), self._collection_name)
+        # Make a pointer to the database
+        self._collection = getattr(
+            getattr(MongoClient(self._address, self._port), self._db_name),
+            self._collection_name,
+        )
 
     def query(self, query_input={}, query_output={}):
         """Query a MongoDB database.
@@ -185,8 +163,7 @@ class MongoDbDatabase(MetadataSource):
         index_id = "_id"
 
         # Query the database
-        collection = self._get_collection()
-        cursor = collection.find(query_input, projection=query_output)
+        cursor = self._collection.find(query_input, projection=query_output)
 
         # Put projection values into a dataframe.  For each session, make a dict where
         # the keys are the field names and the vals are their values for that session.
@@ -223,7 +200,7 @@ class MongoDbDatabase(MetadataSource):
                     )
 
         finally:
-            self._get_client().close()
+            pass
         return query_results
 
     def delete_single_record(self, document_id):
@@ -236,8 +213,7 @@ class MongoDbDatabase(MetadataSource):
             (int) number of documents deleted (1 or 0)
 
         """
-        collection = self._get_collection()
-        deletion_result = collection.delete_one({"_id": document_id})
+        deletion_result = self._collection.delete_one({"_id": document_id})
         return deletion_result.deleted_count
 
     def insert_single_record(self, document_to_insert):
@@ -251,8 +227,7 @@ class MongoDbDatabase(MetadataSource):
             (str) _id property of the inserted document
 
         """
-        collection = self._get_collection()
-        insertion_result = collection.insert_one(document_to_insert)
+        insertion_result = self._collection.insert_one(document_to_insert)
         return insertion_result.inserted_id
 
 
@@ -279,7 +254,7 @@ class TinyDbJson(MetadataSource):
         # simplest way to solve this is to keep the _id field expected by Beaverdam, and
         # query it for the value associated with the numeric TinyDB id -- set up a
         # lookup table for this as a dict with key=_id (string), val=id (int set by
-        # TinyDB). This is only used for creating the database.
+        # TinyDB).
         self._record_ids = {}
         record_id_field_name = "_id"
         query_results = self._db.search(Query()[record_id_field_name].exists())
@@ -295,8 +270,8 @@ class TinyDbJson(MetadataSource):
             yet).  Default is all fields.
                 TODO:  implement TinyDB queries.  Ref:
                 https://tinydb.readthedocs.io/en/latest/usage.html#queries
-            query_output (str or list of str):  requested output fields.  Strings should correspond to the field names in self.fields.
-            Default is all fields.
+            query_output (str or list of str):  requested output fields.  Strings should
+            correspond to the field names in self.fields.  Default is all fields.
                 query_output = ["path.to.output.value"]
 
         Returns:
