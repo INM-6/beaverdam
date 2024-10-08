@@ -22,16 +22,48 @@ file_type = ".json"
 # Information about the database containing (meta)data.  This is the database which will 
 # be created, updated, or read from.
 #
-# address (str):  use "localhost" to run Beaverdam locally
-# port (int):  most likely you will use 27017 to run Beaverdam locally
-# db_name (str):  name of the database to use (will be created if it doesn't exist)
-# collection_name (str):  name of the collection to use (will be created if it doesn't
-#   exist).  This is needed because MongoDB stores documents in collections within
-#   databases.
-address = "localhost"
-port = 27017
-db_name = "database_name"
-collection_name = "collection_name"
+# Use **ONE** of the following database types, which have different required
+# information.
+# Ensure there *isn't* a # character preceding a line with required information.
+# Ensure there *is* a # character preceding a line with information that's not needed.
+#
+# Note that if you don't specify the "type" key (as in the first release of Beaverdam),
+# Beaverdam will attempt to use TinyDB.
+#
+# 1. TinyDB
+#    - best for fewer or smaller (meta)data files; may be slow for large numbers of
+#      files or large amounts of (meta)data per file
+#    - only allows local use, unless you can access the database file remotely
+#    - doesn't require any extra dependencies
+#
+#    Required information:
+#        type (str):  "tinydb"
+#        location (str):  path to the json file containing the database (will be created
+#            if it doesn't exist)
+#
+type = "tinydb"
+location = "name_of_database.json"
+#
+# 2. MongoDB
+#    - best for many or larger (meta)data files
+#    - allows local or remote use
+#    - requires MongoDB to be installed separately
+#
+#    Required information:
+#        type (str):  "mongodb"
+#        address (str):  use "localhost" to run Beaverdam locally
+#        port (int):  most likely you will use 27017 to run Beaverdam locally
+#        db_name (str):  name of the database to use (will be created if it doesn't
+#            exist)
+#        collection_name (str):  name of the collection to use (will be created if it
+#            doesn't exist).  This is needed because MongoDB stores documents in
+#            collections within databases.
+#
+# type = "mongodb"
+# address = "localhost"
+# port = 27017
+# db_name = "database_name"
+# collection_name = "collection_name"
 
 [fields]
 # The name you want to use to refer to each (meta)data field, and the location of the
