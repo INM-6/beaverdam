@@ -377,7 +377,9 @@ class TinyDbJson(MetadataSource):
 def create_database(cfg) -> MetadataSource:
     """Create a database object.
 
-    The default is a MongoDB database, for backwards compatability.
+    The default is a TinyDB database.  Note that this is *not* backwards compatible with
+    the previous version of Beaverdam, which only used MongoDB and didn't require a
+    'type' field in the configuration file.
 
     Args:
         cfg (dict):  information about database.  This should contain a key 'type'
@@ -395,4 +397,4 @@ def create_database(cfg) -> MetadataSource:
         else:
             return MongoDbDatabase(cfg)
     else:
-        return MongoDbDatabase(cfg)
+        return TinyDbJson(cfg)
