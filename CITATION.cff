@@ -18,7 +18,7 @@ authors:
   email: m.denker@fz-juelich.de
   orcid: https://orcid.org/0000-0003-1255-7300
 repository-code: 'https://github.com/INM-6/beaverdam'
-doi: 10.5281/zenodo.11070922
+doi: 10.5281/zenodo.11070921
 license: BSD-3-Clause
 abstract: Build, explore, and visualize experimental databases of metadata
 version: 0.1.0
