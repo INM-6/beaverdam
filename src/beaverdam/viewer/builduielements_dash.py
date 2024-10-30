@@ -8,11 +8,12 @@ import dash_trich_components as dtc  # alternative for carousel: dash_slick
 import plotly.express as px
 from dash import dash_table, dcc, html
 
+from beaverdam.viewer.plotly_modebarlayout import modebar_layout
+
 # Custom plot themes (themes are loaded immediately when imported)
 from . import (
     plotly_theme,  # noqa: F401
 )
-from .plotly_modebarlayout import modebar_layout
 
 
 def set_ui_object_id(element_type, id=[]):
@@ -208,7 +209,7 @@ def build_data_table_label(
             ),
             html.Div(
                 style={"white-space": "pre-wrap"},
-                children=[" sessions meet your criteria"],
+                children=[" records meet your criteria"],
             ),
         ],
         direction="horizontal",

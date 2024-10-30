@@ -1,6 +1,11 @@
 """Prepare data for visualization."""
 
-from .uielement import DataFigure, DataTable, FilterChecklist, SelectedCriteria
+from beaverdam.viewer.uielement import (
+    DataFigure,
+    DataTable,
+    FilterChecklist,
+    SelectedCriteria,
+)
 
 
 class Presenter:
@@ -109,3 +114,18 @@ class Presenter:
         element_properties = all_elements[element_id]["properties"]
 
         return element_properties
+
+    def get_element_contents(self, element_id):
+        """Get the contents of an element, given the element's id.
+
+        Args:
+            element_id (str):  the unique id of the element
+
+        Returns:
+            element_contents (dict):  properties of the element
+
+        """
+        all_elements = self.get_elements()
+        element_contents = all_elements[element_id]["contents"]
+
+        return element_contents
