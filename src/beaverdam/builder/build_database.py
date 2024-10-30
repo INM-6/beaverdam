@@ -72,8 +72,8 @@ class BeaverDB:
         print(update_message)
         logging.info(update_message)
         # Store info to print exit status
-        n_documents_deleted = 0
-        n_new_documents = 0
+        n_records_deleted = 0
+        n_new_records = 0
         n_skipped_files = 0
         # For each file in the list of files, manipulate it if needed then add it to the
         # database
@@ -96,22 +96,22 @@ class BeaverDB:
                 # However this doesn't work well when the _id field is included in the
                 # new document.
                 #
-                # Delete existing document from database if present
-                is_document_deleted = self.db.delete_single_record(db_record_id)
-                # Insert the new document
-                updated_document_id = self.db.insert_single_record(json_file)
-                # Record what happened
-                if is_document_deleted:
-                    n_documents_deleted += 1
+                # Delete existing record from database if present
+                is_record_deleted = self.db.delete_single_record(db_record_id)
+                # Insert the new record
+                updated_record_id = self.db.insert_single_record(json_file)
+                # Store what happened
+                if is_record_deleted:
+                    n_records_deleted += 1
                 else:
-                    n_new_documents += 1
+                    n_new_records += 1
 
                 # Check that the updated document has the same _id as you intended
-                if updated_document_id != db_record_id:
+                if updated_record_id != db_record_id:
                     logging.warning(
-                        """The document with _id = {0} was updated,
+                        """The record with _id = {0} was updated,
                         instead of id = {1}.""".format(
-                            updated_document_id, db_record_id
+                            updated_record_id, db_record_id
                         )
                     )
             else:
@@ -123,13 +123,13 @@ class BeaverDB:
         # Report what happened
         update_message = (
             "Database updated!"
-            + "\n{0} existing document{1} modified.".format(
-                n_documents_deleted, pluralize(n_documents_deleted)
+            + "\n{0} existing record{1} modified.".format(
+                n_records_deleted, pluralize(n_records_deleted)
             )
-            + "\n{0} new document{1} added.".format(
-                n_new_documents, pluralize(n_new_documents)
+            + "\n{0} new record{1} added.".format(
+                n_new_records, pluralize(n_new_records)
             )
-            + """\n{0} document{1} skipped due to file problems -- see beaverdam.log for details.""".format(
+            + """\n{0} record{1} skipped due to file problems -- see beaverdam.log for details.""".format(
                 n_skipped_files, pluralize(n_skipped_files)
             )
         )
