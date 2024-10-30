@@ -19,7 +19,7 @@ class Core:
 
         """
         # Define database info
-        self.db = MongoDbDatabase(cfg.get_section("database"))
+        self.db = create_database(cfg.get_section("database"))
         # Store information about fields to query and their field names
         # keys = field names, vals = access information for database (e.g. location)
         self.db.set_fields(cfg.get_section("fields"))

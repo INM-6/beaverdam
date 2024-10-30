@@ -7,21 +7,30 @@
 #
 # directory (str): directory containing (meta)data files.  Files in subdirectories will
 #   also be included.
-# file_type (str):  extension of files to include.  Currently this can be '.json' or
-#   '.odml'.
-directory = 'countries'
-file_type = '.json'
+# file_type (str):  extension of files to include.  Currently this can be ".json" or
+#   ".odml".
+directory = "countries"
+file_type = ".json"
 
 [database]
 # Information about the database containing (meta)data.  This is the database which will 
 # be created, updated, or read from.
 #
-# address (str):  use 'localhost' to run Beaverdam locally
-# port (int):  most likely you will use 27017 to run Beaverdam locally
-# db_name (str):  name of the database to use (will be created if it doesn't exist)
-# collection_name (str):  name of the collection to use (will be created if it doesn't
-#   exist).  This is needed because MongoDB stores documents in collections within
-#   databases.
+# 2. MongoDB
+#    - best for many or larger (meta)data files
+#    - allows local or remote use
+#    - requires MongoDB to be installed separately
+#
+#    Required information:
+#        type (str):  "mongodb"
+#        address (str):  use "localhost" to run Beaverdam locally
+#        port (int):  most likely you will use 27017 to run Beaverdam locally
+#        db_name (str):  name of the database to use (will be created if it doesn't
+#            exist)
+#        collection_name (str):  name of the collection to use (will be created if it
+#            doesn't exist).  This is needed because MongoDB stores documents in
+#            collections within databases.
+type = "mongodb"
 address = "localhost"
 port = 27017
 db_name = "example"
@@ -39,9 +48,12 @@ collection_name = "countries"
 # "path.to.field" (str):  location of the (meta)data field in the database.  This must
 #   be the same for each document in the database, and can't include wildcards (due to
 #   MongoDB restrictions).  The field doesn't have to exist in all documents, but if it
-#   exists it must have the same location.  If you used
-#   json files, this is probably something like:
+#   exists it must have the same location.
+#   If you used json files, this is probably something like:
 #       "FirstSectionName.SubSection.SubSubSection"
+#   If you used odML files, note that the Document, section, and properties designations
+#   are included in the path, for example:
+#       "Document.sections.FirstSectionName.sections.SubSection.properties.PropertyName.value"
 #   For metadata files with complex structures, it might be helpful to find field
 #   locations using a tool like [Studio3T](https://studio3t.com/free/) or its
 #   free-forever predecessor [Robo3T](https://github.com/Studio3T/robomongo).

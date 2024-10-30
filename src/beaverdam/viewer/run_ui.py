@@ -7,6 +7,11 @@ from beaverdam.viewer.controller import Controller
 from beaverdam.viewer.dash_view import DashView
 from beaverdam.viewer.presenter import Presenter
 
+## INPUTS
+
+# Name of configuration file
+cfg_file_name = Path("config.toml")
+
 
 class BeaverUI:
     """Define and configure modules to be included in the user interface."""
