@@ -387,7 +387,7 @@ class DashView(View):
                                     for ind, x in enumerate(is_value_in_data)
                                     if x
                                 ]
-                                new_filter_criteria = actual_value[0]
+                                new_filter_criteria = [actual_value[0]]
                             elif new_filter_criteria in false_values:
                                 # Check which value is in the plotted values
                                 is_value_in_data = [
@@ -406,7 +406,7 @@ class DashView(View):
                                     for ind, x in enumerate(is_value_in_data)
                                     if x
                                 ]
-                                new_filter_criteria = actual_value[0]
+                                new_filter_criteria = [actual_value[0]]
                             else:
                                 pass
                         # Update the filter criteria with the actual value
