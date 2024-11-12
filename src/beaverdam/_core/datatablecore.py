@@ -68,8 +68,6 @@ class DataTableCore(pd.DataFrame):
         """
         # Find keys of new criteria
         new_filter_criteria_keys = list(new_filter_criteria.keys())
-        # Check for existing filter criteria with the same key
-        # existing_filter_criteria_keys = list(self.filter_criteria.keys())
         # Go through new criteria and update existing criteria.
         # NOTE:  This assumes that the vals in new_filter_criteria represent ALL the
         # allowable values for that key.
