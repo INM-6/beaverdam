@@ -75,17 +75,24 @@ location = "name_of_database.json"
 # NameOfField ():  text that will also show up in the dashboard, e.g. as column names.
 #   Therefore it should be somewhat self-explanatory.  Cannot include spaces.
 # "path.to.field" (str):  location of the (meta)data field in the database.  This must
-#   be the same for each document in the database, and can't include wildcards (due to
-#   MongoDB restrictions).  The field doesn't have to exist in all documents, but if it
-#   exists it must have the same location.
+#   be the same for each record in the database.  The field doesn't have to exist in all
+#   records, but if it exists it must have the same path (nested structure; not relevant
+#   for csv files).
+#   If you used csv files, this is the column name given in the first row of the file,
+#   for example:
+#       "NameOfColumn1"
+#   If you used csv files, you can include the record ID (formed by combining the file
+#   name with the row number) using the field:
+#       "_id"
 #   If you used json files, this is probably something like:
 #       "FirstSectionName.SubSection.SubSubSection"
 #   If you used odML files, note that the Document, section, and properties designations
 #   are included in the path, for example:
 #       "Document.sections.FirstSectionName.sections.SubSection.properties.PropertyName.value"
-#   For metadata files with complex structures, it might be helpful to find field
-#   locations using a tool like [Studio3T](https://studio3t.com/free/) or its
-#   free-forever predecessor [Robo3T](https://github.com/Studio3T/robomongo).
+#   When using MongoDB with metadata files having complex structures, it might be
+#   helpful to find field locations using a tool like
+#   [Studio3T](https://studio3t.com/free/) or its free-forever predecessor
+#   [Robo3T](https://github.com/Studio3T/robomongo).
 NameOfField = "path.to.field"
 
 [filters]

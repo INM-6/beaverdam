@@ -6,7 +6,7 @@
 
 Beaverdam is a Python package that centralizes your data or metadata and shows you a high-level overview of trends.  It combines (meta)data files into a single database, then generates a dashboard in your web browser so you can interactively explore.  Beaverdam was designed to be pretty simple, and give you the information you need to decide which (possibly less-simple) things to do next.
 
-(Meta)data formats currently supported are [JSON](https://www.json.org), [odML](https://g-node.github.io/python-odml), and csv, though in principle Beaverdam's MongoDB backend supports any file type that can be converted to JSON.
+(Meta)data formats currently supported are [JSON](https://www.json.org) and JSON arrays, [odML](https://g-node.github.io/python-odml), and CSV, though in principle Beaverdam's MongoDB backend supports any file type that can be converted to JSON.
 
 Currently, Beaverdam runs locally on your machine, and can build or access local or remote databases.
 
@@ -57,6 +57,20 @@ We designed Beaverdam to have as few restrictions as possible.  However, in orde
 - **Unique file names**:  Beaverdam uses filenames as unique identifiers, and will replace records in the database if files have the same name.  Hover text in plots often includes the filename to identify data points, so to make your life easier we suggest choosing meaningful names :)
 - **Same file extension** (*one* of `.odml` or `.json`):  Beaverdam will include all files with this extension inside the parent directory.  Other types of files can be present; Beaverdam will ignore them.
 - **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam can only combine this with information from other files in which `name` is also a subsection of `subject` (rather than a top-level section itself).
+
+#### CSV files
+
+If you are using (meta)data from CSV files, Beaverdam additionally makes the following assumptions:
+
+- **Field names in the first row**:  Beaverdam assumes each column represents one metadata field, with the field name given in the first row of the column.
+- **One row per record**:  Beaverdam converts each row of a CSV to one record, with each value in the row assigned to the field represented by its column.
+- **Text and numbers**:  Because CSV files don't store information about the data type of each cell, Beaverdam stores obvious numbers as numeric values (e.g. 1, 1.2), and everything else (text and non-obvious numeric values) as text (e.g. beaver, 2000-01-31).
+
+#### A note on record ID in CSV files and JSON arrays
+
+Beaverdam assigns each record (row of the CSV or element of a JSON array) an ID of the form `{file_name}_{record_index}`, where `record_index` is padded with zeros so that each record from the file has an ID with the same number of characters.  For example, if the file `csvmetadata.csv` contains 100 rows, the record ID for the first data row is `csvmetadata_001`; similarly, if the file `jsonarray.json` contains 100 JSON arrays, the record ID for the first JSON array is `jsonarray_001`.
+
+For records obtained from CSV files, `record_index` is **one less** than the row number you see when you open the CSV in a spreadsheet program, because of the header row.
 
 ### Configuration
 
