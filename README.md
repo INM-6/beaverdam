@@ -6,7 +6,7 @@
 
 Beaverdam is a Python package that centralizes your data or metadata and shows you a high-level overview of trends.  It combines (meta)data files into a single database, then generates a dashboard in your web browser so you can interactively explore.  Beaverdam was designed to be pretty simple, and give you the information you need to decide which (possibly less-simple) things to do next.
 
-(Meta)data formats currently supported are [JSON](https://www.json.org) and [odML](https://g-node.github.io/python-odml), though in principle Beaverdam's MongoDB backend supports any file type that can be converted to JSON.
+(Meta)data formats currently supported are [JSON](https://www.json.org), [odML](https://g-node.github.io/python-odml), and csv, though in principle Beaverdam's MongoDB backend supports any file type that can be converted to JSON.
 
 Currently, Beaverdam runs locally on your machine, and can build or access local or remote databases.
 
@@ -56,7 +56,7 @@ We designed Beaverdam to have as few restrictions as possible.  However, in orde
 - **One file per record** (e.g. experiment, session, person)
 - **Unique file names**:  Beaverdam uses filenames as unique identifiers, and will replace records in the database if files have the same name.  Hover text in plots often includes the filename to identify data points, so to make your life easier we suggest choosing meaningful names :)
 - **Same file extension** (*one* of `.odml` or `.json`):  Beaverdam will include all files with this extension inside the parent directory.  Other types of files can be present; Beaverdam will ignore them.
-- **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  This is a restriction from MongoDB.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam can only combine this with information from other files in which `name` is also a subsection of `subject` (rather than a top-level section itself).
+- **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam can only combine this with information from other files in which `name` is also a subsection of `subject` (rather than a top-level section itself).
 
 ### Configuration
 
@@ -97,6 +97,8 @@ A single configuration file contains all the information for Beaverdam to access
 ## How to cite
 
 Use the information in the [citation file](https://github.com/INM-6/beaverdam/blob/documentation/CITATION.cff), which follows the [citation file format](https://citation-file-format.github.io).
+
+Beaverdam releases are also stored on Zenodo; the DOI [10.5281/zenodo.11070921](https://doi.org/10.5281/zenodo.11070921) resolves to the latest version.
 
 ## How to contribute
 
