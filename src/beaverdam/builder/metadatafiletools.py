@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 import odml  # handling odml files; install with pip not conda
+import pandas as pd  # handling csv files
 
 
 class MetadataFile(ABC):
@@ -31,6 +32,41 @@ class MetadataFile(ABC):
     @abstractmethod
     def to_json(self):  # return json dict
         """Convert the metadata file to json format."""
+
+
+class CsvMetadata(MetadataFile):
+    """Control handling of csv files."""
+
+    def __init__(self, file_name):
+        """Initialize object.
+
+        Args:
+            file_name (_type_): path and name of metadata file
+
+        """
+        super().__init__(file_name)
+
+    def _load_file(self):
+        """Load raw data from csv file."""
+        # Use Pandas instead of csv.DictReader() because Pandas reads numbers as numeric
+        # values, whereas DictReader reads all fields as strings.
+        self.file_contents = pd.read_csv(self.file_name)
+
+    def to_json(self):
+        """Convert the contents of the csv file to json.
+
+        Returns
+            self.json: metadata in json format
+
+        """
+        # Save temporary json file then load it.  I can't figure out why it doesn't work
+        # without saving then loading.
+        with tempfile.TemporaryDirectory() as temp_dir_name:
+            temp_file_path = Path(temp_dir_name) / Path(self.file_name.stem + ".json")
+            self.file_contents.to_json(temp_file_path, orient="records")
+            with open(temp_file_path, "r") as f:
+                self.json = json.load(f)
+        return self.json
 
 
 class JsonMetadata(MetadataFile):
@@ -222,10 +258,12 @@ def load_metadata(file_name: Path) -> MetadataFile:
     # Create the correct type of file object depending on the extension.  If there is a
     # problem, report this in the log file.
     try:
-        if file_name.suffix == ".odml":
-            return OdmlMetadata(file_name)
+        if file_name.suffix == ".csv":
+            return CsvMetadata(file_name)
         elif file_name.suffix == ".json":
             return JsonMetadata(file_name)
+        elif file_name.suffix == ".odml":
+            return OdmlMetadata(file_name)
         else:
             logging.error(
                 """File {0} skipped, because Beaverdam doesn't know how to treat

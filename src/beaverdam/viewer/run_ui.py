@@ -54,6 +54,7 @@ def run_ui(cfg_file_name):
     user_interface = BeaverUI(cfg_file_name)
     user_interface.run()
 
+
 if __name__ == "__main__":
     # Edit the name and RELATIVE (to this file) location of the config file
     # appropriately.
