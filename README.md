@@ -68,7 +68,7 @@ If you are using (meta)data from CSV files, Beaverdam additionally makes the fol
 
 #### A note on record ID in CSV files and JSON arrays
 
-Beaverdam assigns each record (row of the CSV or element of a JSON array) an ID of the form `{file_name}_{record_index}`, where `record_index` is padded with zeros so that each record from the file has an ID with the same number of characters.  For example, if the file `csvmetadata.csv` contains 100 rows, the record ID for the first data row is `csvmetadata_001`; similarly, if the file `jsonarray.json` contains 100 JSON records, the record ID for the first JSON record is `jsonarray_001`.
+Beaverdam assigns each record (row of the CSV or element of a JSON array) an identifier (ID) of the form `{file_name}_{record_index}`, where `record_index` is padded with zeros so that all records from the file have IDs with the same number of characters.  For example, if the file `csvmetadata.csv` contains 100 rows, the record ID for the first data row is `csvmetadata_001`; similarly, if the file `jsonarray.json` contains 100 JSON records, the record ID for the first JSON record is `jsonarray_001`.
 
 For records obtained from CSV files, `record_index` is **one less** than the row number you see when you open the CSV in a spreadsheet program, because of the header row.
 
