@@ -93,8 +93,16 @@ class DashView(View):
         # Get the plotted data
         df = self.presenter.get_element_contents(plot_id)["df"]
         df_column_values = df[df.columns[0]].tolist()
-        # Check whether the query item is in the list of plotted data
-        if query_item in df_column_values:
+        # Find the number of elements of the plotted data where the element's value and
+        # type both match the query item
+        num_query_in_data = len(
+            [
+                ind
+                for ind, val in enumerate(df_column_values)
+                if ((val == query_item) and (type(val) == type(query_item)))
+            ]
+        )
+        if num_query_in_data > 1:
             is_query_in_data = True
         else:
             is_query_in_data = False

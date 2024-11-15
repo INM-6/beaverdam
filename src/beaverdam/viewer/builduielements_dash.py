@@ -482,7 +482,7 @@ def encode_criterion_info(criterion_name, criterion_value):
         "CRITERION="
         + criterion_name
         + "__VALUE="
-        + value_to_label(criterion_value)
+        + str(value_to_label(criterion_value))
         + "__TYPE="
         + type(criterion_value).__name__
     )
