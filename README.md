@@ -59,19 +59,19 @@ We designed Beaverdam to have as few restrictions as possible.  However, in orde
 - **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam can only combine this with information from other files in which `name` is also a subsection of `subject` (rather than a top-level section itself).
 - **No periods in section names**:  Beaverdam uses periods to distinguish nested structures, so using periods within the name of a section, subsection, or CSV column heading will result in the respective field not being found.
 
-#### CSV files
+#### Delimiter-separated files (CSV, TSV, etc.)
 
-If you are using (meta)data from CSV files, Beaverdam additionally makes the following assumptions:
+If you are using (meta)data from CSV, TSV, or other delimiter-separated files, Beaverdam additionally makes the following assumptions:
 
 - **Field names in the first row**:  Beaverdam assumes each column represents one metadata field, with the field name given in the first row of the column.
-- **One row per record**:  Beaverdam converts each row of a CSV to one record, with each value in the row assigned to the field represented by its column.
-- **Text and numbers**:  Because CSV files don't store information about the data type of each cell, Beaverdam stores obvious numbers as numeric values (e.g. 1, 1.2), and everything else (text and non-obvious numeric values) as text (e.g. beaver, 2000-01-31).
+- **One row per record**:  Beaverdam converts each row of the file to one record, with each value in the row assigned to the field represented by its column.
+- **Text and numbers**:  Because CSV/TSV/etc. files don't store information about the data type of each cell, Beaverdam stores obvious numbers as numeric values (e.g. 1, 1.2), and everything else (text and non-obvious numeric values) as text (e.g. beaver, 2000-01-31).
 
-#### A note on record ID in CSV files and JSON arrays
+#### A note on record ID in delimiter-separated files and JSON arrays
 
 Beaverdam assigns each record (row of the CSV or element of a JSON array) an identifier (ID) of the form `{file_name}_{record_index}`, where `record_index` is padded with zeros so that all records from the file have IDs with the same number of characters.  For example, if the file `csvmetadata.csv` contains 100 rows, the record ID for the first data row is `csvmetadata_001`; similarly, if the file `jsonarray.json` contains 100 JSON records, the record ID for the first JSON record is `jsonarray_001`.
 
-For records obtained from CSV files, `record_index` is **one less** than the row number you see when you open the CSV in a spreadsheet program, because of the header row.
+For records obtained from delimiter-separated files, `record_index` is **one less** than the row number you see when you open the file in a spreadsheet program, because of the header row.
 
 ### Configuration
 
