@@ -57,6 +57,7 @@ We designed Beaverdam to have as few restrictions as possible.  However, in orde
 - **Unique file names**:  Beaverdam uses filenames as unique identifiers, and will replace records in the database if files have the same name.  Hover text in plots often includes the filename to identify data points, so to make your life easier we suggest choosing meaningful names :)
 - **Same file extension** (*one* of `.odml` or `.json`):  Beaverdam will include all files with this extension inside the parent directory.  Other types of files can be present; Beaverdam will ignore them.
 - **Same data structure**:  A given (meta)data field must exist in the same hierarchical location in all files that contain that field.  It doesn't have to exist in all files, though.  For example, if one json file has a section `subject` with a subsection `name`, Beaverdam can only combine this with information from other files in which `name` is also a subsection of `subject` (rather than a top-level section itself).
+- **No periods in section names**:  Beaverdam uses periods to distinguish nested structures, so using periods within the name of a section, subsection, or CSV column heading will result in the respective field not being found.
 
 #### CSV files
 

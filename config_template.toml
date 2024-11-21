@@ -76,8 +76,12 @@ location = "name_of_database.json"
 #   Therefore it should be somewhat self-explanatory.  Cannot include spaces.
 # "path.to.field" (str):  location of the (meta)data field in the database.  This must
 #   be the same for each record in the database.  The field doesn't have to exist in all
-#   records, but if it exists it must have the same path (nested structure; not relevant
-#   for csv files).
+#   records.  It can include spaces, but it can't include periods.
+#   For nested strucures (e.g. json or odML files; not relevant for csv files), existing
+#   elements must have the same path in all records.  Separate elements of nested paths
+#   (for example, in json or odML files) using periods.  Each element of the path can
+#   include spaces, but not periods because Beaverdam uses periods to split elements of
+#   nested paths.
 #   If you used csv files, this is the column name given in the first row of the file,
 #   for example:
 #       "NameOfColumn1"
