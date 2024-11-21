@@ -51,15 +51,17 @@ class BeaverDB:
         """Detect metadata files to include in the database."""
         # Get information from config file
         input_file_info = self.cfg.get_section("raw_metadata")
+        # Check that period is given for file extension, and add it if not
+        input_file_extension = input_file_info["file_type"]
+        if input_file_extension[0] != ".":
+            input_file_extension = "." + input_file_extension
         # Recursively search parent directory and store the locations of files having
         # the requested extension.  I used os.walk() because it's backwards-compatible -
         # on Python 3.12 and higher, you could use Path.walk().
         self.input_files = []
         for dirpath, _dirnames, filenames in os.walk(input_file_info["directory"]):
             filepaths = [
-                Path(dirpath, x)
-                for x in filenames
-                if x.endswith(input_file_info["file_type"])
+                Path(dirpath, x) for x in filenames if x.endswith(input_file_extension)
             ]
             self.input_files.extend(filepaths)
 

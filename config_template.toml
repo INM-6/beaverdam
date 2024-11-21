@@ -13,8 +13,8 @@
 #
 # directory (str): directory containing (meta)data files.  Files in subdirectories will
 #   also be included.
-# file_type (str):  extension of files to include.  Currently this can be ".json" or
-#   ".odml".
+# file_type (str):  extension of files to include.  Currently this can be ".json",
+#   ".odml", ".csv", ".tsv", or ".dsv".
 directory = "path/to/files"
 file_type = ".json"
 

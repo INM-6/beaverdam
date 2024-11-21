@@ -34,8 +34,8 @@ class MetadataFile(ABC):
         """Convert the metadata file to json format."""
 
 
-class CsvMetadata(MetadataFile):
-    """Control handling of csv files."""
+class DsvMetadata(MetadataFile):
+    """Control handling of delimiter-separated value files."""
 
     def __init__(self, file_name):
         """Initialize object.
@@ -47,13 +47,14 @@ class CsvMetadata(MetadataFile):
         super().__init__(file_name)
 
     def _load_file(self):
-        """Load raw data from csv file."""
+        """Load raw data from file."""
         # Use Pandas instead of csv.DictReader() because Pandas reads numbers as numeric
-        # values, whereas DictReader reads all fields as strings.
-        self.file_contents = pd.read_csv(self.file_name)
+        # values, whereas DictReader reads all fields as strings.  Pandas can
+        # auto-detect the delimiter if sep=None and the Python engine is used.
+        self.file_contents = pd.read_csv(self.file_name, sep=None, engine="python")
 
     def to_json(self):
-        """Convert the contents of the csv file to json.
+        """Convert the contents of the file to json.
 
         Returns
             self.json: metadata in json format
@@ -255,14 +256,18 @@ def load_metadata(file_name: Path) -> MetadataFile:
         exist.
 
     """
-    # Create the correct type of file object depending on the extension.  If there is a
-    # problem, report this in the log file.
+    # Create the correct type of file object depending on the extension.  Make sure to
+    # do this caseless, so that capitalization doesn't affect the results.  If there is
+    # a problem, report this in the log file.
+    caseless_suffix = file_name.suffix.casefold()
     try:
-        if file_name.suffix == ".csv":
-            return CsvMetadata(file_name)
-        elif file_name.suffix == ".json":
+        if caseless_suffix in [".dsv".casefold(), ".csv".casefold(), ".tsv".casefold()]:
+            # Delimiter-separated values (DSV) files can all be read with the same
+            # method, as long as the delimiter can be auto-detected.
+            return DsvMetadata(file_name)
+        elif caseless_suffix == ".json".casefold():
             return JsonMetadata(file_name)
-        elif file_name.suffix == ".odml":
+        elif caseless_suffix == ".odml".casefold():
             return OdmlMetadata(file_name)
         else:
             logging.error(
