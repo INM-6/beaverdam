@@ -127,7 +127,7 @@ columns = ["NameOfFirstField", "NameOfSecondField"]
 # Which fields to plot, and how to plot them.  Each plot must have a unique name and the
 # following keys:
 #   - data_field (string or list of strings): name of the field(s) to plot
-#   - plot_type (string): type of plot ("pie", "bar", "scatter", "box")
+#   - plot_type (string): type of plot ("pie", "bar", "strip", "scatter", "box")
 #
 # Currently the following plot types are defined:
 #
@@ -143,17 +143,25 @@ columns = ["NameOfFirstField", "NameOfSecondField"]
 #           PlotName.data_field = "NameOfField"
 #           PlotName.plot_type = "bar"
 #
-#   Scatter plot:  plots the values of two fields.  Include these two lines for each
-#       scatter plot you want to make, with a different PlotName for each plot and
-#       substituting NameOfFieldY and NameOfFieldX with the fields you want to plot on
-#       the Y and X axes, respectively:
+#   Scatter plot:  plots the values of two fields as points.  Include these two lines
+#       for each scatter plot you want to make, with a different PlotName for each plot
+#       and substituting NameOfFieldY and NameOfFieldX with the fields you want to plot
+#       on the Y and X axes, respectively:
 #           PlotName.data_field = ["NameOfFieldY", "NameOfFieldX"]
 #           PlotName.plot_type = "scatter"
 #
-#   Box plot:  plots the values of two fields.  Include these two lines for each box
-#       plot you want to make, with a different PlotName for each plot and substituting
+#   Strip plot:  plots the values of two fields as points, with horizontal jitter to
+#       separate overlapping points.  Include these two lines for each strip plot you
+#       want to make, with a different PlotName for each plot and substituting
 #       NameOfFieldY and NameOfFieldX with the fields you want to plot on the Y and X
 #       axes, respectively:
+#           PlotName.data_field = ["NameOfFieldY", "NameOfFieldX"]
+#           PlotName.plot_type = "strip"
+#
+#   Box plot:  plots the values of two fields, showing median, minimum, maximum, and
+#       quartiles.  Include these two lines for each box plot you want to make, with a
+#       different PlotName for each plot and substituting NameOfFieldY and NameOfFieldX
+#       with the fields you want to plot on the Y and X axes, respectively:
 #           PlotName.data_field = ["NameOfFieldY", "NameOfFieldX"]
 #           PlotName.plot_type = "box"
 PlotName.data_field = "NameOfField"

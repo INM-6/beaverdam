@@ -326,6 +326,8 @@ def build_plot(data, title=[], style=""):
         final_plot = build_bar_graph(data, title)
     elif style == "box":
         final_plot = build_box_plot(data, title)
+    elif style == "strip":
+        final_plot = build_strip_plot(data, title)
     elif style == "scatter":
         final_plot = build_scatter_plot(data, title)
     else:
@@ -397,6 +399,27 @@ def build_box_plot(data, title=[]):
         dragmode="select",
     )
     return box_plot
+
+
+def build_strip_plot(data, title=[]):
+    """Build a strip plot to include in a Dash figure.
+
+    Args:
+        data (df with two columns):  data to be plotted
+        title (str):  title of the graph (optional; default is no title).
+
+    Returns:
+        strip_plot (px.strip): Plotly Express object containing the graph
+
+    """
+    strip_plot = px.strip(
+        data_frame=data.map(unlist_element),
+        x=data.columns[1],
+        y=data.columns[0],
+        hover_name=data.index,
+        title=title,
+    )
+    return strip_plot
 
 
 def build_scatter_plot(data, title=[]):
