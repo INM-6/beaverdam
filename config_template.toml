@@ -2,9 +2,13 @@
 #
 # To use this as a template:
 #   - For all sections:  replace each value with the appropriate value for your project
-#   - Section [fields]:  choose names for each field and surround these names in quotes
-#     "" in subsequent sections
-#   - Section [plots]:  define each plot shown in the dashboard
+#   - Section [raw_metadata]:  specify the location and type of (meta)data files
+#   - Section [database]:  specify the location and type of database to use
+#   - Section [fields]:  choose names for each (meta)data field and surround these names
+#     in quotes "" in subsequent sections
+#   - Section [filters]:  define which fields to show as checkbox filters
+#   - Section [table]:  define which fields to show in the data table
+#   - Section [plots]:  define which fields to show in each plot, and the plot types
 
 [raw_metadata]
 # Information about the location and type of (meta)data files to include in the
