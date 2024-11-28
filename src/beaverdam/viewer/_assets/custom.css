@@ -80,3 +80,8 @@ body .dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-in
     color: var(--bs-body-color);
     border-color: var(--bs-secondary-bg) !important;
 }
+
+/* colour of sort arrows */
+.dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+    --accent: var(--bs-primary) !important;
+  }
