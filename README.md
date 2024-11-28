@@ -77,7 +77,7 @@ For records obtained from delimiter-separated files, `record_index` is **one les
 
 A single configuration file contains all the information for Beaverdam to access the database and set options for the dashboard.  It's probably easiest to download the template configuration file `config_template.toml` from the main directory of this repository, then edit it with your specific details.  Find more information within the configuration file.
 
-### Build a database
+### Build or update a database
 
 1. Ensure all your [files](#metadata-files) are organized and formatted correctly.
 1. [Install](#installation) Beaverdam and edit the [configuration file](#configuration).  Important sections for this step are:
@@ -91,6 +91,8 @@ A single configuration file contains all the information for Beaverdam to access
     where `config.toml` is the name and **relative** path of your configuration file
 
     You will see a progress bar appear as Beaverdam builds or updates your database.  Any errors or warnings will be written to `beaverdam.log` in the same directory as your configuration file - please check the log file afterwards in a text editor to see if there was a problem!
+
+Note that when Beaverdam **updates** a database, it will add new records and overwrite existing records, but will **not delete** records.  If you want deleted (meta)data files to be removed from the database, you will need to manually delete the database and re-create it.
 
 ### View a database
 
