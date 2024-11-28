@@ -233,6 +233,7 @@ def build_filter_checklist(items, title=[], id=[], element_type=""):
     """
     # Find checklist options
     values = [unlist_element(x) for x in items]
+    values.sort()
     options = []
     for idx, item in enumerate(values):
         if item is None:
