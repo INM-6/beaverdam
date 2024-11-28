@@ -97,10 +97,15 @@ location = "name_of_database.json"
 #   If you used odML files, note that the Document, section, and properties designations
 #   are included in the path, for example:
 #       "Document.sections.FirstSectionName.sections.SubSection.properties.PropertyName.value"
-#   When using MongoDB with metadata files having complex structures, it might be
-#   helpful to find field locations using a tool like
-#   [Studio3T](https://studio3t.com/free/) or its free-forever predecessor
-#   [Robo3T](https://github.com/Studio3T/robomongo).
+#   When with metadata files having complex structures, it might be helpful to use
+#   additional tools to find field locations:
+#       - this command-line tool searches for fields in structured files and returns the
+#       full path to the field as an indented structure:
+#           https://github.com/con/utils/blob/main/bin/show-paths
+#       - when using MongoDB, database viewers like
+#       [Studio3T](https://studio3t.com/free/) or its free-forever predecessor
+#       [Robo3T](https://github.com/Studio3T/robomongo) make it easy to explore
+#       databases and find the path to a field
 NameOfField = "path.to.field"
 
 [filters]
