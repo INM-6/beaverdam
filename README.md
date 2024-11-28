@@ -92,7 +92,7 @@ A single configuration file contains all the information for Beaverdam to access
 
     You will see a progress bar appear as Beaverdam builds or updates your database.  Any errors or warnings will be written to `beaverdam.log` in the same directory as your configuration file - please check the log file afterwards in a text editor to see if there was a problem!
 
-Note that when Beaverdam **updates** a database, it will add new records and overwrite existing records, but will **not delete** records.  If you want deleted (meta)data files to be removed from the database, you will need to manually delete the database and re-create it.
+Note that when Beaverdam **updates** a database, it will add new records and overwrite existing records, but will **not delete** records corresponding to deleted (meta)data files.  If you want to remove records for deleted files, you will need to manually delete the database and re-create it.
 
 ### View a database
 
